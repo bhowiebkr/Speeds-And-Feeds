@@ -1,0 +1,233 @@
+material,k-factor,hardness-brinell
+1018,1.88,126
+4140 alloy steel,1.44,200
+A2 Tool steel 200-230,1.064,200-300
+304 stainless cold rolled ,0.633,225-275
+6061-T6 Aluminum,3.344,95
+7075-T6 Aluminum,2.00,150
+Very soft low-carbon steel,1.56,100-160
+very low-carbon steel,1.50,120
+Free cutting magnetic steels,2.00,100-260
+"1108, 1109, 1115, 1117, 1118, 1120, 1126, 1211 plain carbon steels",2.13,100-150
+"1108, 1109, 1115, 1117, 1118, 1120, 1126, 1211, plain carbon steels",1.86,150-200
+1144 carbon steel cold rolled ,1.78,217
+"11L17, 11L18, 12L13, 18, 12L13, 12L14, leaded carbon steels",2.12,100-150
+"11L17, 11L18, 12L13, 12L14 Leaded carbon steels ",1.86,150-200
+"11L17, 11L18, 12L13, 12L14 Leaded carbon steels ",1.64,200-250
+"1212, 1213, 1215, Plain carbon steels",2.12,100-150
+"A36, 44W hot rolled steels",1.75,160-220
+low carbon steel,1.40,5-20Rc
+"structrul steel, ordinary low to medium carbon steel (0-5%c) ",1.67,100-200
+ASTM A516-70 Pressure vessel steel,1.54,140-210
+"1015, Ck15, C16, ",2.43,111
+1018,1.88,126
+"1035, c35 cold drawn ",2.00,143
+"1043, 1045, C45, Hot Rolled",1.88,162
+1148,1.60,200
+plain high carbon steel,1.04,125-275
+"1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",1.54,175-220
+"1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",1.25,225-275
+"1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",1.00,275-375
+"1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",0.91,375-425
+low alloy steel medium-hard,1.35,120-360
+4130 alloy steel ,1.66,156
+4130 PH alloy steel,1.81,245
+8620 alloy steel ,1.69,149
+8620 HT alloy steel ,1.26,300
+high-carbon and alloy steel medium-hard,1.25,160-360
+4140 alloy steel,1.44,200
+4140PH Alloy steel ,1.13,300
+4150 Alloy steel ,1.43,200
+5160 Alloy spring steel,1.43,200
+6150 Alloy spring steel,1.43,200
+low carbon steel,1.08,18-26Rc
+low carbon steel,1.14,24-32Rc
+high-strength structual steel ,0.72,250-650
+"Steel 1132, 1137, 1139, 1140, 1144, 1146, 1151",0.92,275-325
+"Steel 1132, 1137, 1139, 1140, 1144, 1146, 1151",0.83,325-375
+"Steel 1132,1137, 1139, 1140, 1144, 1146, 1151 ",0.75,375-425
+"A514, T-1",0.98,300
+armox 370T,0.78,380-430
+armox 440,0.70,420-480
+armox 500T,0.64,480-540
+armox 600T,0.70,570-640
+armox advance ,0.53,58-63 Rc
+astralloy 4800 ,0.83,370
+astralloy 8000,0.71,430-470
+astralloy Rol-man,1.11,180-245
+astralloy -v EB-450,0.66,418-512
+weldox 1030-1100,0.77,430
+weldox 700 ,1.08,260
+weldox 900/960,0.94,320
+normal tool steels. Hard- quenching an tempering steel,1.04,170-270
+low carbon steel 5-20Rc,0.88,30-40Rc
+01 Tool steel,1.33,175-225
+S7 Tool steel ,1.33,187-220
+uddeholm Tool Steel,1.14,170-360
+ame ,1.29,190
+caldie ,1.26,215
+dievar annealed ,1.33,160
+sleipner ,1.22,235
+"sverker3, alsi d6,  alsi d3",1.14,240
+UHB 11 (alsi 1158) ,1.60,200
+unimax,1.22,185
+vanadais 10 superclean,1.13,300
+"vanadais 6,23,30 ALSI superclean",1.11,310
+vanadais 60 superclean ,1.07,340
+"vancron 30,40 superclean",1.13,300
+"high-alloy, high hardness steel",1.11,270-360
+300M alloy steel annealed ,1.14,260
+4340 alloy steel,1.09,217
+4340 PH alloy steel ,0.93,300
+A2 Tool steel 200-230,1.06,200-300
+"AerMet 100, 310, 340, Alloy steel annealed ",0.87,336
+D2 Dc53 Tool Steel annealed ,1.14,200-250
+H13 Tool Steel ,1.14,200-250
+P20 Tool Steel ,0.88,330
+SB Wear,1.14,225-255
+"high-strength, hardned Tool and HSS steel.",0.77,>360
+300mAlloy steel hadrened ,0.60,50-55Rc
+"AerMet 100, 310, 340, Alloy steel annealed ",0.60,50-55Rc
+" D2, DC53 Tool Steel ",0.77,35-40Rc
+" D2, DC53 Tool Steel ",0.65,40-45Rc
+" D2, DC53 Tool Steel ",0.60,45-50Rc
+" D2, DC53 Tool Steel ",0.58,50-55Rc
+" D2, DC53 Tool Steel ",0.53,55-60Rc
+" D2, DC53 Tool Steel ",0.50,60-65Rc
+H13 Tool Steel ,0.77,35-40
+H13 Tool Steel ,0.65,40-45
+H13 Tool Steel ,0.61,45-50
+H13 Tool Steel ,0.58,50-55
+H13 Tool Steel ,0.53,55-60
+H13 Tool Steel ,0.50,60-65
+Hardox 500,0.58,50-55Rc
+"M1, M2, M6, M10, T1, T2, T6",0.45,60-65RC
+S7 Tool steel ,0.78,40-45Rc
+S7 Tool steel ,0.71,45-50Rc
+S7 Tool steel ,0.64,50-55Rc
+S7 Tool steel ,0.56,55-60Rc
+toolox 33,0.83,275-325
+Toolox 40,0.77,360-420
+Toolox 44,0.71,410-475
+High Speed Steel,1.33,200-275
+"M1, M2, M6, M10, T1, T2, T6",1.30,200-250
+"M3-1, M4, M7, M30, M33, M36, M41, M42, M43, M36, M41, M42, M43, M44, M46, M47, T5, T8",1.25,225-275
+T15 M3-2,1.25,225-275
+Powdered metals ,0.77,360
+anvioy 1150,0.90,36Rc
+free-cutting  stainless steel ,0.73,135-375
+1.2085 stainless,0.65,30-35Rc
+302 Stainless ,1.00,135-185
+303 Stainless ,1.00,135-185
+416 Stainless,1.00,187-235
+416 Stainless,1.00,200-285
+416 Stainless,0.86,200-285
+430F Stainless,1.00,170-185
+moderately difficuit stainless steel,1.44,135-325
+13-8 Aged h1025 Stainless,0.56,381
+13-3 aged H1150 Stainless,0.63,280
+15-5 PH H1150 Stainless,0.66,270
+17-4 ph Stainless 150-200,1.75,150-200
+17-4 ph Stainless   ,0.59,275-325
+304 stainless cold rolled ,0.63,225-275
+316 Stainless ,0.69,185-220
+321 Stainless ,0.63,225-275
+410 Stainless steel annealed ,0.68,225
+422 Stainless ,0.62,285-300
+440 Stainless ,0.63,255-275
+CPM-154 Stainless Annealed ,0.67,235
+CPM-s30V-S35VN Stainless Annealed ,0.63,255-275
+Duplex 2205 (UNS S32205 / S31803) ,0.63,30Rc
+Nitronic 50,0.67,189-241
+Nitronic 60,0.65,170-255
+13-8 aged h950 stainless,0.55,410
+15-5 ph 1025-h1075,0.61,310-330
+15-5 ph p 900 stainless,0.57,388
+17-4 aged H1075 Stainless ,0.58,325-375
+17-4 aged h900 stainless,0.57,420
+410 Stainless steel annealed ,0.60,40rc
+440 Stainless ,0.53,50rc
+440n stainless ,0.61,275-325
+CPM-154 Stainless Annealed ,0.54,375-425
+cpm-S90V stainless ,0.67,50-60
+p550 stainless ,0.54,350-430
+cast iron Sg iron,1.54,120-260
+cast iron Sg iron,1.85,120-150
+cast iron  ,1.57,190-220
+cast iron ,1.44,250-260
+aluminum  alloys ,3.34,28-150
+2024-t4 ,2.50,120
+3003,4.99,28
+5000,3.34,60
+6061-t4,3.69,65
+6061-t6,3.34,95
+"6063-t5,t6",3.32,60-75
+7075-t6,2.00,150
+alumec,1.67,89
+cast aluminum ,2.51,60-90
+cast aluminum hi,3.35,60-100
+"cast aluminum 200, 500, 700 ,800",3.32,28-100
+"Wrought Aluminum 3000, 5000, 6000, 7000",3.29,30-150
+sodt non-ferrous alloys ,3.34,28-150
+magnesium ,9.07,65
+zinc ,3.99,100
+copper alloys ,2.01,50-250
+c10100 copper ,1.73,95
+c18200 chrome copper,1.65,150
+c18200 chrome copper,3.01,60
+c863000 maganese bronze ,1.19,225
+"c90300, c9220, c90500 tin bronze alloy ",2.55,80
+c90700 tin bronze (SAE 65),2.14,105
+c93200 sae 660,2.55,65
+c95500 nickel aluminum bronze,1.38,190
+copper 110,2.00,42
+high lead brass,3.33,60
+low lead brass,1.20,120
+low lead brass,1.67,80
+high alloyed copper ,0.77,180-390
+ampcoloy 83,0.77,340-390
+ampcoloy 88 ,0.91,260-280
+"ampcoloy 940,95,972",1.14,180-255
+ampcoloy 944 moldmate 90,0.91,275
+tough2,0.78,260-280
+tough 3 ,0.69,300-336
+ampco aluminum bronze ,0.91,100-450
+ampco 18,1.75,159--183
+ampco 21,0.96,285-311
+amco 22,0.83,321-352
+ampco 25,0.80,356-394
+ampco 26,0.71,395-450
+ampco 8,1.78,108-124
+ampco m4 ,0.97,270-305
+ferrous superalloy ,0.63,200-300
+nitronic 50,0.55,189-241
+nitronic 60,0.65,170-255
+nickel an colbalt super alloys ,0.99,200-450
+hastelloy b-3,0.39,345
+hastelloy c c276,0.49,207
+hastelloy x,0.63,180
+inconel 600,0.63,180
+inconel 700,0.46,238
+invar 46,0.62,180
+monel k 500,0.42,277
+waspaloy ,0.41,300
+"plastic, soft non-metals",10.00,1
+acrylic ,10.00,1
+"delrin, nylon, nylatron",10.00,1
+"duration  xp, vespel pc , celazole pbi",10.00,1
+"HDPE, UHMW, POLYETHYLENE ",10.00,1
+machining wax,10.00,1
+phenolic,10.00,1
+"plycarbonate, polysulone uitem 100",10.00,1
+"REN, Pattern/ modeling ",10.00,1
+wood,10.00,1
+Hard wood,10.00,1
+hard playwwod ,10.00,1
+mahogsny,10.00,1
+MDF,10.00,1
+soft plywood ,10.00,1
+soft wood,10.00,1
+hard non- metals,10.00,1
+fiber glass,10.00,1
+graphite,10.00,1
+ketron PEEK 1000,10.00,1

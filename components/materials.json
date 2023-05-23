@@ -1,0 +1,1394 @@
+[
+    {
+        "material": "1018",
+        "k-factor": 1.88,
+        "hb_min": "126",
+        "hb_max": "126"
+    },
+    {
+        "material": "4140 Alloy Steel",
+        "k-factor": 1.44,
+        "hb_min": "200",
+        "hb_max": "200"
+    },
+    {
+        "material": "A2 Tool Steel 200-230",
+        "k-factor": 1.064,
+        "hb_min": "200",
+        "hb_max": "300"
+    },
+    {
+        "material": "304 Stainless Cold Rolled",
+        "k-factor": 0.633,
+        "hb_min": "225",
+        "hb_max": "275"
+    },
+    {
+        "material": "6061-T6 Aluminum",
+        "k-factor": 3.344,
+        "hb_min": "95",
+        "hb_max": "95"
+    },
+    {
+        "material": "7075-T6 Aluminum",
+        "k-factor": 2.0,
+        "hb_min": "150",
+        "hb_max": "150"
+    },
+    {
+        "material": "Very Soft Low-Carbon Steel",
+        "k-factor": 1.56,
+        "hb_min": "100",
+        "hb_max": "160"
+    },
+    {
+        "material": "Very Low-Carbon Steel",
+        "k-factor": 1.5,
+        "hb_min": "120",
+        "hb_max": "120"
+    },
+    {
+        "material": "Free Cutting Magnetic Steels",
+        "k-factor": 2.0,
+        "hb_min": "100",
+        "hb_max": "260"
+    },
+    {
+        "material": "1108, 1109, 1115, 1117, 1118, 1120, 1126, 1211 Plain Carbon Steels",
+        "k-factor": 2.13,
+        "hb_min": "100",
+        "hb_max": "150"
+    },
+    {
+        "material": "1108, 1109, 1115, 1117, 1118, 1120, 1126, 1211, Plain Carbon Steels",
+        "k-factor": 1.86,
+        "hb_min": "150",
+        "hb_max": "200"
+    },
+    {
+        "material": "1144 Carbon Steel Cold Rolled",
+        "k-factor": 1.78,
+        "hb_min": "217",
+        "hb_max": "217"
+    },
+    {
+        "material": "11L17, 11L18, 12L13, 18, 12L13, 12L14, Leaded Carbon Steels",
+        "k-factor": 2.12,
+        "hb_min": "100",
+        "hb_max": "150"
+    },
+    {
+        "material": "11L17, 11L18, 12L13, 12L14 Leaded Carbon Steels",
+        "k-factor": 1.86,
+        "hb_min": "150",
+        "hb_max": "200"
+    },
+    {
+        "material": "11L17, 11L18, 12L13, 12L14 Leaded Carbon Steels",
+        "k-factor": 1.64,
+        "hb_min": "200",
+        "hb_max": "250"
+    },
+    {
+        "material": "1212, 1213, 1215, Plain Carbon Steels",
+        "k-factor": 2.12,
+        "hb_min": "100",
+        "hb_max": "150"
+    },
+    {
+        "material": "A36, 44W Hot Rolled Steels",
+        "k-factor": 1.75,
+        "hb_min": "160",
+        "hb_max": "220"
+    },
+    {
+        "material": "Low Carbon Steel",
+        "k-factor": 1.4,
+        "hb_min": "5",
+        "hb_max": "20"
+    },
+    {
+        "material": "Structrul Steel, Ordinary Low To Medium Carbon Steel (0-5%C)",
+        "k-factor": 1.67,
+        "hb_min": "100",
+        "hb_max": "200"
+    },
+    {
+        "material": "Astm A516-70 Pressure Vessel Steel",
+        "k-factor": 1.54,
+        "hb_min": "140",
+        "hb_max": "210"
+    },
+    {
+        "material": "1015, Ck15, C16,",
+        "k-factor": 2.43,
+        "hb_min": "111",
+        "hb_max": "111"
+    },
+    {
+        "material": "1018",
+        "k-factor": 1.88,
+        "hb_min": "126",
+        "hb_max": "126"
+    },
+    {
+        "material": "1035, C35 Cold Drawn",
+        "k-factor": 2.0,
+        "hb_min": "143",
+        "hb_max": "143"
+    },
+    {
+        "material": "1043, 1045, C45, Hot Rolled",
+        "k-factor": 1.88,
+        "hb_min": "162",
+        "hb_max": "162"
+    },
+    {
+        "material": "1148",
+        "k-factor": 1.6,
+        "hb_min": "200",
+        "hb_max": "200"
+    },
+    {
+        "material": "Plain High Carbon Steel",
+        "k-factor": 1.04,
+        "hb_min": "125",
+        "hb_max": "275"
+    },
+    {
+        "material": "1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",
+        "k-factor": 1.54,
+        "hb_min": "175",
+        "hb_max": "220"
+    },
+    {
+        "material": "1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",
+        "k-factor": 1.25,
+        "hb_min": "225",
+        "hb_max": "275"
+    },
+    {
+        "material": "1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",
+        "k-factor": 1.0,
+        "hb_min": "275",
+        "hb_max": "375"
+    },
+    {
+        "material": "1055, 1060, 1064, 1065, 1070, 1074, 1078, 1080, 1084, 1086, 1090, 1095, 1548-1566",
+        "k-factor": 0.91,
+        "hb_min": "375",
+        "hb_max": "425"
+    },
+    {
+        "material": "Low Alloy Steel Medium-Hard",
+        "k-factor": 1.35,
+        "hb_min": "120",
+        "hb_max": "360"
+    },
+    {
+        "material": "4130 Alloy Steel",
+        "k-factor": 1.66,
+        "hb_min": "156",
+        "hb_max": "156"
+    },
+    {
+        "material": "4130 Ph Alloy Steel",
+        "k-factor": 1.81,
+        "hb_min": "245",
+        "hb_max": "245"
+    },
+    {
+        "material": "8620 Alloy Steel",
+        "k-factor": 1.69,
+        "hb_min": "149",
+        "hb_max": "149"
+    },
+    {
+        "material": "8620 Ht Alloy Steel",
+        "k-factor": 1.26,
+        "hb_min": "300",
+        "hb_max": "300"
+    },
+    {
+        "material": "High-Carbon And Alloy Steel Medium-Hard",
+        "k-factor": 1.25,
+        "hb_min": "160",
+        "hb_max": "360"
+    },
+    {
+        "material": "4140 Alloy Steel",
+        "k-factor": 1.44,
+        "hb_min": "200",
+        "hb_max": "200"
+    },
+    {
+        "material": "4140Ph Alloy Steel",
+        "k-factor": 1.13,
+        "hb_min": "300",
+        "hb_max": "300"
+    },
+    {
+        "material": "4150 Alloy Steel",
+        "k-factor": 1.43,
+        "hb_min": "200",
+        "hb_max": "200"
+    },
+    {
+        "material": "5160 Alloy Spring Steel",
+        "k-factor": 1.43,
+        "hb_min": "200",
+        "hb_max": "200"
+    },
+    {
+        "material": "6150 Alloy Spring Steel",
+        "k-factor": 1.43,
+        "hb_min": "200",
+        "hb_max": "200"
+    },
+    {
+        "material": "Low Carbon Steel",
+        "k-factor": 1.08,
+        "hb_min": "18",
+        "hb_max": "26"
+    },
+    {
+        "material": "Low Carbon Steel",
+        "k-factor": 1.14,
+        "hb_min": "24",
+        "hb_max": "32"
+    },
+    {
+        "material": "High-Strength Structual Steel",
+        "k-factor": 0.72,
+        "hb_min": "250",
+        "hb_max": "650"
+    },
+    {
+        "material": "Steel 1132, 1137, 1139, 1140, 1144, 1146, 1151",
+        "k-factor": 0.92,
+        "hb_min": "275",
+        "hb_max": "325"
+    },
+    {
+        "material": "Steel 1132, 1137, 1139, 1140, 1144, 1146, 1151",
+        "k-factor": 0.83,
+        "hb_min": "325",
+        "hb_max": "375"
+    },
+    {
+        "material": "Steel 1132,1137, 1139, 1140, 1144, 1146, 1151",
+        "k-factor": 0.75,
+        "hb_min": "375",
+        "hb_max": "425"
+    },
+    {
+        "material": "A514, T-1",
+        "k-factor": 0.98,
+        "hb_min": "300",
+        "hb_max": "300"
+    },
+    {
+        "material": "Armox 370T",
+        "k-factor": 0.78,
+        "hb_min": "380",
+        "hb_max": "430"
+    },
+    {
+        "material": "Armox 440",
+        "k-factor": 0.7,
+        "hb_min": "420",
+        "hb_max": "480"
+    },
+    {
+        "material": "Armox 500T",
+        "k-factor": 0.64,
+        "hb_min": "480",
+        "hb_max": "540"
+    },
+    {
+        "material": "Armox 600T",
+        "k-factor": 0.7,
+        "hb_min": "570",
+        "hb_max": "640"
+    },
+    {
+        "material": "Armox Advance",
+        "k-factor": 0.53,
+        "hb_min": "58",
+        "hb_max": "63 "
+    },
+    {
+        "material": "Astralloy 4800",
+        "k-factor": 0.83,
+        "hb_min": "370",
+        "hb_max": "370"
+    },
+    {
+        "material": "Astralloy 8000",
+        "k-factor": 0.71,
+        "hb_min": "430",
+        "hb_max": "470"
+    },
+    {
+        "material": "Astralloy Rol-Man",
+        "k-factor": 1.11,
+        "hb_min": "180",
+        "hb_max": "245"
+    },
+    {
+        "material": "Astralloy -V Eb-450",
+        "k-factor": 0.66,
+        "hb_min": "418",
+        "hb_max": "512"
+    },
+    {
+        "material": "Weldox 1030-1100",
+        "k-factor": 0.77,
+        "hb_min": "430",
+        "hb_max": "430"
+    },
+    {
+        "material": "Weldox 700",
+        "k-factor": 1.08,
+        "hb_min": "260",
+        "hb_max": "260"
+    },
+    {
+        "material": "Weldox 900/960",
+        "k-factor": 0.94,
+        "hb_min": "320",
+        "hb_max": "320"
+    },
+    {
+        "material": "Normal Tool Steels. Hard- Quenching An Tempering Steel",
+        "k-factor": 1.04,
+        "hb_min": "170",
+        "hb_max": "270"
+    },
+    {
+        "material": "Low Carbon Steel 5-20Rc",
+        "k-factor": 0.88,
+        "hb_min": "30",
+        "hb_max": "40"
+    },
+    {
+        "material": "01 Tool Steel",
+        "k-factor": 1.33,
+        "hb_min": "175",
+        "hb_max": "225"
+    },
+    {
+        "material": "S7 Tool Steel",
+        "k-factor": 1.33,
+        "hb_min": "187",
+        "hb_max": "220"
+    },
+    {
+        "material": "Uddeholm Tool Steel",
+        "k-factor": 1.14,
+        "hb_min": "170",
+        "hb_max": "360"
+    },
+    {
+        "material": "Ame",
+        "k-factor": 1.29,
+        "hb_min": "190",
+        "hb_max": "190"
+    },
+    {
+        "material": "Caldie",
+        "k-factor": 1.26,
+        "hb_min": "215",
+        "hb_max": "215"
+    },
+    {
+        "material": "Dievar Annealed",
+        "k-factor": 1.33,
+        "hb_min": "160",
+        "hb_max": "160"
+    },
+    {
+        "material": "Sleipner",
+        "k-factor": 1.22,
+        "hb_min": "235",
+        "hb_max": "235"
+    },
+    {
+        "material": "Sverker3, Alsi D6,  Alsi D3",
+        "k-factor": 1.14,
+        "hb_min": "240",
+        "hb_max": "240"
+    },
+    {
+        "material": "Uhb 11 (Alsi 1158)",
+        "k-factor": 1.6,
+        "hb_min": "200",
+        "hb_max": "200"
+    },
+    {
+        "material": "Unimax",
+        "k-factor": 1.22,
+        "hb_min": "185",
+        "hb_max": "185"
+    },
+    {
+        "material": "Vanadais 10 Superclean",
+        "k-factor": 1.13,
+        "hb_min": "300",
+        "hb_max": "300"
+    },
+    {
+        "material": "Vanadais 6,23,30 Alsi Superclean",
+        "k-factor": 1.11,
+        "hb_min": "310",
+        "hb_max": "310"
+    },
+    {
+        "material": "Vanadais 60 Superclean",
+        "k-factor": 1.07,
+        "hb_min": "340",
+        "hb_max": "340"
+    },
+    {
+        "material": "Vancron 30,40 Superclean",
+        "k-factor": 1.13,
+        "hb_min": "300",
+        "hb_max": "300"
+    },
+    {
+        "material": "High-Alloy, High Hardness Steel",
+        "k-factor": 1.11,
+        "hb_min": "270",
+        "hb_max": "360"
+    },
+    {
+        "material": "300M Alloy Steel Annealed",
+        "k-factor": 1.14,
+        "hb_min": "260",
+        "hb_max": "260"
+    },
+    {
+        "material": "4340 Alloy Steel",
+        "k-factor": 1.09,
+        "hb_min": "217",
+        "hb_max": "217"
+    },
+    {
+        "material": "4340 Ph Alloy Steel",
+        "k-factor": 0.93,
+        "hb_min": "300",
+        "hb_max": "300"
+    },
+    {
+        "material": "A2 Tool Steel 200-230",
+        "k-factor": 1.06,
+        "hb_min": "200",
+        "hb_max": "300"
+    },
+    {
+        "material": "Aermet 100, 310, 340, Alloy Steel Annealed",
+        "k-factor": 0.87,
+        "hb_min": "336",
+        "hb_max": "336"
+    },
+    {
+        "material": "D2 Dc53 Tool Steel Annealed",
+        "k-factor": 1.14,
+        "hb_min": "200",
+        "hb_max": "250"
+    },
+    {
+        "material": "H13 Tool Steel",
+        "k-factor": 1.14,
+        "hb_min": "200",
+        "hb_max": "250"
+    },
+    {
+        "material": "P20 Tool Steel",
+        "k-factor": 0.88,
+        "hb_min": "330",
+        "hb_max": "330"
+    },
+    {
+        "material": "Sb Wear",
+        "k-factor": 1.14,
+        "hb_min": "225",
+        "hb_max": "255"
+    },
+    {
+        "material": "High-Strength, Hardned Tool And Hss Steel.",
+        "k-factor": 0.77,
+        "hb_min": ">360",
+        "hb_max": ">360"
+    },
+    {
+        "material": "300Malloy Steel Hadrened",
+        "k-factor": 0.6,
+        "hb_min": "50",
+        "hb_max": "55"
+    },
+    {
+        "material": "Aermet 100, 310, 340, Alloy Steel Annealed",
+        "k-factor": 0.6,
+        "hb_min": "50",
+        "hb_max": "55"
+    },
+    {
+        "material": "D2, Dc53 Tool Steel",
+        "k-factor": 0.77,
+        "hb_min": "35",
+        "hb_max": "40"
+    },
+    {
+        "material": "D2, Dc53 Tool Steel",
+        "k-factor": 0.65,
+        "hb_min": "40",
+        "hb_max": "45"
+    },
+    {
+        "material": "D2, Dc53 Tool Steel",
+        "k-factor": 0.6,
+        "hb_min": "45",
+        "hb_max": "50"
+    },
+    {
+        "material": "D2, Dc53 Tool Steel",
+        "k-factor": 0.58,
+        "hb_min": "50",
+        "hb_max": "55"
+    },
+    {
+        "material": "D2, Dc53 Tool Steel",
+        "k-factor": 0.53,
+        "hb_min": "55",
+        "hb_max": "60"
+    },
+    {
+        "material": "D2, Dc53 Tool Steel",
+        "k-factor": 0.5,
+        "hb_min": "60",
+        "hb_max": "65"
+    },
+    {
+        "material": "H13 Tool Steel",
+        "k-factor": 0.77,
+        "hb_min": "35",
+        "hb_max": "40"
+    },
+    {
+        "material": "H13 Tool Steel",
+        "k-factor": 0.65,
+        "hb_min": "40",
+        "hb_max": "45"
+    },
+    {
+        "material": "H13 Tool Steel",
+        "k-factor": 0.61,
+        "hb_min": "45",
+        "hb_max": "50"
+    },
+    {
+        "material": "H13 Tool Steel",
+        "k-factor": 0.58,
+        "hb_min": "50",
+        "hb_max": "55"
+    },
+    {
+        "material": "H13 Tool Steel",
+        "k-factor": 0.53,
+        "hb_min": "55",
+        "hb_max": "60"
+    },
+    {
+        "material": "H13 Tool Steel",
+        "k-factor": 0.5,
+        "hb_min": "60",
+        "hb_max": "65"
+    },
+    {
+        "material": "Hardox 500",
+        "k-factor": 0.58,
+        "hb_min": "50",
+        "hb_max": "55"
+    },
+    {
+        "material": "M1, M2, M6, M10, T1, T2, T6",
+        "k-factor": 0.45,
+        "hb_min": "60",
+        "hb_max": "65"
+    },
+    {
+        "material": "S7 Tool Steel",
+        "k-factor": 0.78,
+        "hb_min": "40",
+        "hb_max": "45"
+    },
+    {
+        "material": "S7 Tool Steel",
+        "k-factor": 0.71,
+        "hb_min": "45",
+        "hb_max": "50"
+    },
+    {
+        "material": "S7 Tool Steel",
+        "k-factor": 0.64,
+        "hb_min": "50",
+        "hb_max": "55"
+    },
+    {
+        "material": "S7 Tool Steel",
+        "k-factor": 0.56,
+        "hb_min": "55",
+        "hb_max": "60"
+    },
+    {
+        "material": "Toolox 33",
+        "k-factor": 0.83,
+        "hb_min": "275",
+        "hb_max": "325"
+    },
+    {
+        "material": "Toolox 40",
+        "k-factor": 0.77,
+        "hb_min": "360",
+        "hb_max": "420"
+    },
+    {
+        "material": "Toolox 44",
+        "k-factor": 0.71,
+        "hb_min": "410",
+        "hb_max": "475"
+    },
+    {
+        "material": "High Speed Steel",
+        "k-factor": 1.33,
+        "hb_min": "200",
+        "hb_max": "275"
+    },
+    {
+        "material": "M1, M2, M6, M10, T1, T2, T6",
+        "k-factor": 1.3,
+        "hb_min": "200",
+        "hb_max": "250"
+    },
+    {
+        "material": "M3-1, M4, M7, M30, M33, M36, M41, M42, M43, M36, M41, M42, M43, M44, M46, M47, T5, T8",
+        "k-factor": 1.25,
+        "hb_min": "225",
+        "hb_max": "275"
+    },
+    {
+        "material": "T15 M3-2",
+        "k-factor": 1.25,
+        "hb_min": "225",
+        "hb_max": "275"
+    },
+    {
+        "material": "Powdered Metals",
+        "k-factor": 0.77,
+        "hb_min": "360",
+        "hb_max": "360"
+    },
+    {
+        "material": "Anvioy 1150",
+        "k-factor": 0.9,
+        "hb_min": "36",
+        "hb_max": "36"
+    },
+    {
+        "material": "Free-Cutting  Stainless Steel",
+        "k-factor": 0.73,
+        "hb_min": "135",
+        "hb_max": "375"
+    },
+    {
+        "material": "1.2085 Stainless",
+        "k-factor": 0.65,
+        "hb_min": "30",
+        "hb_max": "35"
+    },
+    {
+        "material": "302 Stainless",
+        "k-factor": 1.0,
+        "hb_min": "135",
+        "hb_max": "185"
+    },
+    {
+        "material": "303 Stainless",
+        "k-factor": 1.0,
+        "hb_min": "135",
+        "hb_max": "185"
+    },
+    {
+        "material": "416 Stainless",
+        "k-factor": 1.0,
+        "hb_min": "187",
+        "hb_max": "235"
+    },
+    {
+        "material": "416 Stainless",
+        "k-factor": 1.0,
+        "hb_min": "200",
+        "hb_max": "285"
+    },
+    {
+        "material": "416 Stainless",
+        "k-factor": 0.86,
+        "hb_min": "200",
+        "hb_max": "285"
+    },
+    {
+        "material": "430F Stainless",
+        "k-factor": 1.0,
+        "hb_min": "170",
+        "hb_max": "185"
+    },
+    {
+        "material": "Moderately Difficuit Stainless Steel",
+        "k-factor": 1.44,
+        "hb_min": "135",
+        "hb_max": "325"
+    },
+    {
+        "material": "13-8 Aged H1025 Stainless",
+        "k-factor": 0.56,
+        "hb_min": "381",
+        "hb_max": "381"
+    },
+    {
+        "material": "13-3 Aged H1150 Stainless",
+        "k-factor": 0.63,
+        "hb_min": "280",
+        "hb_max": "280"
+    },
+    {
+        "material": "15-5 Ph H1150 Stainless",
+        "k-factor": 0.66,
+        "hb_min": "270",
+        "hb_max": "270"
+    },
+    {
+        "material": "17-4 Ph Stainless 150-200",
+        "k-factor": 1.75,
+        "hb_min": "150",
+        "hb_max": "200"
+    },
+    {
+        "material": "17-4 Ph Stainless",
+        "k-factor": 0.59,
+        "hb_min": "275",
+        "hb_max": "325"
+    },
+    {
+        "material": "304 Stainless Cold Rolled",
+        "k-factor": 0.63,
+        "hb_min": "225",
+        "hb_max": "275"
+    },
+    {
+        "material": "316 Stainless",
+        "k-factor": 0.69,
+        "hb_min": "185",
+        "hb_max": "220"
+    },
+    {
+        "material": "321 Stainless",
+        "k-factor": 0.63,
+        "hb_min": "225",
+        "hb_max": "275"
+    },
+    {
+        "material": "410 Stainless Steel Annealed",
+        "k-factor": 0.68,
+        "hb_min": "225",
+        "hb_max": "225"
+    },
+    {
+        "material": "422 Stainless",
+        "k-factor": 0.62,
+        "hb_min": "285",
+        "hb_max": "300"
+    },
+    {
+        "material": "440 Stainless",
+        "k-factor": 0.63,
+        "hb_min": "255",
+        "hb_max": "275"
+    },
+    {
+        "material": "Cpm-154 Stainless Annealed",
+        "k-factor": 0.67,
+        "hb_min": "235",
+        "hb_max": "235"
+    },
+    {
+        "material": "Cpm-S30V-S35Vn Stainless Annealed",
+        "k-factor": 0.63,
+        "hb_min": "255",
+        "hb_max": "275"
+    },
+    {
+        "material": "Duplex 2205 (Uns S32205 / S31803)",
+        "k-factor": 0.63,
+        "hb_min": "30",
+        "hb_max": "30"
+    },
+    {
+        "material": "Nitronic 50",
+        "k-factor": 0.67,
+        "hb_min": "189",
+        "hb_max": "241"
+    },
+    {
+        "material": "Nitronic 60",
+        "k-factor": 0.65,
+        "hb_min": "170",
+        "hb_max": "255"
+    },
+    {
+        "material": "13-8 Aged H950 Stainless",
+        "k-factor": 0.55,
+        "hb_min": "410",
+        "hb_max": "410"
+    },
+    {
+        "material": "15-5 Ph 1025-H1075",
+        "k-factor": 0.61,
+        "hb_min": "310",
+        "hb_max": "330"
+    },
+    {
+        "material": "15-5 Ph P 900 Stainless",
+        "k-factor": 0.57,
+        "hb_min": "388",
+        "hb_max": "388"
+    },
+    {
+        "material": "17-4 Aged H1075 Stainless",
+        "k-factor": 0.58,
+        "hb_min": "325",
+        "hb_max": "375"
+    },
+    {
+        "material": "17-4 Aged H900 Stainless",
+        "k-factor": 0.57,
+        "hb_min": "420",
+        "hb_max": "420"
+    },
+    {
+        "material": "410 Stainless Steel Annealed",
+        "k-factor": 0.6,
+        "hb_min": "40",
+        "hb_max": "40"
+    },
+    {
+        "material": "440 Stainless",
+        "k-factor": 0.53,
+        "hb_min": "50",
+        "hb_max": "50"
+    },
+    {
+        "material": "440N Stainless",
+        "k-factor": 0.61,
+        "hb_min": "275",
+        "hb_max": "325"
+    },
+    {
+        "material": "Cpm-154 Stainless Annealed",
+        "k-factor": 0.54,
+        "hb_min": "375",
+        "hb_max": "425"
+    },
+    {
+        "material": "Cpm-S90V Stainless",
+        "k-factor": 0.67,
+        "hb_min": "50",
+        "hb_max": "60"
+    },
+    {
+        "material": "P550 Stainless",
+        "k-factor": 0.54,
+        "hb_min": "350",
+        "hb_max": "430"
+    },
+    {
+        "material": "Cast Iron Sg Iron",
+        "k-factor": 1.54,
+        "hb_min": "120",
+        "hb_max": "260"
+    },
+    {
+        "material": "Cast Iron Sg Iron",
+        "k-factor": 1.85,
+        "hb_min": "120",
+        "hb_max": "150"
+    },
+    {
+        "material": "Cast Iron",
+        "k-factor": 1.57,
+        "hb_min": "190",
+        "hb_max": "220"
+    },
+    {
+        "material": "Cast Iron",
+        "k-factor": 1.44,
+        "hb_min": "250",
+        "hb_max": "260"
+    },
+    {
+        "material": "Aluminum  Alloys",
+        "k-factor": 3.34,
+        "hb_min": "28",
+        "hb_max": "150"
+    },
+    {
+        "material": "2024-T4",
+        "k-factor": 2.5,
+        "hb_min": "120",
+        "hb_max": "120"
+    },
+    {
+        "material": "3003",
+        "k-factor": 4.99,
+        "hb_min": "28",
+        "hb_max": "28"
+    },
+    {
+        "material": "5000",
+        "k-factor": 3.34,
+        "hb_min": "60",
+        "hb_max": "60"
+    },
+    {
+        "material": "6061-T4",
+        "k-factor": 3.69,
+        "hb_min": "65",
+        "hb_max": "65"
+    },
+    {
+        "material": "6061-T6",
+        "k-factor": 3.34,
+        "hb_min": "95",
+        "hb_max": "95"
+    },
+    {
+        "material": "6063-T5,T6",
+        "k-factor": 3.32,
+        "hb_min": "60",
+        "hb_max": "75"
+    },
+    {
+        "material": "7075-T6",
+        "k-factor": 2.0,
+        "hb_min": "150",
+        "hb_max": "150"
+    },
+    {
+        "material": "Alumec",
+        "k-factor": 1.67,
+        "hb_min": "89",
+        "hb_max": "89"
+    },
+    {
+        "material": "Cast Aluminum",
+        "k-factor": 2.51,
+        "hb_min": "60",
+        "hb_max": "90"
+    },
+    {
+        "material": "Cast Aluminum Hi",
+        "k-factor": 3.35,
+        "hb_min": "60",
+        "hb_max": "100"
+    },
+    {
+        "material": "Cast Aluminum 200, 500, 700 ,800",
+        "k-factor": 3.32,
+        "hb_min": "28",
+        "hb_max": "100"
+    },
+    {
+        "material": "Wrought Aluminum 3000, 5000, 6000, 7000",
+        "k-factor": 3.29,
+        "hb_min": "30",
+        "hb_max": "150"
+    },
+    {
+        "material": "Sodt Non-Ferrous Alloys",
+        "k-factor": 3.34,
+        "hb_min": "28",
+        "hb_max": "150"
+    },
+    {
+        "material": "Magnesium",
+        "k-factor": 9.07,
+        "hb_min": "65",
+        "hb_max": "65"
+    },
+    {
+        "material": "Zinc",
+        "k-factor": 3.99,
+        "hb_min": "100",
+        "hb_max": "100"
+    },
+    {
+        "material": "Copper Alloys",
+        "k-factor": 2.01,
+        "hb_min": "50",
+        "hb_max": "250"
+    },
+    {
+        "material": "C10100 Copper",
+        "k-factor": 1.73,
+        "hb_min": "95",
+        "hb_max": "95"
+    },
+    {
+        "material": "C18200 Chrome Copper",
+        "k-factor": 1.65,
+        "hb_min": "150",
+        "hb_max": "150"
+    },
+    {
+        "material": "C18200 Chrome Copper",
+        "k-factor": 3.01,
+        "hb_min": "60",
+        "hb_max": "60"
+    },
+    {
+        "material": "C863000 Maganese Bronze",
+        "k-factor": 1.19,
+        "hb_min": "225",
+        "hb_max": "225"
+    },
+    {
+        "material": "C90300, C9220, C90500 Tin Bronze Alloy",
+        "k-factor": 2.55,
+        "hb_min": "80",
+        "hb_max": "80"
+    },
+    {
+        "material": "C90700 Tin Bronze (Sae 65)",
+        "k-factor": 2.14,
+        "hb_min": "105",
+        "hb_max": "105"
+    },
+    {
+        "material": "C93200 Sae 660",
+        "k-factor": 2.55,
+        "hb_min": "65",
+        "hb_max": "65"
+    },
+    {
+        "material": "C95500 Nickel Aluminum Bronze",
+        "k-factor": 1.38,
+        "hb_min": "190",
+        "hb_max": "190"
+    },
+    {
+        "material": "Copper 110",
+        "k-factor": 2.0,
+        "hb_min": "42",
+        "hb_max": "42"
+    },
+    {
+        "material": "High Lead Brass",
+        "k-factor": 3.33,
+        "hb_min": "60",
+        "hb_max": "60"
+    },
+    {
+        "material": "Low Lead Brass",
+        "k-factor": 1.2,
+        "hb_min": "120",
+        "hb_max": "120"
+    },
+    {
+        "material": "Low Lead Brass",
+        "k-factor": 1.67,
+        "hb_min": "80",
+        "hb_max": "80"
+    },
+    {
+        "material": "High Alloyed Copper",
+        "k-factor": 0.77,
+        "hb_min": "180",
+        "hb_max": "390"
+    },
+    {
+        "material": "Ampcoloy 83",
+        "k-factor": 0.77,
+        "hb_min": "340",
+        "hb_max": "390"
+    },
+    {
+        "material": "Ampcoloy 88",
+        "k-factor": 0.91,
+        "hb_min": "260",
+        "hb_max": "280"
+    },
+    {
+        "material": "Ampcoloy 940,95,972",
+        "k-factor": 1.14,
+        "hb_min": "180",
+        "hb_max": "255"
+    },
+    {
+        "material": "Ampcoloy 944 Moldmate 90",
+        "k-factor": 0.91,
+        "hb_min": "275",
+        "hb_max": "275"
+    },
+    {
+        "material": "Tough2",
+        "k-factor": 0.78,
+        "hb_min": "260",
+        "hb_max": "280"
+    },
+    {
+        "material": "Tough 3",
+        "k-factor": 0.69,
+        "hb_min": "300",
+        "hb_max": "336"
+    },
+    {
+        "material": "Ampco Aluminum Bronze",
+        "k-factor": 0.91,
+        "hb_min": "100",
+        "hb_max": "450"
+    },
+    {
+        "material": "Ampco 18",
+        "k-factor": 1.75,
+        "hb_min": "159",
+        "hb_max": ""
+    },
+    {
+        "material": "Ampco 21",
+        "k-factor": 0.96,
+        "hb_min": "285",
+        "hb_max": "311"
+    },
+    {
+        "material": "Amco 22",
+        "k-factor": 0.83,
+        "hb_min": "321",
+        "hb_max": "352"
+    },
+    {
+        "material": "Ampco 25",
+        "k-factor": 0.8,
+        "hb_min": "356",
+        "hb_max": "394"
+    },
+    {
+        "material": "Ampco 26",
+        "k-factor": 0.71,
+        "hb_min": "395",
+        "hb_max": "450"
+    },
+    {
+        "material": "Ampco 8",
+        "k-factor": 1.78,
+        "hb_min": "108",
+        "hb_max": "124"
+    },
+    {
+        "material": "Ampco M4",
+        "k-factor": 0.97,
+        "hb_min": "270",
+        "hb_max": "305"
+    },
+    {
+        "material": "Ferrous Superalloy",
+        "k-factor": 0.63,
+        "hb_min": "200",
+        "hb_max": "300"
+    },
+    {
+        "material": "Nitronic 50",
+        "k-factor": 0.55,
+        "hb_min": "189",
+        "hb_max": "241"
+    },
+    {
+        "material": "Nitronic 60",
+        "k-factor": 0.65,
+        "hb_min": "170",
+        "hb_max": "255"
+    },
+    {
+        "material": "Nickel An Colbalt Super Alloys",
+        "k-factor": 0.99,
+        "hb_min": "200",
+        "hb_max": "450"
+    },
+    {
+        "material": "Hastelloy B-3",
+        "k-factor": 0.39,
+        "hb_min": "345",
+        "hb_max": "345"
+    },
+    {
+        "material": "Hastelloy C C276",
+        "k-factor": 0.49,
+        "hb_min": "207",
+        "hb_max": "207"
+    },
+    {
+        "material": "Hastelloy X",
+        "k-factor": 0.63,
+        "hb_min": "180",
+        "hb_max": "180"
+    },
+    {
+        "material": "Inconel 600",
+        "k-factor": 0.63,
+        "hb_min": "180",
+        "hb_max": "180"
+    },
+    {
+        "material": "Inconel 700",
+        "k-factor": 0.46,
+        "hb_min": "238",
+        "hb_max": "238"
+    },
+    {
+        "material": "Invar 46",
+        "k-factor": 0.62,
+        "hb_min": "180",
+        "hb_max": "180"
+    },
+    {
+        "material": "Monel K 500",
+        "k-factor": 0.42,
+        "hb_min": "277",
+        "hb_max": "277"
+    },
+    {
+        "material": "Waspaloy",
+        "k-factor": 0.41,
+        "hb_min": "300",
+        "hb_max": "300"
+    },
+    {
+        "material": "Plastic, Soft Non-Metals",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Acrylic",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Delrin, Nylon, Nylatron",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Duration  Xp, Vespel Pc , Celazole Pbi",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Hdpe, Uhmw, Polyethylene",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Machining Wax",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Phenolic",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Plycarbonate, Polysulone Uitem 100",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Ren, Pattern/ Modeling",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Wood",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Hard Wood",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Hard Playwwod",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Mahogsny",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Mdf",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Soft Plywood",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Soft Wood",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Hard Non- Metals",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Fiber Glass",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Graphite",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    },
+    {
+        "material": "Ketron Peek 1000",
+        "k-factor": 10.0,
+        "hb_min": "1",
+        "hb_max": "1"
+    }
+]
