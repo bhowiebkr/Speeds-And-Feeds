@@ -518,8 +518,8 @@
     {
         "material": "High-Strength, Hardned Tool And Hss Steel.",
         "k-factor": 0.77,
-        "hb_min": ">360",
-        "hb_max": ">360"
+        "hb_min": "360",
+        "hb_max": "360"
     },
     {
         "material": "300Malloy Steel Hadrened",

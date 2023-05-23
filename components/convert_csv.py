@@ -30,8 +30,6 @@ def csv_to_json(csv_file_path, json_file_path):
                     h_max = rc_to_hb(hardness.split("-")[1])
 
                 else:
-                    print(row["material"], hardness)
-
                     h_min = rc_to_hb(hardness)
                     h_max = rc_to_hb(hardness)
 
@@ -45,6 +43,9 @@ def csv_to_json(csv_file_path, json_file_path):
             row["hb_min"] = h_min
             row["hb_max"] = h_max
 
+            if not (h_min.isdigit()):
+                print(row["material"])
+
             data.append(row)
 
     # Convert CSV data to JSON
@@ -56,7 +57,7 @@ def csv_to_json(csv_file_path, json_file_path):
 
 
 # Example usage
-csv_file_path = "materials.csv"  # Replace with your CSV file path
-json_file_path = "materials.json"  # Replace with the desired output JSON file path
+csv_file_path = "components\materials.csv"  # Replace with your CSV file path
+json_file_path = "components\materials.json"  # Replace with the desired output JSON file path
 
 csv_to_json(csv_file_path, json_file_path)
