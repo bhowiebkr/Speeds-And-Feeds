@@ -32,8 +32,11 @@ class MaterialCombo(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super(MaterialCombo, self).__init__(parent)
 
-        for mat in materials:
+        for index, mat in enumerate(materials):
             self.addItem(mat.get_name(), userData=mat)
+            # print(index, mat.get_name())
+
+        self.setCurrentIndex(60)  # 6061 alu
 
     @property
     def HBMin(self):
@@ -42,6 +45,10 @@ class MaterialCombo(QtWidgets.QComboBox):
     @property
     def HBMax(self):
         return self.currentData().HB_max
+
+    @property
+    def k_factor(self):
+        return self.currentData().k_factor
 
     @property
     def material(self):

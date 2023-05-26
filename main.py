@@ -6,6 +6,7 @@ from PySide6 import QtWidgets, QtCore, QtGui
 
 from components.widgets import MaterialCombo, IntInput, DoubleInput
 import qdarktheme
+from formulas import FeedsAndSpeeds
 
 
 class ToolBox(QtWidgets.QGroupBox):
@@ -20,6 +21,11 @@ class ToolBox(QtWidgets.QGroupBox):
         self.fluteNum = QtWidgets.QSpinBox()
         self.fluteLen = QtWidgets.QDoubleSpinBox()
         self.leadAngle = QtWidgets.QDoubleSpinBox()
+
+        self.toolDiameter.setValue(12)
+        self.fluteNum.setValue(2)
+        self.fluteLen.setValue(10)
+        self.leadAngle.setValue(90)
 
         # Add Layout
         form.addRow("Diameter (MM)", self.toolDiameter)
@@ -38,36 +44,63 @@ class CuttingBox(QtWidgets.QGroupBox):
         # Widgets
         self.DOC = QtWidgets.QDoubleSpinBox()
         self.WOC = QtWidgets.QDoubleSpinBox()
-        self.useWidthPercentage = QtWidgets.QCheckBox()
-        self.widthPercentage = QtWidgets.QDoubleSpinBox()
-        self.slotting = QtWidgets.QCheckBox()
+        self.SFM = QtWidgets.QSpinBox()
+        self.SMM = QtWidgets.QSpinBox()
+        self.SMMM = QtWidgets.QSpinBox()
+        self.IPT = QtWidgets.QDoubleSpinBox()
+        self.MMPT = QtWidgets.QDoubleSpinBox()
+        self.IPT.setDecimals(4)
+        self.IPT.setMinimum(0.000)
+        self.SFM.setMaximum(1000)
+        # self.useWidthPercentage = QtWidgets.QCheckBox()
+        # self.widthPercentage = QtWidgets.QDoubleSpinBox()
+        # self.slotting = QtWidgets.QCheckBox()
+
+        self.DOC.setValue(0.5)
+        self.WOC.setValue(11)
+        self.SFM.setValue(300)
+        self.IPT.setValue(0.001)
+
+        spacer = QtWidgets.QWidget()
+        spacer.setFixedHeight(10)  # Set the desired height for the spacer
 
         form.addRow("Depth Of Cut (MM)", self.DOC)
         form.addRow("Width Of Cut (MM)", self.WOC)
-        form.addRow("Width As Percentage", self.useWidthPercentage)
-        form.addRow("Width Percentage (%)", self.widthPercentage)
-        form.addRow("Slotting", self.slotting)
+        form.addRow(spacer)
+        form.addRow("Surface Feet per Minute (SFM)", self.SFM)
+        form.addRow("Surface Millimeters per Minute (SMMM)", self.SMMM)
+        form.addRow("Surface Meters per Minute (SMM)", self.SMM)
+        form.addRow(spacer)
 
-        self.useWidthPercentage.stateChanged.connect(self.updateGUI)
-        self.slotting.stateChanged.connect(self.updateGUI)
+        form.addRow("Inches per Tooth (IPT)", self.IPT)
+        form.addRow("Millimeters per tooth (MMPT)", self.MMPT)
+        # form.addRow("Width As Percentage", self.useWidthPercentage)
+        # form.addRow("Width Percentage (%)", self.widthPercentage)
+        # form.addRow("Slotting", self.slotting)
+
+        # self.useWidthPercentage.stateChanged.connect(self.updateGUI)
+        # self.slotting.stateChanged.connect(self.updateGUI)
 
         self.updateGUI()
 
     def updateGUI(self):
-        if self.slotting.isChecked():
-            self.WOC.setDisabled(True)
-            self.widthPercentage.setDisabled(True)
-            self.useWidthPercentage.setDisabled(True)
-            return
-        else:
-            self.useWidthPercentage.setEnabled(True)
+        pass
 
-        if self.useWidthPercentage.isChecked():
-            self.WOC.setDisabled(True)
-            self.widthPercentage.setEnabled(True)
-        else:
-            self.WOC.setEnabled(True)
-            self.widthPercentage.setDisabled(True)
+    # def updateGUI(self):
+    #     if self.slotting.isChecked():
+    #         self.WOC.setDisabled(True)
+    #         self.widthPercentage.setDisabled(True)
+    #         self.useWidthPercentage.setDisabled(True)
+    #         return
+    #     else:
+    #         self.useWidthPercentage.setEnabled(True)
+
+    #     if self.useWidthPercentage.isChecked():
+    #         self.WOC.setDisabled(True)
+    #         self.widthPercentage.setEnabled(True)
+    #     else:
+    #         self.WOC.setEnabled(True)
+    #         self.widthPercentage.setDisabled(True)
 
 
 class MachineBox(QtWidgets.QGroupBox):
@@ -166,6 +199,14 @@ class GUI(QtWidgets.QMainWindow):
         # Logic
         self.materialCombo.currentIndexChanged.connect(self.update)
 
+        self.tool_box.toolDiameter.valueChanged.connect(self.update)
+        self.tool_box.fluteNum.valueChanged.connect(self.update)
+        self.tool_box.fluteLen.valueChanged.connect(self.update)
+        self.tool_box.leadAngle.valueChanged.connect(self.update)
+
+        self.cutting_box.DOC.valueChanged.connect(self.update)
+        self.cutting_box.WOC.valueChanged.connect(self.update)
+
         self.update()
 
     def closeEvent(self, event):
@@ -175,9 +216,29 @@ class GUI(QtWidgets.QMainWindow):
 
     def update(self):
         print("update")
-        print("Material", self.materialCombo.material)
-        print("HB Min", self.materialCombo.HBMin)
-        print("HB Max", self.materialCombo.HBMax)
+
+        fs = FeedsAndSpeeds()
+
+        # Material
+        fs.hb_min = self.materialCombo.HBMin
+        fs.hb_max = self.materialCombo.HBMax
+        fs.k_factor = self.materialCombo.k_factor
+
+        # Tool
+        fs.diameter = self.tool_box.toolDiameter.value()
+        fs.flute_num = self.tool_box.fluteNum.value()
+        fs.flute_len = self.tool_box.fluteLen.value()
+        fs.lead_angle = self.tool_box.leadAngle.value()
+
+        # Cutting
+        fs.doc = self.cutting_box.DOC.value()
+        fs.woc = self.cutting_box.WOC.value()
+
+        fs.print_values()
+
+        # Do the formulas
+
+        # Update the output
 
 
 if __name__ == "__main__":
