@@ -40,67 +40,120 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.setTitle("Cutting Operation")
         form = QtWidgets.QFormLayout()
         self.setLayout(form)
+        self.paused = False
 
         # Widgets
         self.DOC = QtWidgets.QDoubleSpinBox()
+        self.DOC_percent = QtWidgets.QDoubleSpinBox()
         self.WOC = QtWidgets.QDoubleSpinBox()
-        self.SFM = QtWidgets.QSpinBox()
-        self.SMM = QtWidgets.QSpinBox()
-        self.SMMM = QtWidgets.QSpinBox()
+        self.WOC_percent = QtWidgets.QDoubleSpinBox()
+        self.SFM = QtWidgets.QDoubleSpinBox()
+        self.SMM = QtWidgets.QDoubleSpinBox()
+        self.SMMM = QtWidgets.QDoubleSpinBox()
         self.IPT = QtWidgets.QDoubleSpinBox()
         self.MMPT = QtWidgets.QDoubleSpinBox()
         self.IPT.setDecimals(4)
         self.IPT.setMinimum(0.000)
+        self.IPT.setSingleStep(0.001)
+        self.MMPT.setDecimals(4)
+        self.MMPT.setSingleStep(0.001)
+        self.MMPT.setMinimum(0.000)
         self.SFM.setMaximum(1000)
-        # self.useWidthPercentage = QtWidgets.QCheckBox()
-        # self.widthPercentage = QtWidgets.QDoubleSpinBox()
-        # self.slotting = QtWidgets.QCheckBox()
+        self.SMM.setMaximum(10000)
+        self.SMMM.setMaximum(1000000)
+        self.WOC_percent.setMaximum(100)
+        self.DOC_percent.setMaximum(200)
 
         self.DOC.setValue(0.5)
         self.WOC.setValue(11)
         self.SFM.setValue(300)
         self.IPT.setValue(0.001)
 
-        spacer = QtWidgets.QWidget()
-        spacer.setFixedHeight(10)  # Set the desired height for the spacer
+        spacer1 = QtWidgets.QWidget()
+        spacer1.setFixedHeight(10)  # Set the desired height for the spacer
+        spacer2 = QtWidgets.QWidget()
+        spacer2.setFixedHeight(10)  # Set the desired height for the spacer
+        spacer3 = QtWidgets.QWidget()
+        spacer3.setFixedHeight(10)  # Set the desired height for the spacer
 
         form.addRow("Depth Of Cut (MM)", self.DOC)
+        form.addRow("Depth Of Cut (%)", self.DOC_percent)
+        form.addRow(spacer1)
         form.addRow("Width Of Cut (MM)", self.WOC)
-        form.addRow(spacer)
+        form.addRow("Width Of Cut (%)", self.WOC_percent)
+        form.addRow(spacer2)
         form.addRow("Surface Feet per Minute (SFM)", self.SFM)
         form.addRow("Surface Millimeters per Minute (SMMM)", self.SMMM)
         form.addRow("Surface Meters per Minute (SMM)", self.SMM)
-        form.addRow(spacer)
+        form.addRow(spacer3)
 
         form.addRow("Inches per Tooth (IPT)", self.IPT)
         form.addRow("Millimeters per tooth (MMPT)", self.MMPT)
-        # form.addRow("Width As Percentage", self.useWidthPercentage)
-        # form.addRow("Width Percentage (%)", self.widthPercentage)
-        # form.addRow("Slotting", self.slotting)
 
-        # self.useWidthPercentage.stateChanged.connect(self.updateGUI)
-        # self.slotting.stateChanged.connect(self.updateGUI)
+        self.DOC.valueChanged.connect(self.doc_to_percent)
+        self.WOC.valueChanged.connect(self.woc_to_percent)
+        self.DOC_percent.valueChanged.connect(self.doc_percent_to_mm)
+        self.WOC_percent.valueChanged.connect(self.woc_percent_to_mm)
+        self.IPT.valueChanged.connect(self.ipt_to_mmpt)
+        self.MMPT.valueChanged.connect(self.mmpt_to_ipt)
+        self.SFM.valueChanged.connect(self.sfm_to_others)
+        self.SMM.valueChanged.connect(self.smm_to_others)
+        self.SMMM.valueChanged.connect(self.smmm_to_others)
 
-        self.updateGUI()
+    def init(self):
+        self.doc_to_percent()
+        self.woc_to_percent()
+        self.ipt_to_mmpt()
+        self.sfm_to_others()
 
-    def updateGUI(self):
-        pass
+        # Surface millimeters per minute
 
-    # def updateGUI(self):
-    #     if self.slotting.isChecked():
-    #         self.WOC.setDisabled(True)
-    #         self.widthPercentage.setDisabled(True)
-    #         self.useWidthPercentage.setDisabled(True)
-    #         return
-    #     else:
-    #         self.useWidthPercentage.setEnabled(True)
+    def doc_to_percent(self):
+        diameter = self.parent().parent().tool_box.toolDiameter.value()
+        doc = self.DOC.value()
+        self.DOC_percent.setValue(doc / diameter * 100)
 
-    #     if self.useWidthPercentage.isChecked():
-    #         self.WOC.setDisabled(True)
-    #         self.widthPercentage.setEnabled(True)
-    #     else:
-    #         self.WOC.setEnabled(True)
-    #         self.widthPercentage.setDisabled(True)
+    def woc_to_percent(self):
+        diameter = self.parent().parent().tool_box.toolDiameter.value()
+        woc = self.WOC.value()
+        if woc > diameter:
+            self.WOC.setValue(diameter)
+            self.WOC_percent.setValue(100)
+        else:
+            self.WOC_percent.setValue(woc / diameter * 100)
+
+    def doc_percent_to_mm(self):
+        diameter = self.parent().parent().tool_box.toolDiameter.value()
+        doc_percent = self.DOC_percent.value()
+        self.DOC.setValue(diameter * doc_percent / 100)
+
+    def woc_percent_to_mm(self):
+        diameter = self.parent().parent().tool_box.toolDiameter.value()
+        woc_percent = self.WOC_percent.value()
+        self.WOC.setValue(diameter * woc_percent / 100)
+
+    def ipt_to_mmpt(self):
+        ipt = self.IPT.value()
+        self.MMPT.setValue(ipt * 25.4)
+
+    def mmpt_to_ipt(self):
+        mmpt = self.MMPT.value()
+        self.IPT.setValue(mmpt * 0.03937007874)
+
+    def sfm_to_others(self):
+        sfm = self.SFM.value()
+        self.SMMM.setValue(sfm * 304.8)
+        self.SMM.setValue(sfm * 0.3048)
+
+    def smm_to_others(self):
+        smm = self.SMM.value()
+        self.SFM.setValue(smm * 3.28084)
+        self.SMMM.setValue(smm * 1000)
+
+    def smmm_to_others(self):
+        smmm = self.SMMM.value()
+        self.SFM.setValue(smmm * 0.00328084)
+        self.SMM.setValue(smmm * 0.001)
 
 
 class MachineBox(QtWidgets.QGroupBox):
@@ -160,14 +213,18 @@ class GUI(QtWidgets.QMainWindow):
         super(GUI, self).__init__(parent)
         self.settings = None
 
-        self.setWindowTitle("Speeds and Feeds Calculator - https://github.com/bhowiebkr/Speeds-And-Feeds")
+        self.setWindowTitle(
+            "Speeds and Feeds Calculator - https://github.com/bhowiebkr/Speeds-And-Feeds"
+        )
         settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
 
         try:
             self.restoreGeometry(settings.value("geometry"))
 
         except AttributeError as e:
-            logging.warning("Unable to load settings. First time opening the tool?\n" + str(e))
+            logging.warning(
+                "Unable to load settings. First time opening the tool?\n" + str(e)
+            )
 
         # Layouts
         main_widget = QtWidgets.QWidget()
@@ -178,9 +235,9 @@ class GUI(QtWidgets.QMainWindow):
         main_widget.setLayout(main_layout)
         form = QtWidgets.QFormLayout()
 
-        self.tool_box = ToolBox()
-        self.cutting_box = CuttingBox()
-        self.machine_box = MachineBox()
+        self.tool_box = ToolBox(self)
+        self.cutting_box = CuttingBox(self)
+        self.machine_box = MachineBox(self)
 
         self.results_box = ResultsBox()
 
@@ -207,10 +264,13 @@ class GUI(QtWidgets.QMainWindow):
         self.cutting_box.DOC.valueChanged.connect(self.update)
         self.cutting_box.WOC.valueChanged.connect(self.update)
 
+        self.cutting_box.init()
         self.update()
 
     def closeEvent(self, event):
-        self.settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
+        self.settings = QtCore.QSettings(
+            "speeds-and-feeds-calc", "SpeedsAndFeedsCalculator"
+        )
         self.settings.setValue("geometry", self.saveGeometry())
         QtWidgets.QWidget.closeEvent(self, event)
 
