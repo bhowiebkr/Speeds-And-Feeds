@@ -66,17 +66,21 @@ class FeedsAndSpeeds:
         # Cutting
         self.doc = None
         self.woc = None
+        self.smm = None
+        self.mmpt = None
 
     def print_values(self):
-        print("\nHB Min:\t\t", self.hb_min)
-        print("HB Max:\t\t", self.hb_max)
-        print("K-Factor:\t", self.k_factor)
-        print("Cutting Diameter:\t", self.diameter)
-        print("Flute Num:\t", self.flute_num)
-        print("Flute Length:\t", self.flute_len)
-        print("Lead Angle:\t", self.lead_angle)
-        print("Depth of Cut:\t", self.doc)
-        print("Width of Cut:\t", self.woc)
+        print("\nHB Min:", self.hb_min)
+        print("HB Max:", self.hb_max)
+        print("K-Factor:", self.k_factor)
+        print("Cutting Diameter:", self.diameter)
+        print("Flute Num:", self.flute_num)
+        print("Flute Length:", self.flute_len)
+        print("Lead Angle:", self.lead_angle)
+        print("Depth of Cut:", self.doc)
+        print("Width of Cut:", self.woc)
+        print("Surface Meters per Minute:", self.smm)
+        print("Millimeters per tooth:", self.mmpt)
 
     def calculate(self):
         pass
