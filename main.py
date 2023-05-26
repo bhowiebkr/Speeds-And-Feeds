@@ -19,19 +19,19 @@ class ToolBox(QtWidgets.QGroupBox):
         # Widgets
         self.toolDiameter = QtWidgets.QDoubleSpinBox()
         self.fluteNum = QtWidgets.QSpinBox()
-        self.fluteLen = QtWidgets.QDoubleSpinBox()
-        self.leadAngle = QtWidgets.QDoubleSpinBox()
+        # self.fluteLen = QtWidgets.QDoubleSpinBox()
+        # self.leadAngle = QtWidgets.QDoubleSpinBox()
 
         self.toolDiameter.setValue(12)
         self.fluteNum.setValue(2)
-        self.fluteLen.setValue(10)
-        self.leadAngle.setValue(90)
+        # self.fluteLen.setValue(10)
+        # self.leadAngle.setValue(90)
 
         # Add Layout
         form.addRow("Diameter (MM)", self.toolDiameter)
         form.addRow("Number of flutes (#)", self.fluteNum)
-        form.addRow("Flute Length (MM)", self.fluteLen)
-        form.addRow("Lead Angle (°)", self.leadAngle)
+        # form.addRow("Flute Length (MM)", self.fluteLen)
+        # form.addRow("Lead Angle (°)", self.leadAngle)
 
 
 class CuttingBox(QtWidgets.QGroupBox):
@@ -256,14 +256,21 @@ class GUI(QtWidgets.QMainWindow):
         # Logic
         self.materialCombo.currentIndexChanged.connect(self.update)
 
-        self.tool_box.toolDiameter.valueChanged.connect(self.update)
+        # self.tool_box.toolDiameter.valueChanged.connect(self.update)
         self.tool_box.fluteNum.valueChanged.connect(self.update)
-        self.tool_box.fluteLen.valueChanged.connect(self.update)
-        self.tool_box.leadAngle.valueChanged.connect(self.update)
+        # self.tool_box.fluteLen.valueChanged.connect(self.update)
+        # self.tool_box.leadAngle.valueChanged.connect(self.update)
 
         self.cutting_box.DOC.valueChanged.connect(self.update)
         self.cutting_box.WOC.valueChanged.connect(self.update)
+        self.cutting_box.SMM.valueChanged.connect(self.update)
+        self.cutting_box.MMPT.valueChanged.connect(self.update)
+        self.tool_box.toolDiameter.valueChanged.connect(self.toolDiameterChanged)
 
+        self.cutting_box.init()
+        self.update()
+
+    def toolDiameterChanged(self):
         self.cutting_box.init()
         self.update()
 
@@ -287,16 +294,19 @@ class GUI(QtWidgets.QMainWindow):
         # Tool
         fs.diameter = self.tool_box.toolDiameter.value()
         fs.flute_num = self.tool_box.fluteNum.value()
-        fs.flute_len = self.tool_box.fluteLen.value()
-        fs.lead_angle = self.tool_box.leadAngle.value()
+        # fs.flute_len = self.tool_box.fluteLen.value()
+        # fs.lead_angle = self.tool_box.leadAngle.value()
 
         # Cutting
         fs.doc = self.cutting_box.DOC.value()
         fs.woc = self.cutting_box.WOC.value()
+        fs.smm = self.cutting_box.SMM.value()
+        fs.mmpt = self.cutting_box.MMPT.value()
 
-        fs.print_values()
+        # fs.print_values()
 
         # Do the formulas
+        fs.calculate()
 
         # Update the output
 
