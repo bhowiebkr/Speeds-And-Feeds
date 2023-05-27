@@ -58,7 +58,7 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.MMPT.setDecimals(4)
         self.MMPT.setSingleStep(0.001)
         self.MMPT.setMinimum(0.000)
-        self.SFM.setMaximum(1000)
+        self.SFM.setMaximum(10000)
         self.SMM.setMaximum(10000)
         self.SMMM.setMaximum(1000000)
         self.WOC_percent.setMaximum(100)
@@ -66,7 +66,7 @@ class CuttingBox(QtWidgets.QGroupBox):
 
         self.DOC.setValue(0.5)
         self.WOC.setValue(11)
-        self.SFM.setValue(300)
+        self.SFM.setValue(1312.34)
         self.IPT.setValue(0.001)
 
         spacer1 = QtWidgets.QWidget()
@@ -197,15 +197,11 @@ class ResultsBox(QtWidgets.QGroupBox):
         # Widgets
         self.rpm = QtWidgets.QLabel("<b>18,765</b>")
         self.feed = QtWidgets.QLabel("<b>2000 mm/min</b>")
-        self.cutSpeed = QtWidgets.QLabel("<b>10 m/min</b>")
-        self.chipLoad = QtWidgets.QLabel("<b>0.065</b>")
         self.mmr = QtWidgets.QLabel("<b>62 cm³/min</b>")
 
-        formLeft.addRow("RPM (n):", self.rpm)
-        formLeft.addRow("Surface Speed (Vc):", self.cutSpeed)
+        formLeft.addRow("RPM:", self.rpm)
         formLeft.addRow("Material Removal Rate (MMR):", self.mmr)
-        formRight.addRow("Feed (f):", self.feed)
-        formRight.addRow("Chip Load (fz):", self.chipLoad)
+        formRight.addRow("Feed (mm/min):", self.feed)
 
 
 class GUI(QtWidgets.QMainWindow):
@@ -213,18 +209,14 @@ class GUI(QtWidgets.QMainWindow):
         super(GUI, self).__init__(parent)
         self.settings = None
 
-        self.setWindowTitle(
-            "Speeds and Feeds Calculator - https://github.com/bhowiebkr/Speeds-And-Feeds"
-        )
+        self.setWindowTitle("Speeds and Feeds Calculator - https://github.com/bhowiebkr/Speeds-And-Feeds")
         settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
 
         try:
             self.restoreGeometry(settings.value("geometry"))
 
         except AttributeError as e:
-            logging.warning(
-                "Unable to load settings. First time opening the tool?\n" + str(e)
-            )
+            logging.warning("Unable to load settings. First time opening the tool?\n" + str(e))
 
         # Layouts
         main_widget = QtWidgets.QWidget()
@@ -275,9 +267,7 @@ class GUI(QtWidgets.QMainWindow):
         self.update()
 
     def closeEvent(self, event):
-        self.settings = QtCore.QSettings(
-            "speeds-and-feeds-calc", "SpeedsAndFeedsCalculator"
-        )
+        self.settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
         self.settings.setValue("geometry", self.saveGeometry())
         QtWidgets.QWidget.closeEvent(self, event)
 
@@ -307,6 +297,10 @@ class GUI(QtWidgets.QMainWindow):
 
         # Do the formulas
         fs.calculate()
+
+        self.results_box.rpm.setText(f"<b>{round(fs.rpm):,}</b>")
+        self.results_box.feed.setText(f"<b>{fs.feed:.2f} mm/min</b>")
+        self.results_box.mmr.setText(f"<b>{fs.mmr:.2f} cm³/min</b>")
 
         # Update the output
 

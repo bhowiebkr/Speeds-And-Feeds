@@ -1,5 +1,7 @@
 # https://www.garrtool.com/resources/machining-formulas/
 
+import math
+
 
 def feed(RPM, CPT, flutes):
     """
@@ -69,6 +71,11 @@ class FeedsAndSpeeds:
         self.smm = None
         self.mmpt = None
 
+        # results
+        self.rpm = None
+        self.feed = None
+        self.mmr = None
+
     def print_values(self):
         print("\nHB Min:", self.hb_min)
         print("HB Max:", self.hb_max)
@@ -83,7 +90,9 @@ class FeedsAndSpeeds:
         print("Millimeters per tooth:", self.mmpt)
 
     def calculate(self):
-        pass
+        self.rpm = (self.smm * 1000) / (self.diameter * math.pi)
+        self.feed = float(self.flute_num) * self.mmpt * self.rpm
+        self.mmr = self.woc * self.doc * self.feed / 1000
 
 
 # SFM = (Pi * RPM * Diameter) / 12
