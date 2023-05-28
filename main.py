@@ -2,10 +2,11 @@ import sys
 
 import logging
 
-from PySide6 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 from components.widgets import MaterialCombo, IntInput, DoubleInput
-import qdarktheme
+
+# import qdarktheme
 from formulas import FeedsAndSpeeds
 
 
@@ -209,14 +210,18 @@ class GUI(QtWidgets.QMainWindow):
         super(GUI, self).__init__(parent)
         self.settings = None
 
-        self.setWindowTitle("Speeds and Feeds Calculator - https://github.com/bhowiebkr/Speeds-And-Feeds")
+        self.setWindowTitle(
+            "Speeds and Feeds Calculator - https://github.com/bhowiebkr/Speeds-And-Feeds"
+        )
         settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
 
         try:
             self.restoreGeometry(settings.value("geometry"))
 
-        except AttributeError as e:
-            logging.warning("Unable to load settings. First time opening the tool?\n" + str(e))
+        except Exception as e:
+            logging.warning(
+                "Unable to load settings. First time opening the tool?\n" + str(e)
+            )
 
         # Layouts
         main_widget = QtWidgets.QWidget()
@@ -267,7 +272,9 @@ class GUI(QtWidgets.QMainWindow):
         self.update()
 
     def closeEvent(self, event):
-        self.settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
+        self.settings = QtCore.QSettings(
+            "speeds-and-feeds-calc", "SpeedsAndFeedsCalculator"
+        )
         self.settings.setValue("geometry", self.saveGeometry())
         QtWidgets.QWidget.closeEvent(self, event)
 
@@ -307,7 +314,7 @@ class GUI(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    qdarktheme.setup_theme(additional_qss="QToolTip {color: black;}")
+    # qdarktheme.setup_theme(additional_qss="QToolTip {color: black;}")
     gui = GUI()
     gui.show()
     app.exec()
