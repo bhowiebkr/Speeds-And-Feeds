@@ -92,7 +92,8 @@ class FeedsAndSpeeds:
     def calculate(self):
         self.rpm = (self.smm * 1000) / (self.diameter * math.pi)
         self.feed = float(self.flute_num) * self.mmpt * self.rpm
-        self.mmr = self.woc * self.doc * self.feed / 1000
+        self.mrr = self.woc * self.doc * self.feed / 1000
+        self.kw = self.mrr / self.k_factor
 
 
 # SFM = (Pi * RPM * Diameter) / 12
