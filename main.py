@@ -1,13 +1,22 @@
 import sys
-
+import os
 import logging
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 from components.widgets import MaterialCombo, IntInput, DoubleInput
 
-# import qdarktheme
+if os.name == "nt":
+    import qdarktheme
+
 from formulas import FeedsAndSpeeds
+
+IN_TO_MM = 25.4
+MM_TO_IN = 0.0393701
+FT_TO_M = 0.3048
+FT_TO_MM = 304.8
+MM_TO_FT = 0.00328084
+M_TO_FT = 3.28084
 
 
 class ToolBox(QtWidgets.QGroupBox):
@@ -19,6 +28,7 @@ class ToolBox(QtWidgets.QGroupBox):
 
         # Widgets
         self.toolDiameter = QtWidgets.QDoubleSpinBox()
+        self.toolDiameterImp = QtWidgets.QDoubleSpinBox()
         self.fluteNum = QtWidgets.QSpinBox()
         # self.fluteLen = QtWidgets.QDoubleSpinBox()
         # self.leadAngle = QtWidgets.QDoubleSpinBox()
@@ -30,9 +40,20 @@ class ToolBox(QtWidgets.QGroupBox):
 
         # Add Layout
         form.addRow("Diameter (MM)", self.toolDiameter)
+        form.addRow("Diameter (inches)", self.toolDiameterImp)
         form.addRow("Number of flutes (#)", self.fluteNum)
         # form.addRow("Flute Length (MM)", self.fluteLen)
         # form.addRow("Lead Angle (°)", self.leadAngle)
+
+        self.toolDiameter.editingFinished.connect(self.mm_to_in)
+        self.toolDiameterImp.editingFinished.connect(self.in_to_mm)
+        self.mm_to_in()
+
+    def mm_to_in(self):
+        self.toolDiameterImp.setValue(self.toolDiameter.value() * MM_TO_IN)
+
+    def in_to_mm(self):
+        self.toolDiameter.setValue(self.toolDiameterImp.value() * IN_TO_MM)
 
 
 class CuttingBox(QtWidgets.QGroupBox):
@@ -45,8 +66,10 @@ class CuttingBox(QtWidgets.QGroupBox):
 
         # Widgets
         self.DOC = QtWidgets.QDoubleSpinBox()
+        self.DOC_IMP = QtWidgets.QDoubleSpinBox()
         self.DOC_percent = QtWidgets.QDoubleSpinBox()
         self.WOC = QtWidgets.QDoubleSpinBox()
+        self.WOC_IMP = QtWidgets.QDoubleSpinBox()
         self.WOC_percent = QtWidgets.QDoubleSpinBox()
         self.SFM = QtWidgets.QDoubleSpinBox()
         self.SMM = QtWidgets.QDoubleSpinBox()
@@ -78,9 +101,11 @@ class CuttingBox(QtWidgets.QGroupBox):
         spacer3.setFixedHeight(10)  # Set the desired height for the spacer
 
         form.addRow("Depth Of Cut (MM)", self.DOC)
+        form.addRow("Depth Of Cut (Inches)", self.DOC_IMP)
         form.addRow("Depth Of Cut (%)", self.DOC_percent)
         form.addRow(spacer1)
         form.addRow("Width Of Cut (MM)", self.WOC)
+        form.addRow("Width Of Cut (Inches)", self.WOC_IMP)
         form.addRow("Width Of Cut (%)", self.WOC_percent)
         form.addRow(spacer2)
         form.addRow("Surface Feet per Minute (SFM)", self.SFM)
@@ -91,30 +116,49 @@ class CuttingBox(QtWidgets.QGroupBox):
         form.addRow("Inches per Tooth (IPT)", self.IPT)
         form.addRow("Millimeters per tooth (MMPT)", self.MMPT)
 
-        self.DOC.valueChanged.connect(self.doc_to_percent)
-        self.WOC.valueChanged.connect(self.woc_to_percent)
-        self.DOC_percent.valueChanged.connect(self.doc_percent_to_mm)
-        self.WOC_percent.valueChanged.connect(self.woc_percent_to_mm)
-        self.IPT.valueChanged.connect(self.ipt_to_mmpt)
-        self.MMPT.valueChanged.connect(self.mmpt_to_ipt)
-        self.SFM.valueChanged.connect(self.sfm_to_others)
-        self.SMM.valueChanged.connect(self.smm_to_others)
-        self.SMMM.valueChanged.connect(self.smmm_to_others)
+        self.DOC.editingFinished.connect(self.doc_to_others)
+        self.DOC_IMP.editingFinished.connect(self.doc_imp_to_others)
+        self.WOC.editingFinished.connect(self.woc_to_others)
+        self.WOC_IMP.editingFinished.connect(self.woc_imp_to_others)
+        self.DOC_percent.editingFinished.connect(self.doc_percent_to_others)
+        self.WOC_percent.editingFinished.connect(self.woc_percent_to_others)
+        self.IPT.editingFinished.connect(self.ipt_to_mmpt)
+        self.MMPT.editingFinished.connect(self.mmpt_to_ipt)
+        self.SFM.editingFinished.connect(self.sfm_to_others)
+        self.SMM.editingFinished.connect(self.smm_to_others)
+        self.SMMM.editingFinished.connect(self.smmm_to_others)
 
     def init(self):
-        self.doc_to_percent()
-        self.woc_to_percent()
+        self.doc_to_others()
+        self.woc_to_others()
         self.ipt_to_mmpt()
         self.sfm_to_others()
 
         # Surface millimeters per minute
 
-    def doc_to_percent(self):
+    def doc_imp_to_others(self):
+        diameter = self.parent().parent().tool_box.toolDiameter.value()
+        doc_imp = self.DOC_IMP.value()
+        doc = doc_imp * IN_TO_MM
+        self.DOC_percent.setValue(doc / diameter * 100)
+        self.DOC.setValue(doc)
+
+    def woc_imp_to_others(self):
+        diameter = self.parent().parent().tool_box.toolDiameter.value()
+        woc = self.WOC_IMP.value() * IN_TO_MM
+        if woc > diameter:
+            self.WOC.setValue(diameter)
+            self.WOC_percent.setValue(100)
+        else:
+            self.WOC_percent.setValue(woc / diameter * 100)
+
+    def doc_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         doc = self.DOC.value()
         self.DOC_percent.setValue(doc / diameter * 100)
+        self.DOC_IMP.setValue(doc * MM_TO_IN)
 
-    def woc_to_percent(self):
+    def woc_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         woc = self.WOC.value()
         if woc > diameter:
@@ -123,37 +167,43 @@ class CuttingBox(QtWidgets.QGroupBox):
         else:
             self.WOC_percent.setValue(woc / diameter * 100)
 
-    def doc_percent_to_mm(self):
+        self.WOC_IMP.setValue(woc * MM_TO_IN)
+
+    def doc_percent_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         doc_percent = self.DOC_percent.value()
-        self.DOC.setValue(diameter * doc_percent / 100)
+        mm = diameter * doc_percent / 100
+        self.DOC.setValue(mm)
+        self.DOC_IMP.setValue(mm * MM_TO_IN)
 
-    def woc_percent_to_mm(self):
+    def woc_percent_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         woc_percent = self.WOC_percent.value()
-        self.WOC.setValue(diameter * woc_percent / 100)
+        mm = diameter * woc_percent / 100
+        self.WOC.setValue(mm)
+        self.WOC_IMP.setValue(mm * MM_TO_IN)
 
     def ipt_to_mmpt(self):
         ipt = self.IPT.value()
-        self.MMPT.setValue(ipt * 25.4)
+        self.MMPT.setValue(ipt * IN_TO_MM)
 
     def mmpt_to_ipt(self):
         mmpt = self.MMPT.value()
-        self.IPT.setValue(mmpt * 0.03937007874)
+        self.IPT.setValue(mmpt * MM_TO_IN)
 
     def sfm_to_others(self):
         sfm = self.SFM.value()
-        self.SMMM.setValue(sfm * 304.8)
-        self.SMM.setValue(sfm * 0.3048)
+        self.SMMM.setValue(sfm * FT_TO_MM)
+        self.SMM.setValue(sfm * FT_TO_M)
 
     def smm_to_others(self):
         smm = self.SMM.value()
-        self.SFM.setValue(smm * 3.28084)
+        self.SFM.setValue(smm * M_TO_FT)
         self.SMMM.setValue(smm * 1000)
 
     def smmm_to_others(self):
         smmm = self.SMMM.value()
-        self.SFM.setValue(smmm * 0.00328084)
+        self.SFM.setValue(smmm * MM_TO_FT)
         self.SMM.setValue(smmm * 0.001)
 
 
@@ -198,11 +248,17 @@ class ResultsBox(QtWidgets.QGroupBox):
         # Widgets
         self.rpm = QtWidgets.QLabel("<b>18,765</b>")
         self.feed = QtWidgets.QLabel("<b>2000 mm/min</b>")
-        self.mmr = QtWidgets.QLabel("<b>62 cm³/min</b>")
+        self.feed_imp = QtWidgets.QLabel("<b>2000 inches/min</b>")
+        self.mrr = QtWidgets.QLabel("<b>62 cm³/min</b>")
+        self.kw = QtWidgets.QLabel("<b>0.14 kw</b>")
+        self.hp = QtWidgets.QLabel("<b>0.14 kw</b>")
 
         formLeft.addRow("RPM:", self.rpm)
-        formLeft.addRow("Material Removal Rate (MMR):", self.mmr)
+        formLeft.addRow("Material Removal Rate (MRR):", self.mrr)
+        formLeft.addRow("Kilowatt Power:", self.kw)
+        formLeft.addRow("Horse Power:", self.hp)
         formRight.addRow("Feed (mm/min):", self.feed)
+        formRight.addRow("Feed (inches/min):", self.feed_imp)
 
 
 class GUI(QtWidgets.QMainWindow):
@@ -252,17 +308,16 @@ class GUI(QtWidgets.QMainWindow):
 
         # Logic
         self.materialCombo.currentIndexChanged.connect(self.update)
-
-        # self.tool_box.toolDiameter.valueChanged.connect(self.update)
-        self.tool_box.fluteNum.valueChanged.connect(self.update)
-        # self.tool_box.fluteLen.valueChanged.connect(self.update)
-        # self.tool_box.leadAngle.valueChanged.connect(self.update)
-
-        self.cutting_box.DOC.valueChanged.connect(self.update)
-        self.cutting_box.WOC.valueChanged.connect(self.update)
-        self.cutting_box.SMM.valueChanged.connect(self.update)
-        self.cutting_box.MMPT.valueChanged.connect(self.update)
-        self.tool_box.toolDiameter.valueChanged.connect(self.toolDiameterChanged)
+        self.tool_box.fluteNum.editingFinished.connect(self.update)
+        self.cutting_box.DOC.editingFinished.connect(self.update)
+        self.cutting_box.WOC.editingFinished.connect(self.update)
+        self.cutting_box.SMM.editingFinished.connect(self.update)
+        self.cutting_box.SFM.editingFinished.connect(self.update)
+        self.cutting_box.SMMM.editingFinished.connect(self.update)
+        self.cutting_box.MMPT.editingFinished.connect(self.update)
+        self.cutting_box.IPT.editingFinished.connect(self.update)
+        self.tool_box.toolDiameter.editingFinished.connect(self.toolDiameterChanged)
+        self.tool_box.toolDiameterImp.editingFinished.connect(self.toolDiameterChanged)
 
         self.cutting_box.init()
         self.update()
@@ -307,14 +362,22 @@ class GUI(QtWidgets.QMainWindow):
 
         self.results_box.rpm.setText(f"<b>{round(fs.rpm):,}</b>")
         self.results_box.feed.setText(f"<b>{fs.feed:.2f} mm/min</b>")
-        self.results_box.mmr.setText(f"<b>{fs.mmr:.2f} cm³/min</b>")
+        self.results_box.feed_imp.setText(f"<b>{fs.feed*0.0393701:.2f} inches/min</b>")
+        self.results_box.mrr.setText(f"<b>{fs.mrr:.2f} cm³/min</b>")
+
+        fs.kw = 0
+        self.results_box.kw.setText(f"<b>{fs.kw:.2f} kW</b>")
+        self.results_box.hp.setText(f"<b>{fs.kw * 1.34102:.2f} HP</b>")
 
         # Update the output
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    # qdarktheme.setup_theme(additional_qss="QToolTip {color: black;}")
+
+    if os.name == "nt":
+        print("Loading dark theme for windows")
+        qdarktheme.setup_theme(additional_qss="QToolTip {color: black;}")
     gui = GUI()
     gui.show()
     app.exec()
