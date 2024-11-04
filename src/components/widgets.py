@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets, QtCore, QtGui
 
 import json
 
@@ -18,7 +18,7 @@ class Material(object):
 
 materials = []
 
-with open("components/materials.json") as file:
+with open("src/components/materials.json") as file:
     data = json.load(file)
 
 sorted_materials = sorted(data, key=lambda x: x["material"])

@@ -1,2 +1,2 @@
-PyQt5
+PySide6
 pyqtdarktheme

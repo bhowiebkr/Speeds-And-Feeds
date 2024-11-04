@@ -2,14 +2,14 @@ import sys
 import os
 import logging
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets, QtCore, QtGui
 
-from components.widgets import MaterialCombo, IntInput, DoubleInput
+from src.components.widgets import MaterialCombo, IntInput, DoubleInput
 
 if os.name == "nt":
     import qdarktheme
 
-from formulas import FeedsAndSpeeds
+from src.formulas import FeedsAndSpeeds
 
 IN_TO_MM = 25.4
 MM_TO_IN = 0.0393701
@@ -372,12 +372,9 @@ class GUI(QtWidgets.QMainWindow):
         # Update the output
 
 
-if __name__ == "__main__":
+def start():
     app = QtWidgets.QApplication(sys.argv)
 
-    if os.name == "nt":
-        print("Loading dark theme for windows")
-        qdarktheme.setup_theme(additional_qss="QToolTip {color: black;}")
     gui = GUI()
     gui.show()
     app.exec()
