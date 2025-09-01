@@ -40,7 +40,7 @@ jobs:
         echo "✅ Tag ${{ inputs.tag }} found"
 
     - name: Download build artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: SpeedsAndFeeds-${{ inputs.tag }}-windows
         path: ./artifact
@@ -126,26 +126,15 @@ jobs:
         } >> $GITHUB_OUTPUT
 
     - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ inputs.tag }}
-        release_name: "Speeds & Feeds Calculator ${{ inputs.tag }}"
+        name: "Speeds & Feeds Calculator ${{ inputs.tag }}"
         body: ${{ steps.changelog.outputs.changelog }}
         draft: false
         prerelease: ${{ inputs.release_type == 'prerelease' }}
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SpeedsAndFeeds-${{ inputs.tag }}-windows.zip
-        asset_name: SpeedsAndFeeds-${{ inputs.tag }}-windows.zip
-        asset_content_type: application/zip
+        make_latest: ${{ inputs.make_latest }}
+        files: ./SpeedsAndFeeds-${{ inputs.tag }}-windows.zip
 
     - name: Release Summary
       run: |
