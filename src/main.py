@@ -306,9 +306,44 @@ class ResultsBox(QtWidgets.QGroupBox):
         super(ResultsBox, self).__init__(parent)
         self.setTitle("📊 Results")
         self.setObjectName("results_box")
-        mainLayout = QtWidgets.QHBoxLayout()
+        
+        # Import dashboard widgets
+        from .components.dashboard_widgets import RangeBarWidget, RPMGaugeWidget, StatusIndicatorWidget
+        
+        # Main layout
+        mainLayout = QtWidgets.QVBoxLayout()
         self.setLayout(mainLayout)
-
+        
+        # Tab widget for switching between views
+        self.tab_widget = QtWidgets.QTabWidget()
+        self.tab_widget.setMaximumHeight(35)  # Compact tabs
+        mainLayout.addWidget(self.tab_widget)
+        
+        # Create content area
+        content_area = QtWidgets.QWidget()
+        self.content_layout = QtWidgets.QStackedLayout()
+        content_area.setLayout(self.content_layout)
+        mainLayout.addWidget(content_area)
+        
+        # Classic text view
+        self._create_classic_view()
+        
+        # Dashboard graphical view  
+        self._create_dashboard_view()
+        
+        # Connect tab changes
+        self.tab_widget.currentChanged.connect(self._on_tab_changed)
+        
+        # Set default to Dashboard view
+        self.tab_widget.setCurrentIndex(1)
+        self.content_layout.setCurrentIndex(1)
+    
+    def _create_classic_view(self):
+        """Create the traditional text-based results view."""
+        classic_widget = QtWidgets.QWidget()
+        classicLayout = QtWidgets.QHBoxLayout()
+        classic_widget.setLayout(classicLayout)
+        
         formLeft = QtWidgets.QFormLayout()
         formRight = QtWidgets.QFormLayout()
 
@@ -317,11 +352,11 @@ class ResultsBox(QtWidgets.QGroupBox):
             form.setVerticalSpacing(12)
             form.setHorizontalSpacing(15)
 
-        mainLayout.addStretch()
-        mainLayout.addLayout(formLeft)
-        mainLayout.addStretch()
-        mainLayout.addLayout(formRight)
-        mainLayout.addStretch()
+        classicLayout.addStretch()
+        classicLayout.addLayout(formLeft)
+        classicLayout.addStretch()
+        classicLayout.addLayout(formRight)
+        classicLayout.addStretch()
 
         # Result widgets with better initial styling
         self.rpm = QtWidgets.QLabel("<b>0</b>")
@@ -345,6 +380,117 @@ class ResultsBox(QtWidgets.QGroupBox):
         formLeft.addRow("🐎 Power (HP):", self.hp)
         formRight.addRow("🟢 Feed (mm/min):", self.feed)
         formRight.addRow("🟢 Feed (in/min):", self.feed_imp)
+        
+        # Add to tab and content layout
+        self.tab_widget.addTab(QtWidgets.QWidget(), "📋 Classic")
+        self.content_layout.addWidget(classic_widget)
+    
+    def _create_dashboard_view(self):
+        """Create the new graphical dashboard view."""
+        from .components.dashboard_widgets import RangeBarWidget, RPMGaugeWidget, StatusIndicatorWidget
+        
+        dashboard_widget = QtWidgets.QWidget()
+        dashLayout = QtWidgets.QVBoxLayout()
+        dashboard_widget.setLayout(dashLayout)
+        
+        # Top row: RPM Gauge
+        rpm_row = QtWidgets.QHBoxLayout()
+        rpm_row.addStretch()
+        
+        self.rpm_gauge = RPMGaugeWidget()
+        self.rpm_status_indicator = StatusIndicatorWidget()
+        
+        rpm_container = QtWidgets.QVBoxLayout()
+        rpm_header = QtWidgets.QHBoxLayout()
+        rpm_header.addWidget(QtWidgets.QLabel("🔄 Spindle Speed"))
+        rpm_header.addWidget(self.rpm_status_indicator)
+        rpm_header.addStretch()
+        
+        rpm_container.addLayout(rpm_header)
+        rpm_container.addWidget(self.rpm_gauge)
+        
+        rpm_row.addLayout(rpm_container)
+        rpm_row.addStretch()
+        dashLayout.addLayout(rpm_row)
+        
+        # Separator
+        separator = QtWidgets.QFrame()
+        separator.setFrameShape(QtWidgets.QFrame.Shape.HLine)
+        separator.setStyleSheet("color: #555555;")
+        dashLayout.addWidget(separator)
+        
+        # Bottom section: Range bars for other parameters
+        bars_layout = QtWidgets.QGridLayout()
+        
+        # Feed Rate bars
+        self.feed_bar = RangeBarWidget()
+        self.feed_bar.setLabel("Feed Rate")
+        self.feed_bar.setUnit("mm/min")
+        
+        self.feed_imp_bar = RangeBarWidget() 
+        self.feed_imp_bar.setLabel("Feed Rate")
+        self.feed_imp_bar.setUnit("in/min")
+        
+        # MRR bar
+        self.mrr_bar = RangeBarWidget()
+        self.mrr_bar.setLabel("Material Removal Rate") 
+        self.mrr_bar.setUnit("cm³/min")
+        
+        # Power bars
+        self.kw_bar = RangeBarWidget()
+        self.kw_bar.setLabel("Power")
+        self.kw_bar.setUnit("kW")
+        
+        self.hp_bar = RangeBarWidget()
+        self.hp_bar.setLabel("Power") 
+        self.hp_bar.setUnit("HP")
+        
+        # Add bars to grid layout
+        bars_layout.addWidget(self.feed_bar, 0, 0)
+        bars_layout.addWidget(self.feed_imp_bar, 0, 1)
+        bars_layout.addWidget(self.mrr_bar, 1, 0) 
+        bars_layout.addWidget(self.kw_bar, 2, 0)
+        bars_layout.addWidget(self.hp_bar, 2, 1)
+        
+        dashLayout.addLayout(bars_layout)
+        dashLayout.addStretch()
+        
+        # Add to tab and content layout
+        self.tab_widget.addTab(QtWidgets.QWidget(), "📊 Dashboard")
+        self.content_layout.addWidget(dashboard_widget)
+    
+    def _on_tab_changed(self, index):
+        """Handle tab changes to switch content view."""
+        self.content_layout.setCurrentIndex(index)
+    
+    def update_dashboard_values(self, fs, rpm_status, rpm_message, machine_limits):
+        """Update dashboard widgets with new values."""
+        if hasattr(self, 'rpm_gauge'):
+            # Update RPM gauge
+            min_rpm, preferred_rpm, max_rpm = machine_limits
+            self.rpm_gauge.setRange(min_rpm, max_rpm)
+            self.rpm_gauge.setPreferredValue(preferred_rpm)
+            self.rpm_gauge.setValue(fs.rpm)
+            
+            # Update RPM status indicator
+            pulse = rpm_status in ["warning", "danger"]
+            self.rpm_status_indicator.setStatus(rpm_status, pulse)
+            
+            # Update range bars with appropriate ranges
+            self.feed_bar.setRange(0, fs.feed * 2)  # Dynamic range based on current value
+            self.feed_bar.setValue(fs.feed)
+            
+            self.feed_imp_bar.setRange(0, fs.feed * 0.0393701 * 2)
+            self.feed_imp_bar.setValue(fs.feed * 0.0393701)
+            
+            self.mrr_bar.setRange(0, max(fs.mrr * 2, 10))  # Minimum range of 10
+            self.mrr_bar.setValue(fs.mrr)
+            
+            self.kw_bar.setRange(0, max(fs.kw * 2, 5))  # Minimum range of 5kW
+            self.kw_bar.setValue(fs.kw)
+            
+            self.hp_bar.setRange(0, max(fs.kw * 1.34102 * 2, 7))  # Minimum range of 7HP
+            self.hp_bar.setValue(fs.kw * 1.34102)
 
 
 class GUI(QtWidgets.QMainWindow):
@@ -506,6 +652,14 @@ class GUI(QtWidgets.QMainWindow):
         
         # Set tooltip for RPM with status message
         self.results_box.rpm.setToolTip(f"RPM Status: {rpm_message}")
+        
+        # Update dashboard widgets
+        machine_limits = (
+            self.machine_box.minRPM.value(),
+            self.machine_box.preferredRPM.value(), 
+            self.machine_box.maxRPM.value()
+        )
+        self.results_box.update_dashboard_values(fs, rpm_status, rpm_message, machine_limits)
 
         # Update the output
 
