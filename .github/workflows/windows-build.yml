@@ -15,18 +15,21 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      actions: write
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
     - name: Cache pip dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~\AppData\Local\pip\Cache
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -98,6 +101,7 @@ jobs:
         name: SpeedsAndFeeds-${{ github.ref_name }}-windows
         path: build/main.dist/
         retention-days: 30
+        compression-level: 6
 
     - name: Generate build summary
       if: always()
