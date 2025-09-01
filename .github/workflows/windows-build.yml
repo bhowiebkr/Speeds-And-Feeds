@@ -1,0 +1,112 @@
+name: Windows Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'requirements.txt'
+      - '.github/workflows/windows-build.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install nuitka
+
+    - name: Run tests
+      run: |
+        python run_tests.py
+
+    - name: Build with Nuitka
+      run: |
+        cd src
+        python -m nuitka ^
+          --standalone ^
+          --enable-plugin=pyside6 ^
+          --include-qt-plugins=platforms,styles,iconengines ^
+          --output-dir=../build ^
+          --output-filename=SpeedsAndFeeds.exe ^
+          --nofollow-import-to=tkinter,unittest,setuptools,pip,wheel ^
+          --windows-disable-console ^
+          --remove-output ^
+          --lto=yes ^
+          --include-data-file=dark_theme.qss=src/dark_theme.qss ^
+          --assume-yes-for-downloads ^
+          --company-name="Speeds and Feeds Calculator" ^
+          --product-name="Speeds and Feeds Calculator" ^
+          --product-version="2.0.0" ^
+          --file-description="CNC Speeds and Feeds Calculator" ^
+          --windows-icon-from-ico=../images/icon.ico ^
+          ../main.py
+
+    - name: Verify build
+      run: |
+        if (Test-Path "build/main.dist/SpeedsAndFeeds.exe") {
+          Write-Host "✅ Build successful - executable found"
+          Get-ChildItem "build/main.dist" -Recurse | Select-Object Name, Length | Format-Table
+        } else {
+          Write-Host "❌ Build failed - executable not found"
+          exit 1
+        }
+
+    - name: Create build info
+      run: |
+        $buildInfo = @{
+          "version" = "${{ github.ref_name }}"
+          "commit" = "${{ github.sha }}"
+          "build_date" = (Get-Date -Format "yyyy-MM-dd HH:mm:ss UTC")
+          "runner_os" = "${{ runner.os }}"
+        } | ConvertTo-Json -Depth 2
+        $buildInfo | Out-File -FilePath "build/main.dist/build_info.json" -Encoding UTF8
+
+    - name: Upload build artifact
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: actions/upload-artifact@v3
+      with:
+        name: SpeedsAndFeeds-${{ github.ref_name }}-windows
+        path: build/main.dist/
+        retention-days: 30
+
+    - name: Generate build summary
+      if: always()
+      run: |
+        Write-Host "## Build Summary" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "- **Version**: ${{ github.ref_name }}" >> $env:GITHUB_STEP_SUMMARY  
+        Write-Host "- **Commit**: ${{ github.sha }}" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "- **Build Date**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC')" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "" >> $env:GITHUB_STEP_SUMMARY
+        if (Test-Path "build/main.dist/SpeedsAndFeeds.exe") {
+          $size = (Get-Item "build/main.dist/SpeedsAndFeeds.exe").Length / 1MB
+          Write-Host "- **Status**: ✅ Build Successful" >> $env:GITHUB_STEP_SUMMARY
+          Write-Host "- **Executable Size**: $([math]::Round($size, 2)) MB" >> $env:GITHUB_STEP_SUMMARY
+        } else {
+          Write-Host "- **Status**: ❌ Build Failed" >> $env:GITHUB_STEP_SUMMARY
+        }

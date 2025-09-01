@@ -18,6 +18,12 @@ This is a Speeds and Feeds Calculator for CNC machines built with PySide6 (Qt fo
 - **Run specific test**: `venv/Scripts/python.exe tests/test_layout.py`
 - **Layout test**: Comprehensive GUI layout validation that detects overlapping elements
 
+## Building
+
+- **Local build**: See `BUILD.md` for detailed Nuitka build instructions
+- **GitHub Actions**: Automated builds on version tags, manual releases
+- **Output**: Standalone Windows executable (no Python required)
+
 ## Architecture
 
 ### Entry Points

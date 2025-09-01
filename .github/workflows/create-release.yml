@@ -1,0 +1,159 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        type: string
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+        - release
+        - prerelease
+      make_latest:
+        description: 'Make this the latest release'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.tag }}
+
+    - name: Validate tag
+      run: |
+        if ! git tag -l | grep -q "^${{ inputs.tag }}$"; then
+          echo "❌ Tag ${{ inputs.tag }} does not exist"
+          exit 1
+        fi
+        echo "✅ Tag ${{ inputs.tag }} found"
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: SpeedsAndFeeds-${{ inputs.tag }}-windows
+        path: ./artifact
+
+    - name: Verify artifact contents
+      run: |
+        echo "📦 Artifact contents:"
+        ls -la artifact/
+        
+        if [ ! -f "artifact/SpeedsAndFeeds.exe" ]; then
+          echo "❌ SpeedsAndFeeds.exe not found in artifact"
+          exit 1
+        fi
+        
+        echo "✅ SpeedsAndFeeds.exe found"
+        
+        # Check for required files
+        echo "📋 Checking build contents:"
+        if [ -f "artifact/build_info.json" ]; then
+          echo "✅ Build info found"
+          cat artifact/build_info.json
+        fi
+
+    - name: Create release archive
+      run: |
+        cd artifact
+        
+        # Create a clean release directory
+        mkdir -p ../release
+        
+        # Copy main executable and required files
+        cp SpeedsAndFeeds.exe ../release/
+        
+        # Copy any required directories (Qt libs, etc.)
+        find . -type d -name "*Qt*" -exec cp -r {} ../release/ \;
+        find . -type d -name "*PySide*" -exec cp -r {} ../release/ \;
+        find . -name "*.dll" -exec cp {} ../release/ \;
+        
+        # Copy build info if it exists
+        if [ -f "build_info.json" ]; then
+          cp build_info.json ../release/
+        fi
+        
+        # Create the release archive
+        cd ../release
+        zip -r "../SpeedsAndFeeds-${{ inputs.tag }}-windows.zip" .
+        
+        # Show final archive contents
+        echo "📦 Release archive contents:"
+        unzip -l "../SpeedsAndFeeds-${{ inputs.tag }}-windows.zip"
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        echo "## What's Changed" > changelog.md
+        
+        # Get commits since last tag
+        LAST_TAG=$(git tag --sort=-version:refname | grep -v "^${{ inputs.tag }}$" | head -n1)
+        if [ -n "$LAST_TAG" ]; then
+          echo "" >> changelog.md
+          echo "### Commits since $LAST_TAG:" >> changelog.md
+          git log --oneline $LAST_TAG..${{ inputs.tag }} >> changelog.md
+        else
+          echo "" >> changelog.md
+          echo "### All commits in this release:" >> changelog.md
+          git log --oneline ${{ inputs.tag }} >> changelog.md
+        fi
+        
+        echo "" >> changelog.md
+        echo "## Build Information" >> changelog.md
+        if [ -f "artifact/build_info.json" ]; then
+          echo "- **Build Date**: $(cat artifact/build_info.json | grep -o '"build_date":"[^"]*' | cut -d'"' -f4)" >> changelog.md
+          echo "- **Commit**: ${{ github.sha }}" >> changelog.md
+        fi
+        echo "- **Platform**: Windows x64" >> changelog.md
+        echo "- **Standalone**: Yes (no Python required)" >> changelog.md
+        
+        # Set output for use in release
+        {
+          echo 'changelog<<EOF'
+          cat changelog.md
+          echo 'EOF'
+        } >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ inputs.tag }}
+        release_name: "Speeds & Feeds Calculator ${{ inputs.tag }}"
+        body: ${{ steps.changelog.outputs.changelog }}
+        draft: false
+        prerelease: ${{ inputs.release_type == 'prerelease' }}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./SpeedsAndFeeds-${{ inputs.tag }}-windows.zip
+        asset_name: SpeedsAndFeeds-${{ inputs.tag }}-windows.zip
+        asset_content_type: application/zip
+
+    - name: Release Summary
+      run: |
+        echo "## Release Created Successfully! 🎉" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Tag**: ${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Type**: ${{ inputs.release_type }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Latest**: ${{ inputs.make_latest }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Download" >> $GITHUB_STEP_SUMMARY
+        echo "The release is now available at: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY

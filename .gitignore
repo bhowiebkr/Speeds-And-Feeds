@@ -131,3 +131,15 @@ dmypy.json
 
 # Claude Code files
 .claude
+
+# Nuitka build directories
+build/
+*.build/
+*.dist/
+*.onefile-build/
+
+# Build artifacts
+*.spec
+*.exe
+*.app
+*.dmg
