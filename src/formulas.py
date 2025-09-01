@@ -49,15 +49,10 @@ def SFM_to_SMM(SFM):
     return SFM * 0.3048
 
 
-print(thou_to_mm(1))
 
 
 class FeedsAndSpeeds:
     def __init__(self):
-        # Material
-        self.hb_min = None
-        self.hb_max = None
-        self.k_factor = None
 
         # Tool
         self.diameter = None
@@ -77,23 +72,13 @@ class FeedsAndSpeeds:
         self.mmr = None
 
     def print_values(self):
-        print("\nHB Min:", self.hb_min)
-        print("HB Max:", self.hb_max)
-        print("K-Factor:", self.k_factor)
-        print("Cutting Diameter:", self.diameter)
-        print("Flute Num:", self.flute_num)
-        print("Flute Length:", self.flute_len)
-        print("Lead Angle:", self.lead_angle)
-        print("Depth of Cut:", self.doc)
-        print("Width of Cut:", self.woc)
-        print("Surface Meters per Minute:", self.smm)
-        print("Millimeters per tooth:", self.mmpt)
+        pass
 
     def calculate(self):
         self.rpm = (self.smm * 1000) / (self.diameter * math.pi)
         self.feed = float(self.flute_num) * self.mmpt * self.rpm
         self.mrr = self.woc * self.doc * self.feed / 1000
-        self.kw = self.mrr / self.k_factor
+        self.kw = 0  # Power calculation removed (was dependent on material k_factor)
 
 
 # SFM = (Pi * RPM * Diameter) / 12

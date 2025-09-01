@@ -4,10 +4,8 @@ import logging
 
 from PySide6 import QtWidgets, QtCore, QtGui
 
-from src.components.widgets import MaterialCombo, IntInput, DoubleInput
+from src.components.widgets import IntInput, DoubleInput
 
-if os.name == "nt":
-    import qdarktheme
 
 from src.formulas import FeedsAndSpeeds
 
@@ -22,19 +20,34 @@ M_TO_FT = 3.28084
 class ToolBox(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super(ToolBox, self).__init__(parent)
-        self.setTitle("Tool Info")
+        self.setTitle("🔧 Tool Info")
+        self.setObjectName("tool_box")
         form = QtWidgets.QFormLayout()
+        form.setVerticalSpacing(8)
+        form.setHorizontalSpacing(10)
         self.setLayout(form)
 
-        # Widgets
+        # Widgets with enhanced properties
         self.toolDiameter = QtWidgets.QDoubleSpinBox()
         self.toolDiameterImp = QtWidgets.QDoubleSpinBox()
         self.fluteNum = QtWidgets.QSpinBox()
         # self.fluteLen = QtWidgets.QDoubleSpinBox()
         # self.leadAngle = QtWidgets.QDoubleSpinBox()
 
+        # Set ranges and defaults
+        self.toolDiameter.setRange(0.1, 200.0)
+        self.toolDiameter.setSuffix(" mm")
         self.toolDiameter.setValue(12)
+        self.toolDiameter.setToolTip("Tool diameter in millimeters")
+        
+        self.toolDiameterImp.setRange(0.001, 8.0)
+        self.toolDiameterImp.setSuffix('"')
+        self.toolDiameterImp.setDecimals(3)
+        self.toolDiameterImp.setToolTip("Tool diameter in inches")
+        
+        self.fluteNum.setRange(1, 10)
         self.fluteNum.setValue(2)
+        self.fluteNum.setToolTip("Number of cutting flutes on the tool")
         # self.fluteLen.setValue(10)
         # self.leadAngle.setValue(90)
 
@@ -59,8 +72,11 @@ class ToolBox(QtWidgets.QGroupBox):
 class CuttingBox(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super(CuttingBox, self).__init__(parent)
-        self.setTitle("Cutting Operation")
+        self.setTitle("⚙️ Cutting Operation")
+        self.setObjectName("cutting_box")
         form = QtWidgets.QFormLayout()
+        form.setVerticalSpacing(12)  # Increased to prevent 34px height spinboxes from overlapping
+        form.setHorizontalSpacing(10)
         self.setLayout(form)
         self.paused = False
 
@@ -210,26 +226,42 @@ class CuttingBox(QtWidgets.QGroupBox):
 class MachineBox(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super(MachineBox, self).__init__(parent)
-        self.setTitle("Machine Specs")
+        self.setTitle("🏭 Machine Specs")
+        self.setObjectName("machine_box")
         form = QtWidgets.QFormLayout()
+        form.setVerticalSpacing(8)
+        form.setHorizontalSpacing(10)
         self.setLayout(form)
 
-        # Widgets
+        # Widgets with enhanced styling
         self.minRPM = QtWidgets.QSpinBox()
-        self.minRPM.setMaximum(100000)
+        self.minRPM.setRange(0, 100000)
+        self.minRPM.setSuffix(" RPM")
         self.minRPM.setValue(6000)
+        self.minRPM.setToolTip("Minimum spindle speed of your machine")
+        
+        self.preferredRPM = QtWidgets.QSpinBox()
+        self.preferredRPM.setRange(0, 100000)
+        self.preferredRPM.setSuffix(" RPM")
+        self.preferredRPM.setValue(22000)
+        self.preferredRPM.setToolTip("Your preferred spindle speed for optimal performance")
+        
         self.maxRPM = QtWidgets.QSpinBox()
-        self.maxRPM.setMaximum(100000)
+        self.maxRPM.setRange(0, 100000)
+        self.maxRPM.setSuffix(" RPM")
         self.maxRPM.setValue(24000)
+        self.maxRPM.setToolTip("Maximum spindle speed of your machine")
 
         form.addRow("Min (RPM)", self.minRPM)
+        form.addRow("⭐ Preferred (RPM)", self.preferredRPM)
         form.addRow("Max (RPM)", self.maxRPM)
 
 
 class ResultsBox(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super(ResultsBox, self).__init__(parent)
-        self.setTitle("Results")
+        self.setTitle("📊 Results")
+        self.setObjectName("results_box")
         mainLayout = QtWidgets.QHBoxLayout()
         self.setLayout(mainLayout)
 
@@ -238,6 +270,8 @@ class ResultsBox(QtWidgets.QGroupBox):
 
         for form in [formLeft, formRight]:
             form.setLabelAlignment(QtCore.Qt.AlignRight)
+            form.setVerticalSpacing(12)
+            form.setHorizontalSpacing(15)
 
         mainLayout.addStretch()
         mainLayout.addLayout(formLeft)
@@ -245,20 +279,28 @@ class ResultsBox(QtWidgets.QGroupBox):
         mainLayout.addLayout(formRight)
         mainLayout.addStretch()
 
-        # Widgets
-        self.rpm = QtWidgets.QLabel("<b>18,765</b>")
-        self.feed = QtWidgets.QLabel("<b>2000 mm/min</b>")
-        self.feed_imp = QtWidgets.QLabel("<b>2000 inches/min</b>")
-        self.mrr = QtWidgets.QLabel("<b>62 cm³/min</b>")
-        self.kw = QtWidgets.QLabel("<b>0.14 kw</b>")
-        self.hp = QtWidgets.QLabel("<b>0.14 kw</b>")
+        # Result widgets with better initial styling
+        self.rpm = QtWidgets.QLabel("<b>0</b>")
+        self.feed = QtWidgets.QLabel("<b>0 mm/min</b>")
+        self.feed_imp = QtWidgets.QLabel("<b>0 inches/min</b>")
+        self.mrr = QtWidgets.QLabel("<b>0 cm³/min</b>")
+        self.kw = QtWidgets.QLabel("<b>0 kW</b>")
+        self.hp = QtWidgets.QLabel("<b>0 HP</b>")
+        
+        # Set tooltips for results
+        self.rpm.setToolTip("Spindle speed - should be within machine limits")
+        self.feed.setToolTip("Feed rate in millimeters per minute")
+        self.feed_imp.setToolTip("Feed rate in inches per minute")
+        self.mrr.setToolTip("Material removal rate - volume of material removed per minute")
+        self.kw.setToolTip("Power required in kilowatts")
+        self.hp.setToolTip("Power required in horsepower")
 
-        formLeft.addRow("RPM:", self.rpm)
-        formLeft.addRow("Material Removal Rate (MRR):", self.mrr)
-        formLeft.addRow("Kilowatt Power:", self.kw)
-        formLeft.addRow("Horse Power:", self.hp)
-        formRight.addRow("Feed (mm/min):", self.feed)
-        formRight.addRow("Feed (inches/min):", self.feed_imp)
+        formLeft.addRow("🔄 RPM:", self.rpm)
+        formLeft.addRow("📊 MRR:", self.mrr)
+        formLeft.addRow("⚡ Power (kW):", self.kw)
+        formLeft.addRow("🐎 Power (HP):", self.hp)
+        formRight.addRow("🟢 Feed (mm/min):", self.feed)
+        formRight.addRow("🟢 Feed (in/min):", self.feed_imp)
 
 
 class GUI(QtWidgets.QMainWindow):
@@ -267,8 +309,10 @@ class GUI(QtWidgets.QMainWindow):
         self.settings = None
 
         self.setWindowTitle(
-            "Speeds and Feeds Calculator - https://github.com/bhowiebkr/Speeds-And-Feeds"
+            "⚙️ Speeds & Feeds Calculator v2.0 - Enhanced"
         )
+        self.setMinimumSize(1000, 750)  # Increased height to accommodate better spacing
+        self.resize(1200, 800)
         settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
 
         try:
@@ -279,10 +323,14 @@ class GUI(QtWidgets.QMainWindow):
                 "Unable to load settings. First time opening the tool?\n" + str(e)
             )
 
-        # Layouts
+        # Layouts with improved spacing
         main_widget = QtWidgets.QWidget()
         main_layout = QtWidgets.QVBoxLayout()
+        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(15, 15, 15, 15)
+        
         sections_layout = QtWidgets.QHBoxLayout()
+        sections_layout.setSpacing(15)
 
         self.setCentralWidget(main_widget)
         main_widget.setLayout(main_layout)
@@ -294,11 +342,7 @@ class GUI(QtWidgets.QMainWindow):
 
         self.results_box = ResultsBox()
 
-        # widgets
-        self.materialCombo = MaterialCombo()
-
         # Add Widgets
-        form.addRow("Material", self.materialCombo)
         main_layout.addLayout(form)
         main_layout.addLayout(sections_layout)
         sections_layout.addWidget(self.tool_box)
@@ -307,7 +351,6 @@ class GUI(QtWidgets.QMainWindow):
         main_layout.addWidget(self.results_box)
 
         # Logic
-        self.materialCombo.currentIndexChanged.connect(self.update)
         self.tool_box.fluteNum.editingFinished.connect(self.update)
         self.cutting_box.DOC.editingFinished.connect(self.update)
         self.cutting_box.WOC.editingFinished.connect(self.update)
@@ -333,15 +376,61 @@ class GUI(QtWidgets.QMainWindow):
         self.settings.setValue("geometry", self.saveGeometry())
         QtWidgets.QWidget.closeEvent(self, event)
 
+    def get_rpm_status(self, rpm):
+        """Determine RPM status based on machine limits and preferred RPM"""
+        min_rpm = self.machine_box.minRPM.value()
+        preferred_rpm = self.machine_box.preferredRPM.value()
+        max_rpm = self.machine_box.maxRPM.value()
+        
+        # Check if outside machine limits (danger)
+        if rpm < min_rpm:
+            return "danger", f"below minimum ({min_rpm:,} RPM)"
+        elif rpm > max_rpm:
+            return "danger", f"above maximum ({max_rpm:,} RPM)"
+        
+        # Check if close to preferred RPM (good)
+        preferred_tolerance = preferred_rpm * 0.1  # 10% tolerance around preferred
+        if abs(rpm - preferred_rpm) <= preferred_tolerance:
+            return "good", f"near preferred ({preferred_rpm:,} RPM)"
+        
+        # Check if approaching limits (warning)
+        elif rpm > max_rpm * 0.9:  # Within 90% of max
+            return "warning", "approaching maximum"
+        elif rpm < min_rpm * 1.1:  # Within 110% of min
+            return "warning", "near minimum"
+        else:
+            return "info", "within safe range"
+    
+    def apply_result_styling(self, label, status, value):
+        """Apply color styling to result labels"""
+        if status == "good":
+            color = "#4CAF50"
+            bg_color = "rgba(76, 175, 80, 0.1)"
+        elif status == "warning":
+            color = "#FF9800"
+            bg_color = "rgba(255, 152, 0, 0.1)"
+        elif status == "danger":
+            color = "#F44336"
+            bg_color = "rgba(244, 67, 54, 0.1)"
+        else:
+            color = "#2196F3"
+            bg_color = "rgba(33, 150, 243, 0.1)"
+        
+        label.setStyleSheet(f"""
+            QLabel {{
+                color: {color};
+                background-color: {bg_color};
+                border: 1px solid {color};
+                border-radius: 6px;
+                padding: 4px 8px;
+                font-weight: bold;
+                font-size: 11pt;
+            }}
+        """)
+        label.setText(f"<b>{value}</b>")
+
     def update(self):
-        print("update")
-
         fs = FeedsAndSpeeds()
-
-        # Material
-        fs.hb_min = self.materialCombo.HBMin
-        fs.hb_max = self.materialCombo.HBMax
-        fs.k_factor = self.materialCombo.k_factor
 
         # Tool
         fs.diameter = self.tool_box.toolDiameter.value()
@@ -359,21 +448,41 @@ class GUI(QtWidgets.QMainWindow):
 
         # Do the formulas
         fs.calculate()
-
-        self.results_box.rpm.setText(f"<b>{round(fs.rpm):,}</b>")
-        self.results_box.feed.setText(f"<b>{fs.feed:.2f} mm/min</b>")
-        self.results_box.feed_imp.setText(f"<b>{fs.feed*0.0393701:.2f} inches/min</b>")
-        self.results_box.mrr.setText(f"<b>{fs.mrr:.2f} cm³/min</b>")
-
-        fs.kw = 0
-        self.results_box.kw.setText(f"<b>{fs.kw:.2f} kW</b>")
-        self.results_box.hp.setText(f"<b>{fs.kw * 1.34102:.2f} HP</b>")
+        
+        # Get RPM status for color coding
+        rpm_status, rpm_message = self.get_rpm_status(fs.rpm)
+        
+        # Apply colored styling to results
+        self.apply_result_styling(self.results_box.rpm, rpm_status, f"{round(fs.rpm):,}")
+        self.apply_result_styling(self.results_box.feed, "info", f"{fs.feed:.2f} mm/min")
+        self.apply_result_styling(self.results_box.feed_imp, "info", f"{fs.feed*0.0393701:.2f} inches/min")
+        self.apply_result_styling(self.results_box.mrr, "info", f"{fs.mrr:.2f} cm³/min")
+        self.apply_result_styling(self.results_box.kw, "info", f"{fs.kw:.2f} kW")
+        self.apply_result_styling(self.results_box.hp, "info", f"{fs.kw * 1.34102:.2f} HP")
+        
+        # Set tooltip for RPM with status message
+        self.results_box.rpm.setToolTip(f"RPM Status: {rpm_message}")
 
         # Update the output
 
 
+def load_stylesheet():
+    """Load the dark theme stylesheet"""
+    stylesheet_path = os.path.join(os.path.dirname(__file__), 'dark_theme.qss')
+    try:
+        with open(stylesheet_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        logging.warning(f"Stylesheet file not found: {stylesheet_path}")
+        return ""
+
 def start():
     app = QtWidgets.QApplication(sys.argv)
+    
+    # Apply dark theme stylesheet
+    stylesheet = load_stylesheet()
+    if stylesheet:
+        app.setStyleSheet(stylesheet)
 
     gui = GUI()
     gui.show()

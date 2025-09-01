@@ -1,0 +1,231 @@
+/* Enhanced Dark Theme Stylesheet for Speeds & Feeds Calculator */
+
+QWidget {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 9pt;
+}
+
+QMainWindow {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #1e1e1e, stop:1 #2d2d30);
+}
+
+/* Group Boxes with Enhanced Colors */
+QGroupBox {
+    font-weight: bold;
+    border: 2px solid #007ACC;
+    border-radius: 12px;
+    margin-top: 1ex;
+    margin-bottom: 5px;
+    padding-top: 15px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #3c3c3c, stop:1 #2a2a2a);
+    color: #ffffff;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 15px;
+    padding: 0 8px 0 8px;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #007ACC, stop:1 #005a9e);
+    color: #ffffff;
+    border-radius: 6px;
+    font-size: 10pt;
+}
+
+/* Special styling for different group boxes */
+QGroupBox[objectName="tool_box"] {
+    border-color: #4CAF50;
+}
+
+QGroupBox[objectName="tool_box"]::title {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #4CAF50, stop:1 #388E3C);
+}
+
+QGroupBox[objectName="cutting_box"] {
+    border-color: #FF9800;
+}
+
+QGroupBox[objectName="cutting_box"]::title {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #FF9800, stop:1 #F57C00);
+}
+
+QGroupBox[objectName="machine_box"] {
+    border-color: #9C27B0;
+}
+
+QGroupBox[objectName="machine_box"]::title {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #9C27B0, stop:1 #7B1FA2);
+}
+
+QGroupBox[objectName="results_box"] {
+    border-color: #2196F3;
+}
+
+QGroupBox[objectName="results_box"]::title {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #2196F3, stop:1 #1976D2);
+}
+
+/* Enhanced Form Controls */
+QSpinBox, QDoubleSpinBox {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #4a4a4a, stop:1 #3a3a3a);
+    border: 1px solid #666666;
+    border-radius: 6px;
+    padding: 5px;
+    min-height: 20px;
+    margin: 1px;
+    color: #ffffff;
+    font-size: 9pt;
+}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+    background-color: #505050;
+    border: none;
+    border-radius: 2px;
+    width: 16px;
+}
+
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    background-color: #505050;
+    border: none;
+    border-radius: 2px;
+    width: 16px;
+}
+
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #606060;
+}
+
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #ffffff;
+    width: 0px;
+    height: 0px;
+}
+
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #ffffff;
+    width: 0px;
+    height: 0px;
+}
+
+/* Combo Box */
+QComboBox {
+    background-color: #404040;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 5px;
+    min-height: 20px;
+}
+
+QComboBox::drop-down {
+    background-color: #505050;
+    border: none;
+    border-radius: 2px;
+    width: 20px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #ffffff;
+    width: 0px;
+    height: 0px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #404040;
+    border: 1px solid #555555;
+    selection-background-color: #0078d4;
+    color: #ffffff;
+}
+
+/* Labels */
+QLabel {
+    color: #ffffff;
+    background-color: transparent;
+}
+
+/* Enhanced Form Labels */
+QFormLayout QLabel {
+    color: #e0e0e0;
+    font-weight: normal;
+    font-size: 9pt;
+    padding: 2px;
+}
+
+/* Result labels with special styling */
+QLabel[objectName*="result"] {
+    font-size: 11pt;
+    font-weight: bold;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+/* Color classes for results */
+.result-good {
+    color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.result-warning {
+    color: #FF9800;
+    background-color: rgba(255, 152, 0, 0.1);
+}
+
+.result-danger {
+    color: #F44336;
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.result-info {
+    color: #2196F3;
+    background-color: rgba(33, 150, 243, 0.1);
+}
+
+/* Focus styles with animation */
+QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
+    border: 2px solid #2196F3;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #5a5a5a, stop:1 #4a4a4a);
+}
+
+/* Hover effects */
+QSpinBox:hover, QDoubleSpinBox:hover, QComboBox:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #555555, stop:1 #454545);
+    border-color: #888888;
+}
+
+/* Status bar and menu bar if present */
+QStatusBar {
+    background-color: #2b2b2b;
+    color: #ffffff;
+}
+
+QMenuBar {
+    background-color: #2b2b2b;
+    color: #ffffff;
+}
+
+QMenuBar::item:selected {
+    background-color: #0078d4;
+}
