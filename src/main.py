@@ -104,6 +104,7 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.MMPT.setMinimum(0.000)
         self.SFM.setMaximum(10000)
         self.SMM.setMaximum(10000)
+        self.SMM.setSingleStep(10)
         self.SMMM.setMaximum(1000000)
         self.WOC_percent.setMaximum(100)
         self.DOC_percent.setMaximum(200)
