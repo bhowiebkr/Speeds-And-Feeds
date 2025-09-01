@@ -58,15 +58,19 @@ class ToolBox(QtWidgets.QGroupBox):
         # form.addRow("Flute Length (MM)", self.fluteLen)
         # form.addRow("Lead Angle (°)", self.leadAngle)
 
-        self.toolDiameter.editingFinished.connect(self.mm_to_in)
-        self.toolDiameterImp.editingFinished.connect(self.in_to_mm)
+        self.toolDiameter.valueChanged.connect(self.mm_to_in)
+        self.toolDiameterImp.valueChanged.connect(self.in_to_mm)
         self.mm_to_in()
 
     def mm_to_in(self):
+        self.toolDiameterImp.blockSignals(True)
         self.toolDiameterImp.setValue(self.toolDiameter.value() * MM_TO_IN)
+        self.toolDiameterImp.blockSignals(False)
 
     def in_to_mm(self):
+        self.toolDiameter.blockSignals(True)
         self.toolDiameter.setValue(self.toolDiameterImp.value() * IN_TO_MM)
+        self.toolDiameter.blockSignals(False)
 
 
 class CuttingBox(QtWidgets.QGroupBox):
@@ -132,17 +136,17 @@ class CuttingBox(QtWidgets.QGroupBox):
         form.addRow("Inches per Tooth (IPT)", self.IPT)
         form.addRow("Millimeters per tooth (MMPT)", self.MMPT)
 
-        self.DOC.editingFinished.connect(self.doc_to_others)
-        self.DOC_IMP.editingFinished.connect(self.doc_imp_to_others)
-        self.WOC.editingFinished.connect(self.woc_to_others)
-        self.WOC_IMP.editingFinished.connect(self.woc_imp_to_others)
-        self.DOC_percent.editingFinished.connect(self.doc_percent_to_others)
-        self.WOC_percent.editingFinished.connect(self.woc_percent_to_others)
-        self.IPT.editingFinished.connect(self.ipt_to_mmpt)
-        self.MMPT.editingFinished.connect(self.mmpt_to_ipt)
-        self.SFM.editingFinished.connect(self.sfm_to_others)
-        self.SMM.editingFinished.connect(self.smm_to_others)
-        self.SMMM.editingFinished.connect(self.smmm_to_others)
+        self.DOC.valueChanged.connect(self.doc_to_others)
+        self.DOC_IMP.valueChanged.connect(self.doc_imp_to_others)
+        self.WOC.valueChanged.connect(self.woc_to_others)
+        self.WOC_IMP.valueChanged.connect(self.woc_imp_to_others)
+        self.DOC_percent.valueChanged.connect(self.doc_percent_to_others)
+        self.WOC_percent.valueChanged.connect(self.woc_percent_to_others)
+        self.IPT.valueChanged.connect(self.ipt_to_mmpt)
+        self.MMPT.valueChanged.connect(self.mmpt_to_ipt)
+        self.SFM.valueChanged.connect(self.sfm_to_others)
+        self.SMM.valueChanged.connect(self.smm_to_others)
+        self.SMMM.valueChanged.connect(self.smmm_to_others)
 
     def init(self):
         self.doc_to_others()
@@ -156,71 +160,110 @@ class CuttingBox(QtWidgets.QGroupBox):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         doc_imp = self.DOC_IMP.value()
         doc = doc_imp * IN_TO_MM
+        self.DOC_percent.blockSignals(True)
+        self.DOC.blockSignals(True)
         self.DOC_percent.setValue(doc / diameter * 100)
         self.DOC.setValue(doc)
+        self.DOC_percent.blockSignals(False)
+        self.DOC.blockSignals(False)
 
     def woc_imp_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         woc = self.WOC_IMP.value() * IN_TO_MM
+        self.WOC.blockSignals(True)
+        self.WOC_percent.blockSignals(True)
         if woc > diameter:
             self.WOC.setValue(diameter)
             self.WOC_percent.setValue(100)
         else:
             self.WOC_percent.setValue(woc / diameter * 100)
+        self.WOC.blockSignals(False)
+        self.WOC_percent.blockSignals(False)
 
     def doc_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         doc = self.DOC.value()
+        self.DOC_percent.blockSignals(True)
+        self.DOC_IMP.blockSignals(True)
         self.DOC_percent.setValue(doc / diameter * 100)
         self.DOC_IMP.setValue(doc * MM_TO_IN)
+        self.DOC_percent.blockSignals(False)
+        self.DOC_IMP.blockSignals(False)
 
     def woc_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         woc = self.WOC.value()
+        self.WOC_percent.blockSignals(True)
+        self.WOC_IMP.blockSignals(True)
         if woc > diameter:
             self.WOC.setValue(diameter)
             self.WOC_percent.setValue(100)
         else:
             self.WOC_percent.setValue(woc / diameter * 100)
-
         self.WOC_IMP.setValue(woc * MM_TO_IN)
+        self.WOC_percent.blockSignals(False)
+        self.WOC_IMP.blockSignals(False)
 
     def doc_percent_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         doc_percent = self.DOC_percent.value()
         mm = diameter * doc_percent / 100
+        self.DOC.blockSignals(True)
+        self.DOC_IMP.blockSignals(True)
         self.DOC.setValue(mm)
         self.DOC_IMP.setValue(mm * MM_TO_IN)
+        self.DOC.blockSignals(False)
+        self.DOC_IMP.blockSignals(False)
 
     def woc_percent_to_others(self):
         diameter = self.parent().parent().tool_box.toolDiameter.value()
         woc_percent = self.WOC_percent.value()
         mm = diameter * woc_percent / 100
+        self.WOC.blockSignals(True)
+        self.WOC_IMP.blockSignals(True)
         self.WOC.setValue(mm)
         self.WOC_IMP.setValue(mm * MM_TO_IN)
+        self.WOC.blockSignals(False)
+        self.WOC_IMP.blockSignals(False)
 
     def ipt_to_mmpt(self):
         ipt = self.IPT.value()
+        self.MMPT.blockSignals(True)
         self.MMPT.setValue(ipt * IN_TO_MM)
+        self.MMPT.blockSignals(False)
 
     def mmpt_to_ipt(self):
         mmpt = self.MMPT.value()
+        self.IPT.blockSignals(True)
         self.IPT.setValue(mmpt * MM_TO_IN)
+        self.IPT.blockSignals(False)
 
     def sfm_to_others(self):
         sfm = self.SFM.value()
+        self.SMMM.blockSignals(True)
+        self.SMM.blockSignals(True)
         self.SMMM.setValue(sfm * FT_TO_MM)
         self.SMM.setValue(sfm * FT_TO_M)
+        self.SMMM.blockSignals(False)
+        self.SMM.blockSignals(False)
 
     def smm_to_others(self):
         smm = self.SMM.value()
+        self.SFM.blockSignals(True)
+        self.SMMM.blockSignals(True)
         self.SFM.setValue(smm * M_TO_FT)
         self.SMMM.setValue(smm * 1000)
+        self.SFM.blockSignals(False)
+        self.SMMM.blockSignals(False)
 
     def smmm_to_others(self):
         smmm = self.SMMM.value()
+        self.SFM.blockSignals(True)
+        self.SMM.blockSignals(True)
         self.SFM.setValue(smmm * MM_TO_FT)
         self.SMM.setValue(smmm * 0.001)
+        self.SFM.blockSignals(False)
+        self.SMM.blockSignals(False)
 
 
 class MachineBox(QtWidgets.QGroupBox):
@@ -350,17 +393,17 @@ class GUI(QtWidgets.QMainWindow):
         sections_layout.addWidget(self.machine_box)
         main_layout.addWidget(self.results_box)
 
-        # Logic
-        self.tool_box.fluteNum.editingFinished.connect(self.update)
-        self.cutting_box.DOC.editingFinished.connect(self.update)
-        self.cutting_box.WOC.editingFinished.connect(self.update)
-        self.cutting_box.SMM.editingFinished.connect(self.update)
-        self.cutting_box.SFM.editingFinished.connect(self.update)
-        self.cutting_box.SMMM.editingFinished.connect(self.update)
-        self.cutting_box.MMPT.editingFinished.connect(self.update)
-        self.cutting_box.IPT.editingFinished.connect(self.update)
-        self.tool_box.toolDiameter.editingFinished.connect(self.toolDiameterChanged)
-        self.tool_box.toolDiameterImp.editingFinished.connect(self.toolDiameterChanged)
+        # Logic - Use valueChanged for real-time updates
+        self.tool_box.fluteNum.valueChanged.connect(self.update)
+        self.cutting_box.DOC.valueChanged.connect(self.update)
+        self.cutting_box.WOC.valueChanged.connect(self.update)
+        self.cutting_box.SMM.valueChanged.connect(self.update)
+        self.cutting_box.SFM.valueChanged.connect(self.update)
+        self.cutting_box.SMMM.valueChanged.connect(self.update)
+        self.cutting_box.MMPT.valueChanged.connect(self.update)
+        self.cutting_box.IPT.valueChanged.connect(self.update)
+        self.tool_box.toolDiameter.valueChanged.connect(self.toolDiameterChanged)
+        self.tool_box.toolDiameterImp.valueChanged.connect(self.toolDiameterChanged)
 
         self.cutting_box.init()
         self.update()
