@@ -6,17 +6,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Speeds and Feeds Calculator for CNC machines built with PySide6 (Qt for Python). The application calculates optimal cutting parameters (RPM, feed rates, material removal rates) based on tool specifications, material properties, and cutting parameters.
 
+**Major Version**: v2.0 - Enhanced with HSM (High Speed Machining), micro tool support, and comprehensive refactored architecture.
+
 ## Running the Application
 
 - **Run application**: `run.bat` (Windows batch file that activates venv and runs the app)
 - **Run with Python directly**: `venv/Scripts/python.exe speeds_and_feeds.py`
 - **Install dependencies**: `venv/Scripts/python.exe -m pip install -r requirements.txt`
 
+## Key Features
+
+- **Advanced Calculations**: Standard and micro tool machining calculations (<3mm tools)
+- **Tool Deflection Analysis**: Cantilever beam theory for all tool sizes with deflection warnings
+- **HSM Support**: High Speed Machining mode with chip thinning compensation
+- **Machine Rigidity**: Adjustments for Router, DIY/Medium, and Industrial VMC machines
+- **Unit System**: Full metric/imperial conversion with real-time switching
+- **Material Database**: Comprehensive material properties with coating multipliers
+- **Graphical Dashboard**: Real-time visual feedback with gradient bars and status indicators
+- **Parameter Validation**: Extensive warnings and recommendations for safe machining
+
 ## Testing
 
 - **Run all tests**: `run_tests.bat` (Windows batch file) or `venv/Scripts/python.exe run_tests.py`
 - **Run specific test**: `venv/Scripts/python.exe tests/test_layout.py`
 - **Layout test**: Comprehensive GUI layout validation that detects overlapping elements
+
+### Testing Guidelines
+
+**IMPORTANT**: When writing unit tests, avoid Unicode characters (checkmarks ✓, emojis 🎉, etc.) as they cause encoding errors on Windows systems. Use plain ASCII characters only in test output and assertions.
 
 ## Building
 
@@ -27,21 +44,47 @@ This is a Speeds and Feeds Calculator for CNC machines built with PySide6 (Qt fo
 ## Architecture
 
 ### Entry Points
-- `speeds_and_feeds.py` - Main entry point that imports and calls `src.main.start()`
-- `src/main.py` - Contains the GUI application logic and startup function
+- `speeds_and_feeds.py` - Main entry point that imports and calls `src.app.start()`
+- `src/app.py` - Application startup and theme loading
+- `src/main.py` - Simplified GUI class and main window logic
 
-### Core Components
-- **GUI Classes**: All UI components are defined in `src/main.py`:
-  - `GUI` - Main window and application controller
-  - `ToolBox` - Tool diameter and flute count input
-  - `CuttingBox` - Cutting parameters (depth/width of cut, surface speeds, feed per tooth)
-  - `MachineBox` - Machine specifications (min/max RPM)
-  - `ResultsBox` - Calculated results display
+### Refactored Architecture (v2.0)
 
-- **Calculations**: `src/formulas.py` contains the `FeedsAndSpeeds` class with machining formulas
-- **Custom Widgets**: `src/components/widgets.py` provides:
-  - `MaterialCombo` - Dropdown for material selection with hardness (HB) and K-factor data
-  - `IntInput`/`DoubleInput` - Validated input fields
+The codebase has been comprehensively refactored from large monolithic files into a well-organized modular structure:
+
+#### Constants Package (`src/constants/`)
+- `units.py` - Unit conversion constants and physical constants
+- `materials.py` - Material properties, coating multipliers, MaterialProperty class
+- `machining.py` - Machining constants, machine rigidity definitions, efficiency factors
+
+#### Calculators Package (`src/calculators/`)
+- `base.py` - Main `FeedsAndSpeeds` class with strategy pattern for tool size selection
+- `standard.py` - `StandardMachiningCalculator` for tools ≥3mm using traditional formulas
+- `micro.py` - `MicroMachiningCalculator` for tools <3mm with iterative deflection analysis
+
+#### Formulas Package (`src/formulas/`)
+- `basic.py` - Fundamental calculations (RPM, feed rate, surface speed, MRR)
+- `power.py` - Power and torque calculations
+- `chipload.py` - Chipload calculations, chip thinning, HSM adjustments
+- `deflection.py` - Tool deflection calculations using cantilever beam theory
+- `validation.py` - Parameter validation, warnings, material database loading
+
+#### UI Package (`src/ui/`)
+- `boxes/tool.py` - `ToolBox` widget for tool diameter and flute count with unit switching
+- `boxes/material.py` - `MaterialBox` widget for material selection and presets
+- `boxes/cutting.py` - `CuttingBox` widget for cutting parameters with unit conversion
+- `boxes/machine.py` - `MachineBox` widget for machine specifications and rigidity
+- `boxes/results.py` - `ResultsBox` widget with graphical dashboard
+- `styles.py` - Theme loading functions
+
+#### Utilities Package (`src/utils/`)
+- `conversions.py` - Unit conversion utility functions
+- `rigidity.py` - Machine rigidity adjustment functions
+
+#### Components (Unchanged)
+- `src/components/widgets.py` - Custom widgets (`MaterialCombo`, input validation)
+- `src/components/dashboard_widgets.py` - Graphical dashboard components
+- `src/components/materials.json` - Extended material database
 
 ### Data Files
 - `src/components/materials.json` - Material database with hardness ranges and K-factors for power calculations
@@ -56,15 +99,44 @@ The application supports both metric and imperial units with automatic conversio
 - Cutting parameters: mm ↔ inches, SFM ↔ SMM
 - Real-time updates when values change
 
-### Calculation Flow
-1. User selects material → provides HB range and K-factor
-2. User inputs tool parameters → diameter, flute count
-3. User inputs cutting parameters → depth/width of cut, surface speed, feed per tooth
-4. Application calculates → RPM, feed rate, material removal rate, power requirements
-5. Results update automatically when any input changes
+### Enhanced Calculation Flow (v2.0)
+1. **Tool Setup**: User inputs tool diameter, flute count, selects metric/imperial units
+2. **Material Selection**: Choose material (auto-populates Kc, surface speeds, chip loads) and tool coating
+3. **Cutting Parameters**: Set depth/width of cut, surface speed, feed per tooth with real-time unit conversion
+4. **Machine Configuration**: Select machine rigidity (Router/DIY/Industrial) affecting all parameters
+5. **Advanced Options**: Enable HSM mode, chip thinning compensation, set tool stickout for deflection
+6. **Smart Calculation**: 
+   - **Standard Tools (≥3mm)**: Traditional formulas with rigidity adjustments
+   - **Micro Tools (<3mm)**: Iterative deflection analysis with convergence checking
+   - **All Tools**: Deflection analysis, force calculations, parameter validation
+7. **Results Dashboard**: Graphical display with status indicators, warnings, and advanced metrics
+8. **Real-time Updates**: All calculations update automatically when any parameter changes
 
 ## Development Notes
 
-- The application uses Qt's signal-slot mechanism for real-time UI updates
-- Settings are persisted using QSettings for window geometry
-- All calculations are based on standard machining formulas referenced from garrtool.com
+### Architecture Benefits
+- **Modular Design**: Each module has a single, clear responsibility
+- **Better Testability**: Individual components can be tested in isolation
+- **Easier Maintenance**: Small, focused files are easier to understand and modify
+- **Clear Dependencies**: Import structure makes relationships explicit
+- **Extensibility**: New features can be added without touching unrelated code
+
+### Technical Implementation
+- **Strategy Pattern**: Calculator selection based on tool diameter (<3mm = micro, ≥3mm = standard)
+- **Signal-Slot Architecture**: Qt's mechanism for real-time UI updates and unit conversion
+- **Iterative Convergence**: Micro tool calculations use deflection feedback loops
+- **Physics-Based Modeling**: Cantilever beam theory for tool deflection analysis
+- **Machine Rigidity Aware**: All parameters adjusted based on machine type (Router/DIY/Industrial)
+- **Settings Persistence**: QSettings for window geometry and user preferences
+
+### Calculation References
+- Standard machining formulas from garrtool.com
+- Tool deflection using cantilever beam theory (δ = F×L³/(3×E×I))
+- Chip thinning compensation (RCTF = 1/√(1 - [1 - (2×Ae/D)]²))
+- Material properties from industry-standard sources (Sandvik, Harvey Tool, Kennametal)
+
+### Code Quality
+- **Type Hints**: Comprehensive typing for better IDE support and error prevention  
+- **Documentation**: Detailed docstrings for all functions and classes
+- **Error Handling**: Graceful handling of invalid inputs and edge cases
+- **Validation**: Parameter bounds checking with user-friendly warnings

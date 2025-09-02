@@ -10,7 +10,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from PySide6 import QtWidgets, QtCore
-from src.main import GUI, load_stylesheet
+from src.main import GUI
+from src.ui.styles import load_stylesheet
 
 def check_widget_overlaps(parent_widget, widget_name=""):
     """Check if any child widgets are overlapping"""
