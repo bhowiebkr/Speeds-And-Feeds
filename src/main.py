@@ -23,7 +23,7 @@ class ToolBox(QtWidgets.QGroupBox):
         self.setTitle("🔧 Tool Info")
         self.setObjectName("tool_box")
         form = QtWidgets.QFormLayout()
-        form.setVerticalSpacing(8)
+        form.setVerticalSpacing(10)  # Slightly increased for better spacing
         form.setHorizontalSpacing(10)
         self.setLayout(form)
         
@@ -130,7 +130,7 @@ class MaterialBox(QtWidgets.QGroupBox):
         self.setObjectName("material_box")
         
         form = QtWidgets.QFormLayout()
-        form.setVerticalSpacing(8)
+        form.setVerticalSpacing(10)  # Increased for better spacing
         form.setHorizontalSpacing(10)
         self.setLayout(form)
         
@@ -145,7 +145,9 @@ class MaterialBox(QtWidgets.QGroupBox):
         # Material info display (read-only)
         self.materialInfo = QtWidgets.QLabel("Select a material for recommendations")
         self.materialInfo.setWordWrap(True)
-        self.materialInfo.setStyleSheet("color: #888; font-size: 11px; padding: 5px;")
+        self.materialInfo.setMinimumHeight(40)  # Ensure minimum height for multi-line text
+        self.materialInfo.setAlignment(QtCore.Qt.AlignTop)
+        self.materialInfo.setStyleSheet("color: #888; font-size: 11px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; background-color: #f9f9f9;")
         
         # Suggest parameters button
         self.suggestButton = QtWidgets.QPushButton("💡 Suggest Parameters")
@@ -474,9 +476,11 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.setTitle("⚙️ Cutting Operation")
         self.setObjectName("cutting_box")
         form = QtWidgets.QFormLayout()
-        form.setVerticalSpacing(15)  # Increased spacing for better layout
+        form.setVerticalSpacing(20)  # Further increased to prevent 34px spinbox overlap
         form.setHorizontalSpacing(10)
+        form.setFieldGrowthPolicy(QtWidgets.QFormLayout.ExpandingFieldsGrow)
         self.setLayout(form)
+        self.setMinimumHeight(350)  # Set minimum height for the entire group box
         self.paused = False
 
         # Single input widgets that adapt to unit system
@@ -493,36 +497,42 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.DOC.setValue(0.5)
         self.DOC.setSuffix(" mm")
         self.DOC.setDecimals(3)
+        self.DOC.setMinimumHeight(34)  # Ensure minimum height
         self.DOC.setToolTip("Axial depth of cut")
         
         self.DOC_percent.setRange(0.1, 200.0)
         self.DOC_percent.setValue(4.2)  # 0.5mm / 12mm * 100
         self.DOC_percent.setSuffix(" %")
         self.DOC_percent.setDecimals(1)
+        self.DOC_percent.setMinimumHeight(34)  # Ensure minimum height
         self.DOC_percent.setToolTip("Depth of cut as percentage of tool diameter")
         
         self.WOC.setRange(0.001, 100.0)
         self.WOC.setValue(6.0)
         self.WOC.setSuffix(" mm")
         self.WOC.setDecimals(3)
+        self.WOC.setMinimumHeight(34)  # Ensure minimum height
         self.WOC.setToolTip("Radial width of cut")
         
         self.WOC_percent.setRange(1, 100)
         self.WOC_percent.setValue(50.0)  # 6mm / 12mm * 100
         self.WOC_percent.setSuffix(" %")
         self.WOC_percent.setDecimals(1)
+        self.WOC_percent.setMinimumHeight(34)  # Ensure minimum height
         self.WOC_percent.setToolTip("Width of cut as percentage of tool diameter")
         
         self.surface_speed.setRange(10, 5000)
         self.surface_speed.setValue(400)
         self.surface_speed.setSuffix(" SFM")
         self.surface_speed.setDecimals(0)
+        self.surface_speed.setMinimumHeight(34)  # Ensure minimum height
         self.surface_speed.setToolTip("Surface cutting speed")
         
         self.feed_per_tooth.setRange(0.0001, 1.0)
         self.feed_per_tooth.setValue(0.0020)
         self.feed_per_tooth.setSuffix('"')
         self.feed_per_tooth.setDecimals(4)
+        self.feed_per_tooth.setMinimumHeight(34)  # Ensure minimum height
         self.feed_per_tooth.setToolTip("Feed per tooth (chipload)")
         
         # Configure Kc (Specific Cutting Force) - always in N/mm²
@@ -530,6 +540,7 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.Kc.setMaximum(4000.0)
         self.Kc.setValue(800.0)  # Default for aluminum
         self.Kc.setSuffix(" N/mm²")
+        self.Kc.setMinimumHeight(34)  # Ensure minimum height
         self.Kc.setToolTip("Specific Cutting Force - Material dependent:\nAluminum: 700-900\nMild Steel: 1800-2200\nStainless: 2400-2800\nCast Iron: 1200-1500")
 
         # Add spacers
