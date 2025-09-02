@@ -72,33 +72,38 @@ class ToolBox(QtWidgets.QGroupBox):
     def on_unit_changed(self):
         """Handle unit system change"""
         current_value = self.toolDiameter.value()
+        current_suffix = self.toolDiameter.suffix()
         
         if self.metric_radio.isChecked():
             # Switch to metric
-            if self.toolDiameter.suffix() == '"':  # Currently imperial
+            if current_suffix == '"':  # Currently imperial
                 # Convert current imperial value to metric
-                metric_value = current_value * IN_TO_MM
-                self.toolDiameter.blockSignals(True)
-                self.toolDiameter.setRange(0.1, 200.0)
-                self.toolDiameter.setSuffix(" mm")
-                self.toolDiameter.setDecimals(3)
-                self.toolDiameter.setSingleStep(0.1)
-                self.toolDiameter.setValue(metric_value)
-                self.toolDiameter.blockSignals(False)
-                self._metric_value = metric_value
+                converted_value = current_value * IN_TO_MM
+            else:
+                converted_value = current_value  # Already metric
+                
+            self.toolDiameter.blockSignals(True)
+            self.toolDiameter.setRange(0.1, 200.0)
+            self.toolDiameter.setSuffix(" mm")
+            self.toolDiameter.setDecimals(3)
+            self.toolDiameter.setSingleStep(0.1)
+            self.toolDiameter.setValue(converted_value)
+            self.toolDiameter.blockSignals(False)
         else:
             # Switch to imperial
-            if self.toolDiameter.suffix() == " mm":  # Currently metric
+            if current_suffix == " mm":  # Currently metric
                 # Convert current metric value to imperial
-                imperial_value = current_value * MM_TO_IN
-                self.toolDiameter.blockSignals(True)
-                self.toolDiameter.setRange(0.001, 8.0)
-                self.toolDiameter.setSuffix('"')
-                self.toolDiameter.setDecimals(4)
-                self.toolDiameter.setSingleStep(0.001)
-                self.toolDiameter.setValue(imperial_value)
-                self.toolDiameter.blockSignals(False)
-                self._metric_value = current_value  # Store metric value
+                converted_value = current_value * MM_TO_IN
+            else:
+                converted_value = current_value  # Already imperial
+                
+            self.toolDiameter.blockSignals(True)
+            self.toolDiameter.setRange(0.001, 8.0)
+            self.toolDiameter.setSuffix('"')
+            self.toolDiameter.setDecimals(4)
+            self.toolDiameter.setSingleStep(0.001)
+            self.toolDiameter.setValue(converted_value)
+            self.toolDiameter.blockSignals(False)
     
     def get_diameter_mm(self):
         """Get diameter in millimeters regardless of display units"""
@@ -617,70 +622,125 @@ class CuttingBox(QtWidgets.QGroupBox):
         """Update all widgets to match the selected unit system"""
         is_metric = self.is_metric()
         
+        # Read current displayed values BEFORE unit change
+        current_doc = self.DOC.value()
+        current_woc = self.WOC.value()
+        current_surface_speed = self.surface_speed.value()
+        current_feed = self.feed_per_tooth.value()
+        
+        # Determine current unit state from suffix
+        doc_is_currently_metric = self.DOC.suffix() == " mm"
+        surface_is_currently_metric = self.surface_speed.suffix() == " SMM"
+        feed_is_currently_metric = self.feed_per_tooth.suffix() == " mm"
+        
         # Update DOC
-        current_doc_mm = self.get_doc_mm()
         self.DOC.blockSignals(True)
         if is_metric:
+            # Convert to metric if needed
+            if not doc_is_currently_metric:  # Currently imperial
+                converted_doc = current_doc * IN_TO_MM
+            else:
+                converted_doc = current_doc
+            
             self.DOC.setRange(0.001, 50.0)
             self.DOC.setSuffix(" mm")
             self.DOC.setDecimals(3)
             self.DOC.setSingleStep(0.1)
-            self.DOC.setValue(current_doc_mm)
+            self.DOC.setValue(converted_doc)
         else:
+            # Convert to imperial if needed
+            if doc_is_currently_metric:  # Currently metric
+                converted_doc = current_doc * MM_TO_IN
+            else:
+                converted_doc = current_doc
+                
             self.DOC.setRange(0.00004, 2.0)
             self.DOC.setSuffix('"')
             self.DOC.setDecimals(4)
             self.DOC.setSingleStep(0.001)
-            self.DOC.setValue(current_doc_mm * MM_TO_IN)
+            self.DOC.setValue(converted_doc)
         self.DOC.blockSignals(False)
         
         # Update WOC
-        current_woc_mm = self.get_woc_mm()
         self.WOC.blockSignals(True)
         if is_metric:
+            # Convert to metric if needed
+            if not doc_is_currently_metric:  # Use same logic as DOC for consistency
+                converted_woc = current_woc * IN_TO_MM
+            else:
+                converted_woc = current_woc
+                
             self.WOC.setRange(0.001, 100.0)
             self.WOC.setSuffix(" mm")
             self.WOC.setDecimals(3)
             self.WOC.setSingleStep(0.1)
-            self.WOC.setValue(current_woc_mm)
+            self.WOC.setValue(converted_woc)
         else:
+            # Convert to imperial if needed
+            if doc_is_currently_metric:  # Use same logic as DOC for consistency
+                converted_woc = current_woc * MM_TO_IN
+            else:
+                converted_woc = current_woc
+                
             self.WOC.setRange(0.00004, 4.0)
             self.WOC.setSuffix('"')
             self.WOC.setDecimals(4)
             self.WOC.setSingleStep(0.001)
-            self.WOC.setValue(current_woc_mm * MM_TO_IN)
+            self.WOC.setValue(converted_woc)
         self.WOC.blockSignals(False)
         
         # Update surface speed
-        current_sfm = self.get_surface_speed_sfm()
         self.surface_speed.blockSignals(True)
         if is_metric:
+            # Convert to SMM if needed
+            if not surface_is_currently_metric:  # Currently SFM
+                converted_speed = current_surface_speed * FT_TO_M
+            else:
+                converted_speed = current_surface_speed
+                
             self.surface_speed.setRange(3, 1500)
             self.surface_speed.setSuffix(" SMM")
             self.surface_speed.setDecimals(0)
-            self.surface_speed.setValue(current_sfm * FT_TO_M)
+            self.surface_speed.setValue(converted_speed)
         else:
+            # Convert to SFM if needed
+            if surface_is_currently_metric:  # Currently SMM
+                converted_speed = current_surface_speed * M_TO_FT
+            else:
+                converted_speed = current_surface_speed
+                
             self.surface_speed.setRange(10, 5000)
             self.surface_speed.setSuffix(" SFM")
             self.surface_speed.setDecimals(0)
-            self.surface_speed.setValue(current_sfm)
+            self.surface_speed.setValue(converted_speed)
         self.surface_speed.blockSignals(False)
         
         # Update feed per tooth
-        current_mmpt = self.get_feed_per_tooth_mm()
         self.feed_per_tooth.blockSignals(True)
         if is_metric:
+            # Convert to mm if needed
+            if not feed_is_currently_metric:  # Currently inches
+                converted_feed = current_feed * IN_TO_MM
+            else:
+                converted_feed = current_feed
+                
             self.feed_per_tooth.setRange(0.001, 25.0)
             self.feed_per_tooth.setSuffix(" mm")
             self.feed_per_tooth.setDecimals(4)
             self.feed_per_tooth.setSingleStep(0.001)
-            self.feed_per_tooth.setValue(current_mmpt)
+            self.feed_per_tooth.setValue(converted_feed)
         else:
+            # Convert to inches if needed
+            if feed_is_currently_metric:  # Currently mm
+                converted_feed = current_feed * MM_TO_IN
+            else:
+                converted_feed = current_feed
+                
             self.feed_per_tooth.setRange(0.00004, 1.0)
             self.feed_per_tooth.setSuffix('"')
             self.feed_per_tooth.setDecimals(4)
             self.feed_per_tooth.setSingleStep(0.0001)
-            self.feed_per_tooth.setValue(current_mmpt * MM_TO_IN)
+            self.feed_per_tooth.setValue(converted_feed)
         self.feed_per_tooth.blockSignals(False)
     
     def is_metric(self):
@@ -1115,7 +1175,8 @@ class GUI(QtWidgets.QMainWindow):
         self.cutting_box.Kc.valueChanged.connect(self.update)
         self.tool_box.toolDiameter.valueChanged.connect(self.toolDiameterChanged)
         
-        # Connect unit switching
+        # Connect unit switching - connect to both handlers
+        self.tool_box.unit_group.buttonClicked.connect(self.tool_box.on_unit_changed)
         self.tool_box.unit_group.buttonClicked.connect(self.on_unit_changed)
         
         # Material box signals
@@ -1161,6 +1222,9 @@ class GUI(QtWidgets.QMainWindow):
     
     def on_unit_changed(self):
         """Handle unit system change"""
+        # Update tool box units (this will be called automatically by the signal)
+        # But we need to make sure the ToolBox handles its own conversion
+        
         # Update cutting box units
         self.cutting_box.update_units()
         
