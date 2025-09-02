@@ -476,11 +476,11 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.setTitle("⚙️ Cutting Operation")
         self.setObjectName("cutting_box")
         form = QtWidgets.QFormLayout()
-        form.setVerticalSpacing(20)  # Further increased to prevent 34px spinbox overlap
+        form.setVerticalSpacing(20)  # Increased spacing to prevent overlap
         form.setHorizontalSpacing(10)
         form.setFieldGrowthPolicy(QtWidgets.QFormLayout.ExpandingFieldsGrow)
         self.setLayout(form)
-        self.setMinimumHeight(350)  # Set minimum height for the entire group box
+        self.setMinimumHeight(350)  # Set to accommodate calculated content height (~340px)
         self.paused = False
 
         # Single input widgets that adapt to unit system
@@ -497,42 +497,42 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.DOC.setValue(0.5)
         self.DOC.setSuffix(" mm")
         self.DOC.setDecimals(3)
-        self.DOC.setMinimumHeight(34)  # Ensure minimum height
+        self.DOC.setMinimumHeight(28)  # Standard spinbox height
         self.DOC.setToolTip("Axial depth of cut")
         
         self.DOC_percent.setRange(0.1, 200.0)
         self.DOC_percent.setValue(4.2)  # 0.5mm / 12mm * 100
         self.DOC_percent.setSuffix(" %")
         self.DOC_percent.setDecimals(1)
-        self.DOC_percent.setMinimumHeight(34)  # Ensure minimum height
+        self.DOC_percent.setMinimumHeight(28)  # Standard spinbox height
         self.DOC_percent.setToolTip("Depth of cut as percentage of tool diameter")
         
         self.WOC.setRange(0.001, 100.0)
         self.WOC.setValue(6.0)
         self.WOC.setSuffix(" mm")
         self.WOC.setDecimals(3)
-        self.WOC.setMinimumHeight(34)  # Ensure minimum height
+        self.WOC.setMinimumHeight(28)  # Standard spinbox height
         self.WOC.setToolTip("Radial width of cut")
         
         self.WOC_percent.setRange(1, 100)
         self.WOC_percent.setValue(50.0)  # 6mm / 12mm * 100
         self.WOC_percent.setSuffix(" %")
         self.WOC_percent.setDecimals(1)
-        self.WOC_percent.setMinimumHeight(34)  # Ensure minimum height
+        self.WOC_percent.setMinimumHeight(28)  # Standard spinbox height
         self.WOC_percent.setToolTip("Width of cut as percentage of tool diameter")
         
         self.surface_speed.setRange(10, 5000)
         self.surface_speed.setValue(400)
         self.surface_speed.setSuffix(" SFM")
         self.surface_speed.setDecimals(0)
-        self.surface_speed.setMinimumHeight(34)  # Ensure minimum height
+        self.surface_speed.setMinimumHeight(28)  # Standard spinbox height
         self.surface_speed.setToolTip("Surface cutting speed")
         
         self.feed_per_tooth.setRange(0.0001, 1.0)
         self.feed_per_tooth.setValue(0.0020)
         self.feed_per_tooth.setSuffix('"')
         self.feed_per_tooth.setDecimals(4)
-        self.feed_per_tooth.setMinimumHeight(34)  # Ensure minimum height
+        self.feed_per_tooth.setMinimumHeight(28)  # Standard spinbox height
         self.feed_per_tooth.setToolTip("Feed per tooth (chipload)")
         
         # Configure Kc (Specific Cutting Force) - always in N/mm²
@@ -540,14 +540,14 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.Kc.setMaximum(4000.0)
         self.Kc.setValue(800.0)  # Default for aluminum
         self.Kc.setSuffix(" N/mm²")
-        self.Kc.setMinimumHeight(34)  # Ensure minimum height
+        self.Kc.setMinimumHeight(28)  # Standard spinbox height
         self.Kc.setToolTip("Specific Cutting Force - Material dependent:\nAluminum: 700-900\nMild Steel: 1800-2200\nStainless: 2400-2800\nCast Iron: 1200-1500")
 
         # Add spacers
         spacer1 = QtWidgets.QWidget()
-        spacer1.setFixedHeight(8)
+        spacer1.setFixedHeight(12)  # Increased spacer height
         spacer2 = QtWidgets.QWidget()
-        spacer2.setFixedHeight(8)
+        spacer2.setFixedHeight(12)  # Increased spacer height
 
         # Add to layout
         form.addRow("Depth Of Cut", self.DOC)
@@ -1026,6 +1026,13 @@ class ResultsBox(QtWidgets.QGroupBox):
         from src.formulas import calculate_torque
         
         if hasattr(self, 'rpm_bar'):
+            # Check unit system from parent GUI
+            is_metric = True
+            try:
+                is_metric = self.parent().tool_box.is_metric()
+            except:
+                is_metric = True  # Default to metric
+            
             min_rpm, preferred_rpm, max_rpm = machine_limits
             
             # Update RPM bar with bell curve gradient centered on preferred RPM
@@ -1033,14 +1040,20 @@ class ResultsBox(QtWidgets.QGroupBox):
             self.rpm_bar.setPreferredValue(preferred_rpm)
             self.rpm_bar.setValue(fs.rpm)
             
-            # Feed Rate bars - use intelligent range centered around optimal feed rate
+            # Feed Rate bars - show only the appropriate one based on unit system
             optimal_feed = fs.feed if fs.feed > 0 else 1000  # Default to 1000 mm/min if zero
-            self.feed_bar.setIntelligentRange(fs.feed, optimal_feed, 1.2)
-            self.feed_bar.setValue(fs.feed)
             
-            optimal_feed_imp = optimal_feed * 0.0393701
-            self.feed_imp_bar.setIntelligentRange(fs.feed * 0.0393701, optimal_feed_imp, 1.2)
-            self.feed_imp_bar.setValue(fs.feed * 0.0393701)
+            if is_metric:
+                self.feed_bar.setVisible(True)
+                self.feed_imp_bar.setVisible(False)
+                self.feed_bar.setIntelligentRange(fs.feed, optimal_feed, 1.2)
+                self.feed_bar.setValue(fs.feed)
+            else:
+                self.feed_bar.setVisible(False)
+                self.feed_imp_bar.setVisible(True)
+                optimal_feed_imp = optimal_feed * 0.0393701
+                self.feed_imp_bar.setIntelligentRange(fs.feed * 0.0393701, optimal_feed_imp, 1.2)
+                self.feed_imp_bar.setValue(fs.feed * 0.0393701)
             
             # MRR bar - use intelligent range with typical MRR values
             typical_mrr = max(fs.mrr, 5.0) if fs.mrr > 0 else 15.0  # Default typical MRR
@@ -1054,27 +1067,42 @@ class ResultsBox(QtWidgets.QGroupBox):
             self.torque_bar.setPreferredValue(max_torque * 0.8)  # 80% of max torque
             self.torque_bar.setValue(torque)
             
-            # Power bars - use actual spindle capacity from machine settings
-            self.kw_bar.setRange(0, spindle_capacity_kw)
-            self.kw_bar.setPreferredValue(spindle_capacity_kw * 0.7)  # 70% efficiency sweet spot
-            self.kw_bar.setValue(fs.kw)
-            
-            spindle_capacity_hp = spindle_capacity_kw * 1.34102
-            self.hp_bar.setRange(0, spindle_capacity_hp)  
-            self.hp_bar.setPreferredValue(spindle_capacity_hp * 0.7)  # 70% efficiency sweet spot
-            self.hp_bar.setValue(fs.kw * 1.34102)
+            # Power bars - show only the appropriate one based on unit system
+            if is_metric:
+                self.kw_bar.setVisible(True)
+                self.hp_bar.setVisible(False)
+                self.kw_bar.setRange(0, spindle_capacity_kw)
+                self.kw_bar.setPreferredValue(spindle_capacity_kw * 0.7)  # 70% efficiency sweet spot
+                self.kw_bar.setValue(fs.kw)
+            else:
+                self.kw_bar.setVisible(False)
+                self.hp_bar.setVisible(True)
+                spindle_capacity_hp = spindle_capacity_kw * 1.34102
+                self.hp_bar.setRange(0, spindle_capacity_hp)  
+                self.hp_bar.setPreferredValue(spindle_capacity_hp * 0.7)  # 70% efficiency sweet spot
+                self.hp_bar.setValue(fs.kw * 1.34102)
             
             # Update advanced info display
-            self._update_advanced_info(fs, torque, material_info, warnings, rigidity_info)
+            self._update_advanced_info(fs, torque, material_info, warnings, rigidity_info, is_metric)
     
-    def _update_advanced_info(self, fs, torque, material_info=None, warnings=None, rigidity_info=None):
+    def _update_advanced_info(self, fs, torque, material_info=None, warnings=None, rigidity_info=None, is_metric=True):
         """Update the advanced information display."""
         info_lines = []
         
-        # Basic calculations
+        # Basic calculations with appropriate units
         info_lines.append(f"⚙️ Calculated Parameters:")
-        info_lines.append(f"   RPM: {fs.rpm:.0f} | Feed: {fs.feed:.1f} mm/min | MRR: {fs.mrr:.2f} cm³/min")
-        info_lines.append(f"   Power: {fs.kw:.3f} kW ({fs.kw * 1.34102:.3f} HP) | Torque: {torque:.2f} Nm")
+        
+        if is_metric:
+            feed_text = f"{fs.feed:.1f} mm/min"
+            power_text = f"{fs.kw:.3f} kW"
+        else:
+            feed_imperial = fs.feed * 0.0393701
+            power_hp = fs.kw * 1.34102
+            feed_text = f"{feed_imperial:.2f} in/min"
+            power_text = f"{power_hp:.3f} HP"
+            
+        info_lines.append(f"   RPM: {fs.rpm:.0f} | Feed: {feed_text} | MRR: {fs.mrr:.2f} cm³/min")
+        info_lines.append(f"   Power: {power_text} | Torque: {torque:.2f} Nm")
         
         # Micro tool specific information
         if hasattr(fs, 'is_micro_tool') and fs.is_micro_tool:
@@ -1136,7 +1164,7 @@ class GUI(QtWidgets.QMainWindow):
         self.setWindowTitle(
             "⚙️ Speeds & Feeds Calculator v2.0 - Enhanced"
         )
-        self.setMinimumSize(1000, 650)  # Reduced height with compact dashboard layout
+        self.setMinimumSize(1000, 700)  # Increased height to accommodate CuttingBox spacing
         self.resize(1200, 700)
         settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
 
