@@ -82,7 +82,14 @@ class RangeBarWidget(QWidget):
         else:
             target_pos = 0.0
             
-        self.setToolTip(f"{self._value:.2f} {self._unit}")
+        # Use smart formatting for tooltip
+        if self._value == 0:
+            tooltip_text = f"0 {self._unit}"
+        elif abs(self._value) >= 0.01:
+            tooltip_text = f"{self._value:.4f} {self._unit}"
+        else:
+            tooltip_text = f"{self._value:.2e} {self._unit}"
+        self.setToolTip(tooltip_text)
         
         if animated:
             self._animation.setStartValue(self._indicator_pos)
@@ -105,7 +112,14 @@ class RangeBarWidget(QWidget):
     def setUnit(self, unit):
         """Set the unit string for display."""
         self._unit = unit
-        self.setToolTip(f"{self._value:.2f} {self._unit}")
+        # Use smart formatting for tooltip
+        if self._value == 0:
+            tooltip_text = f"0 {self._unit}"
+        elif abs(self._value) >= 0.01:
+            tooltip_text = f"{self._value:.4f} {self._unit}"
+        else:
+            tooltip_text = f"{self._value:.2e} {self._unit}"
+        self.setToolTip(tooltip_text)
     
     def setShowPercentage(self, show_percentage=True):
         """Set whether to show percentage alongside the value."""
@@ -260,11 +274,28 @@ class RangeBarWidget(QWidget):
         painter.setPen(self._text_color)
         painter.setFont(QFont("Segoe UI", 9, QFont.Weight.Bold))
         
+        # Smart formatting based on value magnitude
+        def smart_format_value(value, unit):
+            if value == 0:
+                return f"0 {unit}"
+            elif abs(value) >= 100:
+                return f"{value:.0f} {unit}"
+            elif abs(value) >= 10:
+                return f"{value:.1f} {unit}"
+            elif abs(value) >= 1:
+                return f"{value:.2f} {unit}"
+            elif abs(value) >= 0.01:
+                return f"{value:.3f} {unit}"
+            elif abs(value) >= 0.0001:
+                return f"{value:.4f} {unit}"
+            else:
+                return f"{value:.2e} {unit}"  # Scientific notation for very small values
+        
         if self._show_percentage and self._max_value > 0:
             percentage = (self._value / self._max_value) * 100
-            value_text = f"{self._value:.1f} {self._unit} ({percentage:.0f}%)"
+            value_text = f"{smart_format_value(self._value, self._unit)} ({percentage:.0f}%)"
         else:
-            value_text = f"{self._value:.1f} {self._unit}"
+            value_text = smart_format_value(self._value, self._unit)
             
         painter.drawText(value_rect, QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignRight,
                         value_text)
