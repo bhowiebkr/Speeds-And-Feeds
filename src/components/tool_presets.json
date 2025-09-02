@@ -1,0 +1,276 @@
+{
+  "manufacturer_presets": {
+    "harvey_tool": {
+      "name": "Harvey Tool",
+      "country": "USA",
+      "specializes": ["Micro tools", "Precision tooling", "Special geometries"],
+      "website": "https://www.harveytool.com",
+      "common_series": [
+        "Micro End Mills",
+        "General Purpose End Mills", 
+        "High Performance End Mills",
+        "Specialty Tools"
+      ]
+    },
+    "mitsubishi": {
+      "name": "Mitsubishi Materials",
+      "country": "Japan",
+      "specializes": ["Advanced coatings", "High performance", "Automotive"],
+      "website": "https://www.mitsubishicarbide.com",
+      "common_series": [
+        "VF-XBR",
+        "MS2MSD", 
+        "WSTAR",
+        "Impact Miracle"
+      ]
+    },
+    "kennametal": {
+      "name": "Kennametal",
+      "country": "USA", 
+      "specializes": ["Industrial solutions", "Aerospace", "Heavy machining"],
+      "website": "https://www.kennametal.com",
+      "common_series": [
+        "Beyond Endmill",
+        "Mill 4™",
+        "Harvi™",
+        "B-Series"
+      ]
+    },
+    "sandvik": {
+      "name": "Sandvik Coromant",
+      "country": "Sweden",
+      "specializes": ["Turning", "Milling", "Advanced materials"],
+      "website": "https://www.sandvik.coromant.com",
+      "common_series": [
+        "CoroMill Plura",
+        "CoroMill 390",
+        "Prime Turning"
+      ]
+    }
+  },
+  "quick_start_tools": {
+    "hobby_starter_kit": [
+      {
+        "id": "hobby_001",
+        "manufacturer": "Generic",
+        "series": "Hobby Kit",
+        "name": "2-Flute Square End Mill - 1/8\"",
+        "type": "square_endmill",
+        "diameter_mm": 3.175,
+        "diameter_inch": 0.125,
+        "flutes": 2,
+        "length_of_cut_mm": 12.0,
+        "overall_length_mm": 38.1,
+        "shank_diameter_mm": 3.175,
+        "coating": "uncoated",
+        "material": "HSS",
+        "manufacturer_speeds": {
+          "aluminum_sfm": 600,
+          "steel_sfm": 200,
+          "wood_sfm": 800
+        },
+        "manufacturer_feeds": {
+          "aluminum_chipload": 0.08,
+          "steel_chipload": 0.04,
+          "wood_chipload": 0.15
+        },
+        "notes": "Great starter tool for hobby CNC projects",
+        "part_number": "HOBBY-125",
+        "price": 8.99,
+        "tags": ["hobby", "starter", "budget", "versatile"]
+      },
+      {
+        "id": "hobby_002", 
+        "manufacturer": "Generic",
+        "series": "Hobby Kit",
+        "name": "2-Flute Square End Mill - 1/4\"",
+        "type": "square_endmill",
+        "diameter_mm": 6.35,
+        "diameter_inch": 0.25,
+        "flutes": 2,
+        "length_of_cut_mm": 19.05,
+        "overall_length_mm": 50.8,
+        "shank_diameter_mm": 6.35,
+        "coating": "uncoated",
+        "material": "HSS",
+        "manufacturer_speeds": {
+          "aluminum_sfm": 800,
+          "steel_sfm": 300,
+          "wood_sfm": 1000
+        },
+        "manufacturer_feeds": {
+          "aluminum_chipload": 0.10,
+          "steel_chipload": 0.06,
+          "wood_chipload": 0.20
+        },
+        "notes": "Versatile 1/4\" endmill for general machining",
+        "part_number": "HOBBY-250",
+        "price": 12.99,
+        "tags": ["hobby", "starter", "budget", "general_purpose"]
+      }
+    ],
+    "professional_aluminum_kit": [
+      {
+        "id": "pro_alu_001",
+        "manufacturer": "Professional Tools",
+        "series": "Aluminum Series",
+        "name": "3-Flute Aluminum End Mill - 6mm",
+        "type": "square_endmill",
+        "diameter_mm": 6.0,
+        "diameter_inch": 0.2362,
+        "flutes": 3,
+        "length_of_cut_mm": 18.0,
+        "overall_length_mm": 60.0,
+        "shank_diameter_mm": 6.0,
+        "coating": "TiAlN",
+        "material": "carbide",
+        "manufacturer_speeds": {
+          "aluminum_sfm": 1200,
+          "aluminum_6061_sfm": 1000,
+          "aluminum_7075_sfm": 800
+        },
+        "manufacturer_feeds": {
+          "aluminum_chipload": 0.12,
+          "aluminum_6061_chipload": 0.10,
+          "aluminum_7075_chipload": 0.08
+        },
+        "notes": "Optimized for aluminum machining with excellent chip evacuation",
+        "part_number": "PRO-ALU-6MM",
+        "price": 35.99,
+        "tags": ["professional", "aluminum", "coated", "3_flute"]
+      }
+    ],
+    "micro_precision_kit": [
+      {
+        "id": "micro_001",
+        "manufacturer": "Precision Tools",
+        "series": "Micro Series", 
+        "name": "Micro End Mill - 0.5mm",
+        "type": "square_endmill",
+        "diameter_mm": 0.5,
+        "diameter_inch": 0.0197,
+        "flutes": 2,
+        "length_of_cut_mm": 1.5,
+        "overall_length_mm": 38.1,
+        "shank_diameter_mm": 3.175,
+        "coating": "DLC",
+        "material": "carbide",
+        "manufacturer_speeds": {
+          "aluminum_sfm": 400,
+          "steel_sfm": 200,
+          "titanium_sfm": 100
+        },
+        "manufacturer_feeds": {
+          "aluminum_chipload": 0.002,
+          "steel_chipload": 0.001,
+          "titanium_chipload": 0.0005
+        },
+        "notes": "Ultra-precision micro machining for intricate features",
+        "part_number": "MICRO-05MM",
+        "price": 89.99,
+        "tags": ["micro", "precision", "electronics", "medical"]
+      }
+    ]
+  },
+  "material_specific_recommendations": {
+    "aluminum": {
+      "recommended_coatings": ["uncoated", "TiAlN", "ZrN"],
+      "avoid_coatings": ["TiN"],
+      "flute_recommendations": {
+        "roughing": [2, 3],
+        "finishing": [3, 4, 6]
+      },
+      "speed_multiplier": 1.0,
+      "notes": "Aluminum machines easily but can be 'gummy'. Use sharp tools and good chip evacuation."
+    },
+    "steel": {
+      "recommended_coatings": ["TiN", "TiAlN", "AlCrN"],
+      "avoid_coatings": [],
+      "flute_recommendations": {
+        "roughing": [2, 3],
+        "finishing": [4, 6]
+      },
+      "speed_multiplier": 0.5,
+      "notes": "Use appropriate speeds and feeds. Higher flute count for better finish."
+    },
+    "stainless_steel": {
+      "recommended_coatings": ["TiAlN", "AlCrN", "DLC"],
+      "avoid_coatings": ["uncoated"],
+      "flute_recommendations": {
+        "roughing": [2, 3],
+        "finishing": [4]
+      },
+      "speed_multiplier": 0.4,
+      "notes": "Work hardens rapidly. Maintain consistent feed rate and use sharp tools."
+    },
+    "titanium": {
+      "recommended_coatings": ["TiAlN", "AlCrN"],
+      "avoid_coatings": ["TiN", "uncoated"],
+      "flute_recommendations": {
+        "roughing": [2],
+        "finishing": [3, 4]
+      },
+      "speed_multiplier": 0.3,
+      "notes": "Very challenging material. Low speeds, high feeds, flood coolant essential."
+    }
+  },
+  "application_guides": {
+    "3d_profiling": {
+      "recommended_types": ["ball_endmill", "corner_radius_endmill"],
+      "flute_count": [2, 3, 4],
+      "notes": "Ball end mills for complex 3D surfaces. Consider corner radius for blend of strength and finish."
+    },
+    "roughing": {
+      "recommended_types": ["roughing_endmill", "square_endmill"],
+      "flute_count": [2, 3],
+      "notes": "Roughing end mills for high material removal rates. Lower flute count for better chip evacuation."
+    },
+    "finishing": {
+      "recommended_types": ["square_endmill", "ball_endmill"],
+      "flute_count": [4, 6],
+      "notes": "Higher flute count for better surface finish. Consider tool deflection for deep cuts."
+    },
+    "slotting": {
+      "recommended_types": ["square_endmill"],
+      "flute_count": [2, 3],
+      "notes": "Lower flute count for better chip evacuation in enclosed slots."
+    },
+    "pocketing": {
+      "recommended_types": ["square_endmill", "corner_radius_endmill"],
+      "flute_count": [3, 4],
+      "notes": "Adaptive toolpaths recommended. Corner radius end mills reduce stress concentrations."
+    }
+  },
+  "coating_guide": {
+    "uncoated": {
+      "best_for": ["Aluminum", "Wood", "Plastics"],
+      "avoid_for": ["Stainless steel", "Titanium"],
+      "benefits": ["Sharp cutting edge", "Low cost", "Easy to resharpen"],
+      "drawbacks": ["Lower tool life", "Limited speed capability"]
+    },
+    "TiN": {
+      "best_for": ["Steel", "Cast iron"],
+      "avoid_for": ["Aluminum", "Stainless steel"],
+      "benefits": ["Good wear resistance", "Improved lubricity"],
+      "drawbacks": ["Not suitable for aluminum", "Limited temperature resistance"]
+    },
+    "TiAlN": {
+      "best_for": ["Steel", "Stainless steel", "Aluminum", "Titanium"],
+      "avoid_for": [],
+      "benefits": ["High temperature resistance", "Excellent wear resistance", "Versatile"],
+      "drawbacks": ["Higher cost"]
+    },
+    "AlCrN": {
+      "best_for": ["Stainless steel", "Titanium", "Hardened steel"],
+      "avoid_for": ["Aluminum"],
+      "benefits": ["Excellent for difficult materials", "High temperature stability"],
+      "drawbacks": ["Higher cost", "Can cause aluminum buildup"]
+    },
+    "DLC": {
+      "best_for": ["Non-ferrous metals", "Composites", "Precision work"],
+      "avoid_for": ["Steel at high temperatures"],
+      "benefits": ["Very low friction", "Excellent for precision", "Good for composites"],
+      "drawbacks": ["Temperature sensitive", "Very expensive"]
+    }
+  }
+}
