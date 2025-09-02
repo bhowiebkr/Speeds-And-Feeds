@@ -96,12 +96,21 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.SMMM = QtWidgets.QDoubleSpinBox()
         self.IPT = QtWidgets.QDoubleSpinBox()
         self.MMPT = QtWidgets.QDoubleSpinBox()
+        self.Kc = QtWidgets.QDoubleSpinBox()  # Specific cutting force
+        
         self.IPT.setDecimals(4)
         self.IPT.setMinimum(0.000)
         self.IPT.setSingleStep(0.001)
         self.MMPT.setDecimals(4)
         self.MMPT.setSingleStep(0.001)
         self.MMPT.setMinimum(0.000)
+        
+        # Configure Kc (Specific Cutting Force)
+        self.Kc.setMinimum(500.0)
+        self.Kc.setMaximum(4000.0)
+        self.Kc.setValue(2000.0)  # Default for general steel
+        self.Kc.setSuffix(" N/mm²")
+        self.Kc.setToolTip("Specific Cutting Force - Material dependent:\nAluminum: 700-900\nMild Steel: 1800-2200\nStainless: 2400-2800\nCast Iron: 1200-1500")
         self.SFM.setMaximum(10000)
         self.SMM.setMaximum(10000)
         self.SMM.setSingleStep(10)
@@ -136,6 +145,7 @@ class CuttingBox(QtWidgets.QGroupBox):
 
         form.addRow("Inches per Tooth (IPT)", self.IPT)
         form.addRow("Millimeters per tooth (MMPT)", self.MMPT)
+        form.addRow("⚡ Specific Cutting Force (Kc)", self.Kc)
 
         self.DOC.valueChanged.connect(self.doc_to_others)
         self.DOC_IMP.valueChanged.connect(self.doc_imp_to_others)
@@ -295,201 +305,124 @@ class MachineBox(QtWidgets.QGroupBox):
         self.maxRPM.setSuffix(" RPM")
         self.maxRPM.setValue(24000)
         self.maxRPM.setToolTip("Maximum spindle speed of your machine")
+        
+        # Add spindle power capacity
+        self.spindlePower = QtWidgets.QDoubleSpinBox()
+        self.spindlePower.setRange(0.1, 50.0)
+        self.spindlePower.setValue(2.2)  # Default to user's 2.2kW spindle
+        self.spindlePower.setSuffix(" kW")
+        self.spindlePower.setDecimals(1)
+        self.spindlePower.setToolTip("Maximum power capacity of your spindle motor")
 
         form.addRow("Min (RPM)", self.minRPM)
         form.addRow("⭐ Preferred (RPM)", self.preferredRPM)
         form.addRow("Max (RPM)", self.maxRPM)
+        form.addRow("🔌 Spindle Power", self.spindlePower)
 
 
 class ResultsBox(QtWidgets.QGroupBox):
     def __init__(self, parent=None):
         super(ResultsBox, self).__init__(parent)
-        self.setTitle("📊 Results")
+        self.setTitle("📊 Results Dashboard")
         self.setObjectName("results_box")
         
         # Import dashboard widgets
         from .components.dashboard_widgets import RangeBarWidget, RPMGaugeWidget, StatusIndicatorWidget
         
-        # Main layout
+        # Main layout - directly use the dashboard
         mainLayout = QtWidgets.QVBoxLayout()
         self.setLayout(mainLayout)
         
-        # Tab widget for switching between views
-        self.tab_widget = QtWidgets.QTabWidget()
-        self.tab_widget.setMaximumHeight(35)  # Compact tabs
-        mainLayout.addWidget(self.tab_widget)
-        
-        # Create content area
-        content_area = QtWidgets.QWidget()
-        self.content_layout = QtWidgets.QStackedLayout()
-        content_area.setLayout(self.content_layout)
-        mainLayout.addWidget(content_area)
-        
-        # Classic text view
-        self._create_classic_view()
-        
-        # Dashboard graphical view  
-        self._create_dashboard_view()
-        
-        # Connect tab changes
-        self.tab_widget.currentChanged.connect(self._on_tab_changed)
-        
-        # Set default to Dashboard view
-        self.tab_widget.setCurrentIndex(1)
-        self.content_layout.setCurrentIndex(1)
+        # Create dashboard view directly
+        self._create_dashboard_view(mainLayout)
     
-    def _create_classic_view(self):
-        """Create the traditional text-based results view."""
-        classic_widget = QtWidgets.QWidget()
-        classicLayout = QtWidgets.QHBoxLayout()
-        classic_widget.setLayout(classicLayout)
+    def _create_dashboard_view(self, main_layout):
+        """Create the graphical dashboard view."""
+        from .components.dashboard_widgets import RangeBarWidget, GradientType
         
-        formLeft = QtWidgets.QFormLayout()
-        formRight = QtWidgets.QFormLayout()
-
-        for form in [formLeft, formRight]:
-            form.setLabelAlignment(QtCore.Qt.AlignRight)
-            form.setVerticalSpacing(12)
-            form.setHorizontalSpacing(15)
-
-        classicLayout.addStretch()
-        classicLayout.addLayout(formLeft)
-        classicLayout.addStretch()
-        classicLayout.addLayout(formRight)
-        classicLayout.addStretch()
-
-        # Result widgets with better initial styling
-        self.rpm = QtWidgets.QLabel("<b>0</b>")
-        self.feed = QtWidgets.QLabel("<b>0 mm/min</b>")
-        self.feed_imp = QtWidgets.QLabel("<b>0 inches/min</b>")
-        self.mrr = QtWidgets.QLabel("<b>0 cm³/min</b>")
-        self.kw = QtWidgets.QLabel("<b>0 kW</b>")
-        self.hp = QtWidgets.QLabel("<b>0 HP</b>")
-        
-        # Set tooltips for results
-        self.rpm.setToolTip("Spindle speed - should be within machine limits")
-        self.feed.setToolTip("Feed rate in millimeters per minute")
-        self.feed_imp.setToolTip("Feed rate in inches per minute")
-        self.mrr.setToolTip("Material removal rate - volume of material removed per minute")
-        self.kw.setToolTip("Power required in kilowatts")
-        self.hp.setToolTip("Power required in horsepower")
-
-        formLeft.addRow("🔄 RPM:", self.rpm)
-        formLeft.addRow("📊 MRR:", self.mrr)
-        formLeft.addRow("⚡ Power (kW):", self.kw)
-        formLeft.addRow("🐎 Power (HP):", self.hp)
-        formRight.addRow("🟢 Feed (mm/min):", self.feed)
-        formRight.addRow("🟢 Feed (in/min):", self.feed_imp)
-        
-        # Add to tab and content layout
-        self.tab_widget.addTab(QtWidgets.QWidget(), "📋 Classic")
-        self.content_layout.addWidget(classic_widget)
-    
-    def _create_dashboard_view(self):
-        """Create the new graphical dashboard view."""
-        from .components.dashboard_widgets import RangeBarWidget, RPMGaugeWidget, StatusIndicatorWidget
-        
-        dashboard_widget = QtWidgets.QWidget()
-        dashLayout = QtWidgets.QVBoxLayout()
-        dashboard_widget.setLayout(dashLayout)
-        
-        # Top row: RPM Gauge
-        rpm_row = QtWidgets.QHBoxLayout()
-        rpm_row.addStretch()
-        
-        self.rpm_gauge = RPMGaugeWidget()
-        self.rpm_status_indicator = StatusIndicatorWidget()
-        
-        rpm_container = QtWidgets.QVBoxLayout()
-        rpm_header = QtWidgets.QHBoxLayout()
-        rpm_header.addWidget(QtWidgets.QLabel("🔄 Spindle Speed"))
-        rpm_header.addWidget(self.rpm_status_indicator)
-        rpm_header.addStretch()
-        
-        rpm_container.addLayout(rpm_header)
-        rpm_container.addWidget(self.rpm_gauge)
-        
-        rpm_row.addLayout(rpm_container)
-        rpm_row.addStretch()
-        dashLayout.addLayout(rpm_row)
-        
-        # Separator
-        separator = QtWidgets.QFrame()
-        separator.setFrameShape(QtWidgets.QFrame.Shape.HLine)
-        separator.setStyleSheet("color: #555555;")
-        dashLayout.addWidget(separator)
-        
-        # Bottom section: Range bars for other parameters
+        # All parameters use consistent gradient bars
         bars_layout = QtWidgets.QGridLayout()
         
-        # Feed Rate bars
+        # RPM bar - bell curve (optimal RPM in middle based on preferred value)
+        self.rpm_bar = RangeBarWidget()
+        self.rpm_bar.setLabel("Spindle Speed")
+        self.rpm_bar.setUnit("RPM")
+        self.rpm_bar.setGradientType(GradientType.BELL_CURVE)
+        
+        # Feed Rate bars - bell curve (optimal feed rates in middle)
         self.feed_bar = RangeBarWidget()
         self.feed_bar.setLabel("Feed Rate")
         self.feed_bar.setUnit("mm/min")
+        self.feed_bar.setGradientType(GradientType.BELL_CURVE)
         
         self.feed_imp_bar = RangeBarWidget() 
         self.feed_imp_bar.setLabel("Feed Rate")
         self.feed_imp_bar.setUnit("in/min")
+        self.feed_imp_bar.setGradientType(GradientType.BELL_CURVE)
         
-        # MRR bar
+        # MRR bar - bell curve (optimal efficiency in middle)
         self.mrr_bar = RangeBarWidget()
         self.mrr_bar.setLabel("Material Removal Rate") 
         self.mrr_bar.setUnit("cm³/min")
+        self.mrr_bar.setGradientType(GradientType.BELL_CURVE)
         
-        # Power bars
+        # Power bars - ascending (higher efficiency is better, but watch limits)
         self.kw_bar = RangeBarWidget()
         self.kw_bar.setLabel("Power")
         self.kw_bar.setUnit("kW")
+        self.kw_bar.setGradientType(GradientType.ASCENDING)
+        self.kw_bar.setShowPercentage(True)  # Show percentage of spindle capacity
         
         self.hp_bar = RangeBarWidget()
         self.hp_bar.setLabel("Power") 
         self.hp_bar.setUnit("HP")
+        self.hp_bar.setGradientType(GradientType.ASCENDING)
+        self.hp_bar.setShowPercentage(True)  # Show percentage of spindle capacity
         
-        # Add bars to grid layout
-        bars_layout.addWidget(self.feed_bar, 0, 0)
-        bars_layout.addWidget(self.feed_imp_bar, 0, 1)
-        bars_layout.addWidget(self.mrr_bar, 1, 0) 
-        bars_layout.addWidget(self.kw_bar, 2, 0)
-        bars_layout.addWidget(self.hp_bar, 2, 1)
+        # Add bars to grid layout in logical order
+        bars_layout.addWidget(self.rpm_bar, 0, 0, 1, 2)  # RPM spans 2 columns at top
+        bars_layout.addWidget(self.feed_bar, 1, 0)
+        bars_layout.addWidget(self.feed_imp_bar, 1, 1)
+        bars_layout.addWidget(self.mrr_bar, 2, 0) 
+        bars_layout.addWidget(self.kw_bar, 3, 0)
+        bars_layout.addWidget(self.hp_bar, 3, 1)
         
-        dashLayout.addLayout(bars_layout)
-        dashLayout.addStretch()
-        
-        # Add to tab and content layout
-        self.tab_widget.addTab(QtWidgets.QWidget(), "📊 Dashboard")
-        self.content_layout.addWidget(dashboard_widget)
+        main_layout.addLayout(bars_layout)
+        main_layout.addStretch()
     
-    def _on_tab_changed(self, index):
-        """Handle tab changes to switch content view."""
-        self.content_layout.setCurrentIndex(index)
     
-    def update_dashboard_values(self, fs, rpm_status, rpm_message, machine_limits):
+    def update_dashboard_values(self, fs, rpm_status, rpm_message, machine_limits, spindle_capacity_kw):
         """Update dashboard widgets with new values."""
-        if hasattr(self, 'rpm_gauge'):
-            # Update RPM gauge
+        if hasattr(self, 'rpm_bar'):
             min_rpm, preferred_rpm, max_rpm = machine_limits
-            self.rpm_gauge.setRange(min_rpm, max_rpm)
-            self.rpm_gauge.setPreferredValue(preferred_rpm)
-            self.rpm_gauge.setValue(fs.rpm)
             
-            # Update RPM status indicator
-            pulse = rpm_status in ["warning", "danger"]
-            self.rpm_status_indicator.setStatus(rpm_status, pulse)
+            # Update RPM bar with bell curve gradient centered on preferred RPM
+            self.rpm_bar.setRange(min_rpm, max_rpm)
+            self.rpm_bar.setPreferredValue(preferred_rpm)
+            self.rpm_bar.setValue(fs.rpm)
             
-            # Update range bars with appropriate ranges
-            self.feed_bar.setRange(0, fs.feed * 2)  # Dynamic range based on current value
+            # Feed Rate bars - use intelligent range centered around optimal feed rate
+            optimal_feed = fs.feed if fs.feed > 0 else 1000  # Default to 1000 mm/min if zero
+            self.feed_bar.setIntelligentRange(fs.feed, optimal_feed, 1.2)
             self.feed_bar.setValue(fs.feed)
             
-            self.feed_imp_bar.setRange(0, fs.feed * 0.0393701 * 2)
+            optimal_feed_imp = optimal_feed * 0.0393701
+            self.feed_imp_bar.setIntelligentRange(fs.feed * 0.0393701, optimal_feed_imp, 1.2)
             self.feed_imp_bar.setValue(fs.feed * 0.0393701)
             
-            self.mrr_bar.setRange(0, max(fs.mrr * 2, 10))  # Minimum range of 10
+            # MRR bar - use intelligent range with typical MRR values
+            typical_mrr = max(fs.mrr, 5.0) if fs.mrr > 0 else 15.0  # Default typical MRR
+            self.mrr_bar.setIntelligentRange(fs.mrr, typical_mrr, 1.8)
             self.mrr_bar.setValue(fs.mrr)
             
-            self.kw_bar.setRange(0, max(fs.kw * 2, 5))  # Minimum range of 5kW
+            # Power bars - use actual spindle capacity from machine settings
+            self.kw_bar.setRange(0, spindle_capacity_kw)
+            self.kw_bar.setPreferredValue(spindle_capacity_kw * 0.7)  # 70% efficiency sweet spot
             self.kw_bar.setValue(fs.kw)
             
-            self.hp_bar.setRange(0, max(fs.kw * 1.34102 * 2, 7))  # Minimum range of 7HP
+            spindle_capacity_hp = spindle_capacity_kw * 1.34102
+            self.hp_bar.setRange(0, spindle_capacity_hp)  
+            self.hp_bar.setPreferredValue(spindle_capacity_hp * 0.7)  # 70% efficiency sweet spot
             self.hp_bar.setValue(fs.kw * 1.34102)
 
 
@@ -501,8 +434,8 @@ class GUI(QtWidgets.QMainWindow):
         self.setWindowTitle(
             "⚙️ Speeds & Feeds Calculator v2.0 - Enhanced"
         )
-        self.setMinimumSize(1000, 750)  # Increased height to accommodate better spacing
-        self.resize(1200, 800)
+        self.setMinimumSize(1000, 650)  # Reduced height with compact dashboard layout
+        self.resize(1200, 700)
         settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
 
         try:
@@ -549,6 +482,7 @@ class GUI(QtWidgets.QMainWindow):
         self.cutting_box.SMMM.valueChanged.connect(self.update)
         self.cutting_box.MMPT.valueChanged.connect(self.update)
         self.cutting_box.IPT.valueChanged.connect(self.update)
+        self.cutting_box.Kc.valueChanged.connect(self.update)
         self.tool_box.toolDiameter.valueChanged.connect(self.toolDiameterChanged)
         self.tool_box.toolDiameterImp.valueChanged.connect(self.toolDiameterChanged)
 
@@ -591,33 +525,6 @@ class GUI(QtWidgets.QMainWindow):
         else:
             return "info", "within safe range"
     
-    def apply_result_styling(self, label, status, value):
-        """Apply color styling to result labels"""
-        if status == "good":
-            color = "#4CAF50"
-            bg_color = "rgba(76, 175, 80, 0.1)"
-        elif status == "warning":
-            color = "#FF9800"
-            bg_color = "rgba(255, 152, 0, 0.1)"
-        elif status == "danger":
-            color = "#F44336"
-            bg_color = "rgba(244, 67, 54, 0.1)"
-        else:
-            color = "#2196F3"
-            bg_color = "rgba(33, 150, 243, 0.1)"
-        
-        label.setStyleSheet(f"""
-            QLabel {{
-                color: {color};
-                background-color: {bg_color};
-                border: 1px solid {color};
-                border-radius: 6px;
-                padding: 4px 8px;
-                font-weight: bold;
-                font-size: 11pt;
-            }}
-        """)
-        label.setText(f"<b>{value}</b>")
 
     def update(self):
         fs = FeedsAndSpeeds()
@@ -633,25 +540,15 @@ class GUI(QtWidgets.QMainWindow):
         fs.woc = self.cutting_box.WOC.value()
         fs.smm = self.cutting_box.SMM.value()
         fs.mmpt = self.cutting_box.MMPT.value()
+        fs.kc = self.cutting_box.Kc.value()
 
         # fs.print_values()
 
         # Do the formulas
         fs.calculate()
         
-        # Get RPM status for color coding
+        # Get RPM status for color coding  
         rpm_status, rpm_message = self.get_rpm_status(fs.rpm)
-        
-        # Apply colored styling to results
-        self.apply_result_styling(self.results_box.rpm, rpm_status, f"{round(fs.rpm):,}")
-        self.apply_result_styling(self.results_box.feed, "info", f"{fs.feed:.2f} mm/min")
-        self.apply_result_styling(self.results_box.feed_imp, "info", f"{fs.feed*0.0393701:.2f} inches/min")
-        self.apply_result_styling(self.results_box.mrr, "info", f"{fs.mrr:.2f} cm³/min")
-        self.apply_result_styling(self.results_box.kw, "info", f"{fs.kw:.2f} kW")
-        self.apply_result_styling(self.results_box.hp, "info", f"{fs.kw * 1.34102:.2f} HP")
-        
-        # Set tooltip for RPM with status message
-        self.results_box.rpm.setToolTip(f"RPM Status: {rpm_message}")
         
         # Update dashboard widgets
         machine_limits = (
@@ -659,7 +556,8 @@ class GUI(QtWidgets.QMainWindow):
             self.machine_box.preferredRPM.value(), 
             self.machine_box.maxRPM.value()
         )
-        self.results_box.update_dashboard_values(fs, rpm_status, rpm_message, machine_limits)
+        spindle_capacity = self.machine_box.spindlePower.value()
+        self.results_box.update_dashboard_values(fs, rpm_status, rpm_message, machine_limits, spindle_capacity)
 
         # Update the output
 
