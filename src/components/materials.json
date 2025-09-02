@@ -1,0 +1,348 @@
+{
+  "materials": {
+    "aluminum": {
+      "name": "Aluminum Alloys",
+      "category": "Non-Ferrous",
+      "variants": {
+        "6061": {
+          "name": "6061-T6 Aluminum",
+          "hardness_hb": [95, 150],
+          "kc_range": [700, 900],
+          "kc_typical": 800,
+          "sfm_range": [600, 1000],
+          "sfm_typical": 800,
+          "smm_range": [183, 305],
+          "smm_typical": 244,
+          "chip_load_range": [0.08, 0.25],
+          "chip_load_typical": 0.15,
+          "description": "General purpose aluminum, excellent machinability"
+        },
+        "2024": {
+          "name": "2024-T3 Aluminum",
+          "hardness_hb": [120, 160],
+          "kc_range": [750, 950],
+          "kc_typical": 850,
+          "sfm_range": [500, 900],
+          "sfm_typical": 700,
+          "smm_range": [152, 274],
+          "smm_typical": 213,
+          "chip_load_range": [0.08, 0.20],
+          "chip_load_typical": 0.12,
+          "description": "Aircraft aluminum, slightly harder than 6061"
+        },
+        "7075": {
+          "name": "7075-T6 Aluminum",
+          "hardness_hb": [150, 175],
+          "kc_range": [800, 1000],
+          "kc_typical": 900,
+          "sfm_range": [400, 800],
+          "sfm_typical": 600,
+          "smm_range": [122, 244],
+          "smm_typical": 183,
+          "chip_load_range": [0.06, 0.18],
+          "chip_load_typical": 0.10,
+          "description": "High strength aluminum, more challenging to machine"
+        }
+      }
+    },
+    "steel": {
+      "name": "Steel Alloys",
+      "category": "Ferrous",
+      "variants": {
+        "1018": {
+          "name": "1018 Mild Steel",
+          "hardness_hb": [120, 170],
+          "kc_range": [1800, 2200],
+          "kc_typical": 2000,
+          "sfm_range": [80, 120],
+          "sfm_typical": 100,
+          "smm_range": [24, 37],
+          "smm_typical": 30,
+          "chip_load_range": [0.05, 0.15],
+          "chip_load_typical": 0.08,
+          "description": "Low carbon steel, good machinability"
+        },
+        "1045": {
+          "name": "1045 Medium Carbon Steel",
+          "hardness_hb": [170, 220],
+          "kc_range": [2000, 2400],
+          "kc_typical": 2200,
+          "sfm_range": [70, 100],
+          "sfm_typical": 85,
+          "smm_range": [21, 30],
+          "smm_typical": 26,
+          "chip_load_range": [0.04, 0.12],
+          "chip_load_typical": 0.06,
+          "description": "Medium carbon steel, moderate machinability"
+        },
+        "4140": {
+          "name": "4140 Alloy Steel (Annealed)",
+          "hardness_hb": [200, 250],
+          "kc_range": [2200, 2600],
+          "kc_typical": 2400,
+          "sfm_range": [60, 90],
+          "sfm_typical": 75,
+          "smm_range": [18, 27],
+          "smm_typical": 23,
+          "chip_load_range": [0.04, 0.10],
+          "chip_load_typical": 0.06,
+          "description": "Alloy steel, requires careful machining"
+        },
+        "4140_ht": {
+          "name": "4140 Alloy Steel (Heat Treated)",
+          "hardness_hrc": [28, 32],
+          "kc_range": [2800, 3200],
+          "kc_typical": 3000,
+          "sfm_range": [40, 70],
+          "sfm_typical": 55,
+          "smm_range": [12, 21],
+          "smm_typical": 17,
+          "chip_load_range": [0.03, 0.08],
+          "chip_load_typical": 0.05,
+          "description": "Heat treated alloy steel, challenging to machine"
+        }
+      }
+    },
+    "stainless": {
+      "name": "Stainless Steel",
+      "category": "Ferrous",
+      "variants": {
+        "304": {
+          "name": "304 Stainless Steel",
+          "hardness_hb": [150, 200],
+          "kc_range": [2400, 2800],
+          "kc_typical": 2600,
+          "sfm_range": [50, 100],
+          "sfm_typical": 75,
+          "smm_range": [15, 30],
+          "smm_typical": 23,
+          "chip_load_range": [0.03, 0.10],
+          "chip_load_typical": 0.05,
+          "description": "Austenitic stainless, work hardens easily"
+        },
+        "316": {
+          "name": "316 Stainless Steel",
+          "hardness_hb": [150, 200],
+          "kc_range": [2500, 2900],
+          "kc_typical": 2700,
+          "sfm_range": [45, 90],
+          "sfm_typical": 70,
+          "smm_range": [14, 27],
+          "smm_typical": 21,
+          "chip_load_range": [0.03, 0.08],
+          "chip_load_typical": 0.04,
+          "description": "Marine grade stainless, gummy material"
+        },
+        "17_4ph": {
+          "name": "17-4 PH Stainless",
+          "hardness_hrc": [28, 32],
+          "kc_range": [2800, 3200],
+          "kc_typical": 3000,
+          "sfm_range": [40, 80],
+          "sfm_typical": 60,
+          "smm_range": [12, 24],
+          "smm_typical": 18,
+          "chip_load_range": [0.02, 0.06],
+          "chip_load_typical": 0.04,
+          "description": "Precipitation hardening stainless steel"
+        }
+      }
+    },
+    "cast_iron": {
+      "name": "Cast Iron",
+      "category": "Ferrous",
+      "variants": {
+        "grey": {
+          "name": "Grey Cast Iron",
+          "hardness_hb": [150, 250],
+          "kc_range": [1200, 1500],
+          "kc_typical": 1350,
+          "sfm_range": [80, 150],
+          "sfm_typical": 120,
+          "smm_range": [24, 46],
+          "smm_typical": 37,
+          "chip_load_range": [0.05, 0.12],
+          "chip_load_typical": 0.08,
+          "description": "Good machinability, abrasive"
+        },
+        "ductile": {
+          "name": "Ductile Iron",
+          "hardness_hb": [200, 300],
+          "kc_range": [1800, 2200],
+          "kc_typical": 2000,
+          "sfm_range": [60, 120],
+          "sfm_typical": 90,
+          "smm_range": [18, 37],
+          "smm_typical": 27,
+          "chip_load_range": [0.04, 0.10],
+          "chip_load_typical": 0.06,
+          "description": "Stronger than grey iron, more ductile"
+        }
+      }
+    },
+    "titanium": {
+      "name": "Titanium Alloys",
+      "category": "Exotic",
+      "variants": {
+        "grade2": {
+          "name": "Titanium Grade 2",
+          "hardness_hb": [200, 300],
+          "kc_range": [2000, 2400],
+          "kc_typical": 2200,
+          "sfm_range": [60, 120],
+          "sfm_typical": 90,
+          "smm_range": [18, 37],
+          "smm_typical": 27,
+          "chip_load_range": [0.03, 0.08],
+          "chip_load_typical": 0.05,
+          "description": "Commercially pure titanium"
+        },
+        "ti64": {
+          "name": "Ti-6Al-4V",
+          "hardness_hb": [300, 400],
+          "kc_range": [2300, 2800],
+          "kc_typical": 2550,
+          "sfm_range": [50, 100],
+          "sfm_typical": 75,
+          "smm_range": [15, 30],
+          "smm_typical": 23,
+          "chip_load_range": [0.02, 0.06],
+          "chip_load_typical": 0.04,
+          "description": "Aerospace titanium alloy, challenging to machine"
+        }
+      }
+    },
+    "tool_steel": {
+      "name": "Tool Steel",
+      "category": "Ferrous",
+      "variants": {
+        "o1_annealed": {
+          "name": "O1 Tool Steel (Annealed)",
+          "hardness_hb": [200, 250],
+          "kc_range": [2500, 3000],
+          "kc_typical": 2750,
+          "sfm_range": [50, 80],
+          "sfm_typical": 65,
+          "smm_range": [15, 24],
+          "smm_typical": 20,
+          "chip_load_range": [0.03, 0.08],
+          "chip_load_typical": 0.05,
+          "description": "Oil hardening tool steel, annealed condition"
+        },
+        "o1_hardened": {
+          "name": "O1 Tool Steel (Hardened)",
+          "hardness_hrc": [58, 62],
+          "kc_range": [3000, 3500],
+          "kc_typical": 3250,
+          "sfm_range": [30, 60],
+          "sfm_typical": 45,
+          "smm_range": [9, 18],
+          "smm_typical": 14,
+          "chip_load_range": [0.02, 0.05],
+          "chip_load_typical": 0.03,
+          "description": "Hardened tool steel, very challenging"
+        },
+        "d2": {
+          "name": "D2 Tool Steel",
+          "hardness_hrc": [58, 62],
+          "kc_range": [3200, 3800],
+          "kc_typical": 3500,
+          "sfm_range": [25, 50],
+          "sfm_typical": 40,
+          "smm_range": [8, 15],
+          "smm_typical": 12,
+          "chip_load_range": [0.02, 0.04],
+          "chip_load_typical": 0.03,
+          "description": "Air hardening tool steel, very abrasive"
+        }
+      }
+    },
+    "brass": {
+      "name": "Brass Alloys",
+      "category": "Non-Ferrous",
+      "variants": {
+        "360": {
+          "name": "360 Brass (Free Machining)",
+          "hardness_hb": [60, 120],
+          "kc_range": [600, 800],
+          "kc_typical": 700,
+          "sfm_range": [300, 600],
+          "sfm_typical": 450,
+          "smm_range": [91, 183],
+          "smm_typical": 137,
+          "chip_load_range": [0.08, 0.20],
+          "chip_load_typical": 0.12,
+          "description": "Excellent machinability, watch for built-up edge"
+        }
+      }
+    },
+    "copper": {
+      "name": "Copper Alloys",
+      "category": "Non-Ferrous",
+      "variants": {
+        "101": {
+          "name": "101 Copper (OFHC)",
+          "hardness_hb": [40, 80],
+          "kc_range": [500, 700],
+          "kc_typical": 600,
+          "sfm_range": [200, 400],
+          "sfm_typical": 300,
+          "smm_range": [61, 122],
+          "smm_typical": 91,
+          "chip_load_range": [0.06, 0.15],
+          "chip_load_typical": 0.10,
+          "description": "Pure copper, gummy material"
+        }
+      }
+    }
+  },
+  "categories": {
+    "Non-Ferrous": {
+      "description": "Materials without iron content",
+      "characteristics": "Generally good machinability, higher speeds possible",
+      "coolant": "Flood coolant or mist recommended"
+    },
+    "Ferrous": {
+      "description": "Iron-based materials",
+      "characteristics": "Moderate to difficult machinability, lower speeds",
+      "coolant": "Flood coolant strongly recommended"
+    },
+    "Exotic": {
+      "description": "Specialty materials like titanium, inconel",
+      "characteristics": "Challenging to machine, requires expertise",
+      "coolant": "Flood coolant essential, sometimes high-pressure"
+    }
+  },
+  "machining_notes": {
+    "general": {
+      "starting_approach": "Always start with conservative parameters (75% of recommended)",
+      "chip_load_rule": "Chip load ≈ Tool Diameter / 200 (in mm) as starting point",
+      "speed_adjustment": "Increase speed if poor surface finish, decrease if excessive tool wear",
+      "feed_adjustment": "Increase feed if work hardening, decrease if chatter occurs"
+    },
+    "aluminum": {
+      "coating_note": "Uncoated carbide preferred, coated tools may pick up aluminum",
+      "coolant": "Flood coolant or air blast, avoid cutting oils that attract aluminum",
+      "speeds": "Can run very high speeds, limited mainly by machine capability"
+    },
+    "stainless": {
+      "work_hardening": "Maintain constant feed to avoid work hardening",
+      "tool_path": "Avoid dwells and hesitation in the cut",
+      "sharp_tools": "Use sharp tools, dull tools cause rapid work hardening"
+    },
+    "titanium": {
+      "heat_management": "Flood coolant essential, titanium retains heat",
+      "tool_selection": "Sharp, positive rake geometry preferred",
+      "speeds": "Conservative speeds to avoid thermal damage"
+    }
+  },
+  "version": "1.0",
+  "last_updated": "2025-09-02",
+  "data_sources": [
+    "Sandvik Coromant Technical Guidelines",
+    "Harvey Tool Machining Guidelines",
+    "Kennametal Speed & Feed References",
+    "Machining Doctor Technical Data",
+    "Industry Standard Handbooks"
+  ]
+}
