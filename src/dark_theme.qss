@@ -229,3 +229,84 @@ QMenuBar {
 QMenuBar::item:selected {
     background-color: #0078d4;
 }
+
+/* Dashboard Widget Styles */
+
+/* Tab Widget for dashboard/classic switching */
+QTabWidget {
+    background-color: transparent;
+}
+
+QTabWidget::pane {
+    border: 1px solid #555555;
+    background-color: transparent;
+}
+
+QTabBar {
+    background-color: transparent;
+}
+
+QTabBar::tab {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #4a4a4a, stop:1 #3a3a3a);
+    border: 1px solid #555555;
+    border-bottom: none;
+    padding: 6px 12px;
+    margin-right: 2px;
+    color: #cccccc;
+    border-radius: 6px 6px 0px 0px;
+}
+
+QTabBar::tab:selected {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #2196F3, stop:1 #1976D2);
+    color: #ffffff;
+    font-weight: bold;
+}
+
+QTabBar::tab:hover:!selected {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                stop:0 #555555, stop:1 #454545);
+}
+
+/* Dashboard widget backgrounds */
+RangeBarWidget {
+    background-color: transparent;
+    border: none;
+}
+
+RPMGaugeWidget {
+    background-color: transparent;
+    border: none;
+}
+
+StatusIndicatorWidget {
+    background-color: transparent;
+    border: none;
+}
+
+/* Frame separators in dashboard */
+QFrame[frameShape="4"] { /* HLine */
+    color: #555555;
+    background-color: #555555;
+    max-height: 1px;
+    min-height: 1px;
+}
+
+/* Dashboard section labels */
+QLabel[text*="Spindle Speed"] {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #ffffff;
+    padding: 4px;
+}
+
+/* Enhanced tooltip styling for dashboard elements */
+QToolTip {
+    background-color: #2d2d30;
+    color: #ffffff;
+    border: 1px solid #555555;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 9pt;
+}
