@@ -63,10 +63,10 @@ def test_layout_at_sizes():
     app.processEvents()
     
     test_sizes = [
-        (1000, 750, "Minimum Size"),
+        (1000, 1100, "Minimum Size"),
         (800, 600, "Below Minimum"),
-        (1200, 800, "Default Size"),
-        (1400, 900, "Large Size")
+        (1200, 1100, "Default Size"),
+        (1400, 1200, "Large Size")
     ]
     
     results = {}

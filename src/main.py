@@ -476,11 +476,11 @@ class CuttingBox(QtWidgets.QGroupBox):
         self.setTitle("⚙️ Cutting Operation")
         self.setObjectName("cutting_box")
         form = QtWidgets.QFormLayout()
-        form.setVerticalSpacing(20)  # Increased spacing to prevent overlap
+        form.setVerticalSpacing(35)  # Further increased spacing to prevent overlap (>34px widget height)
         form.setHorizontalSpacing(10)
         form.setFieldGrowthPolicy(QtWidgets.QFormLayout.ExpandingFieldsGrow)
         self.setLayout(form)
-        self.setMinimumHeight(350)  # Set to accommodate calculated content height (~340px)
+        self.setMinimumHeight(550)  # Further increased to accommodate larger spacing
         self.paused = False
 
         # Single input widgets that adapt to unit system
@@ -560,11 +560,42 @@ class CuttingBox(QtWidgets.QGroupBox):
         form.addRow("Feed per Tooth", self.feed_per_tooth)
         form.addRow("⚡ Specific Cutting Force", self.Kc)
 
+        # Add spacer for HSM controls
+        spacer3 = QtWidgets.QWidget()
+        spacer3.setFixedHeight(12)
+        form.addRow(spacer3)
+
+        # HSM and Chip Thinning controls
+        self.hsm_enabled = QtWidgets.QCheckBox("Enable HSM (High Speed Machining)")
+        self.hsm_enabled.setToolTip("Enable high speed machining mode with chip thinning compensation")
+        
+        self.chip_thinning_enabled = QtWidgets.QCheckBox("Apply Chip Thinning Compensation")
+        self.chip_thinning_enabled.setEnabled(False)  # Auto-controlled by HSM
+        self.chip_thinning_enabled.setToolTip("Automatically compensates feed rates for radial engagement < 50%")
+        
+        # Tool stickout for deflection calculations
+        self.tool_stickout = QtWidgets.QDoubleSpinBox()
+        self.tool_stickout.setRange(5.0, 100.0)
+        self.tool_stickout.setValue(15.0)  # Conservative default
+        self.tool_stickout.setSuffix(" mm")
+        self.tool_stickout.setDecimals(1)
+        self.tool_stickout.setMinimumHeight(28)
+        self.tool_stickout.setToolTip("Tool stickout length for deflection calculations on all tool sizes")
+
+        form.addRow(self.hsm_enabled)
+        form.addRow(self.chip_thinning_enabled)
+        form.addRow("Tool Stickout", self.tool_stickout)
+
         # Connect signals for percentage calculations
         self.DOC.valueChanged.connect(self.update_doc_percent)
         self.DOC_percent.valueChanged.connect(self.update_doc_from_percent)
         self.WOC.valueChanged.connect(self.update_woc_percent)
         self.WOC_percent.valueChanged.connect(self.update_woc_from_percent)
+        
+        # Connect HSM signals
+        self.hsm_enabled.stateChanged.connect(self.on_hsm_changed)
+        self.chip_thinning_enabled.stateChanged.connect(lambda: self.parent().parent().update() if self.parent() and self.parent().parent() else None)
+        self.tool_stickout.valueChanged.connect(lambda: self.parent().parent().update() if self.parent() and self.parent().parent() else None)
 
     def init(self):
         """Initialize the cutting box with default values"""
@@ -788,6 +819,34 @@ class CuttingBox(QtWidgets.QGroupBox):
             return self.feed_per_tooth.value()
         else:
             return self.feed_per_tooth.value() * IN_TO_MM
+    
+    def on_hsm_changed(self):
+        """Handle HSM mode toggle"""
+        if self.hsm_enabled.isChecked():
+            # HSM enabled - auto-enable chip thinning
+            self.chip_thinning_enabled.setChecked(True)
+            self.chip_thinning_enabled.setEnabled(False)  # Auto-controlled
+        else:
+            # HSM disabled - allow manual chip thinning control
+            self.chip_thinning_enabled.setEnabled(True)
+        
+        # Trigger update if parent exists
+        try:
+            self.parent().parent().update()
+        except:
+            pass
+    
+    def is_hsm_enabled(self):
+        """Check if HSM mode is enabled"""
+        return self.hsm_enabled.isChecked()
+    
+    def is_chip_thinning_enabled(self):
+        """Check if chip thinning compensation is enabled"""
+        return self.chip_thinning_enabled.isChecked()
+    
+    def get_tool_stickout_mm(self):
+        """Get tool stickout in mm"""
+        return self.tool_stickout.value()
 
     
     def set_material_context(self, material_key: str):
@@ -1001,18 +1060,25 @@ class ResultsBox(QtWidgets.QGroupBox):
         self.torque_bar.setUnit("Nm")
         self.torque_bar.setGradientType(GradientType.ASCENDING)
         
+        # Deflection bar - ascending (lower deflection is better, but show the actual values)
+        self.deflection_bar = RangeBarWidget()
+        self.deflection_bar.setLabel("Tool Deflection")
+        self.deflection_bar.setUnit("mm")
+        self.deflection_bar.setGradientType(GradientType.ASCENDING)  # Higher values are concerning
+        
         # Advanced info display
         self.advanced_info = QtWidgets.QLabel("Select material and set parameters for advanced calculations")
         self.advanced_info.setWordWrap(True)
         self.advanced_info.setStyleSheet("color: #aaa; font-size: 10px; padding: 8px; border: 1px solid #444; background-color: #2a2a2a;")
         self.advanced_info.setMinimumHeight(80)
         
-        # Add bars to grid layout in logical order
-        bars_layout.addWidget(self.rpm_bar, 0, 0, 1, 2)  # RPM spans 2 columns at top
+        # Add bars to grid layout - reorganized for better space usage
+        bars_layout.addWidget(self.rpm_bar, 0, 0)           # RPM in single column now
+        bars_layout.addWidget(self.deflection_bar, 0, 1)    # Deflection next to RPM
         bars_layout.addWidget(self.feed_bar, 1, 0)
         bars_layout.addWidget(self.feed_imp_bar, 1, 1)
         bars_layout.addWidget(self.mrr_bar, 2, 0) 
-        bars_layout.addWidget(self.torque_bar, 2, 1)  # Torque next to MRR
+        bars_layout.addWidget(self.torque_bar, 2, 1)        # Torque next to MRR
         bars_layout.addWidget(self.kw_bar, 3, 0)
         bars_layout.addWidget(self.hp_bar, 3, 1)
         bars_layout.addWidget(self.advanced_info, 4, 0, 1, 2)  # Advanced info spans both columns
@@ -1082,6 +1148,20 @@ class ResultsBox(QtWidgets.QGroupBox):
                 self.hp_bar.setPreferredValue(spindle_capacity_hp * 0.7)  # 70% efficiency sweet spot
                 self.hp_bar.setValue(fs.kw * 1.34102)
             
+            # Deflection bar - show deflection values prominently
+            if hasattr(fs, 'tool_deflection') and fs.tool_deflection > 0:
+                # Set intelligent range based on tool diameter
+                max_deflection = fs.diameter * 0.1 if fs.diameter > 0 else 0.1  # 10% of diameter max
+                warning_deflection = fs.diameter * 0.05 if fs.diameter > 0 else 0.05  # 5% warning threshold
+                self.deflection_bar.setRange(0, max_deflection)
+                self.deflection_bar.setPreferredValue(warning_deflection)  # 5% deflection is warning level
+                self.deflection_bar.setValue(fs.tool_deflection)
+                self.deflection_bar.setVisible(True)
+            else:
+                # Hide deflection bar if no deflection data
+                self.deflection_bar.setValue(0)
+                self.deflection_bar.setVisible(False)
+            
             # Update advanced info display
             self._update_advanced_info(fs, torque, material_info, warnings, rigidity_info, is_metric)
     
@@ -1104,15 +1184,39 @@ class ResultsBox(QtWidgets.QGroupBox):
         info_lines.append(f"   RPM: {fs.rpm:.0f} | Feed: {feed_text} | MRR: {fs.mrr:.2f} cm³/min")
         info_lines.append(f"   Power: {power_text} | Torque: {torque:.2f} Nm")
         
+        # 📐 Deflection Analysis (for ALL tools now) - More prominent display
+        if hasattr(fs, 'tool_deflection') and fs.tool_deflection > 0:
+            deflection_percent = (fs.tool_deflection / fs.diameter) * 100 if fs.diameter > 0 else 0
+            info_lines.append(f"")
+            info_lines.append(f"📐 DEFLECTION: {fs.tool_deflection:.4f}mm ({deflection_percent:.2f}% of {fs.diameter:.1f}mm tool)")
+            info_lines.append(f"   Cutting Force: {fs.cutting_force:.1f}N | Stickout: {fs.tool_stickout:.1f}mm")
+            
+            # More prominent deflection status
+            if deflection_percent > 5:
+                info_lines.append(f"   🔴 HIGH DEFLECTION - Reduce feeds/DOC immediately")
+            elif deflection_percent > 2:
+                info_lines.append(f"   🟡 MODERATE DEFLECTION - Monitor surface finish")
+            elif deflection_percent > 0.5:
+                info_lines.append(f"   🟢 ACCEPTABLE DEFLECTION - Good for precision")
+            else:
+                info_lines.append(f"   🟢 EXCELLENT RIGIDITY - Minimal deflection")
+        
+        # 🚀 HSM Parameters (when enabled)
+        if hasattr(fs, 'hsm_enabled') and fs.hsm_enabled:
+            info_lines.append(f"")
+            info_lines.append(f"🚀 HSM Parameters:")
+            if hasattr(fs, 'chip_thinning_factor'):
+                base_feed = fs.feed / fs.chip_thinning_factor if fs.chip_thinning_factor > 0 else fs.feed
+                engagement_percent = (fs.woc / fs.diameter) * 100 if fs.diameter > 0 else 0
+                info_lines.append(f"   Chip Thinning Factor: {fs.chip_thinning_factor:.2f}x")
+                info_lines.append(f"   Compensated Feed: {fs.feed:.0f} mm/min (base: {base_feed:.0f} mm/min)")
+                info_lines.append(f"   Radial Engagement: {engagement_percent:.1f}% ({fs.woc:.2f}mm of {fs.diameter:.1f}mm tool)")
+        
         # Micro tool specific information
         if hasattr(fs, 'is_micro_tool') and fs.is_micro_tool:
             info_lines.append(f"")
             info_lines.append(f"🔬 Micro Tool Analysis ({fs.diameter:.1f}mm):")
-            info_lines.append(f"   Tool Deflection: {fs.tool_deflection:.4f}mm ({(fs.tool_deflection/fs.diameter)*100:.1f}% of diameter)")
-            info_lines.append(f"   Cutting Force: {fs.cutting_force:.1f}N")
             info_lines.append(f"   Effective Chipload: {fs.adjusted_mmpt:.4f}mm ({fs.adjusted_mmpt*0.0393701:.4f}\")")
-            if hasattr(fs, 'tool_stickout'):
-                info_lines.append(f"   Tool Stickout: {fs.tool_stickout:.1f}mm")
         else:
             info_lines.append(f"")
             info_lines.append(f"🔧 Standard Tool ({fs.diameter:.1f}mm): Chipload {fs.adjusted_mmpt:.4f}mm ({fs.adjusted_mmpt*0.0393701:.4f}\")")
@@ -1162,10 +1266,10 @@ class GUI(QtWidgets.QMainWindow):
         self.settings = None
 
         self.setWindowTitle(
-            "⚙️ Speeds & Feeds Calculator v2.0 - Enhanced"
+            "⚙️ Speeds & Feeds Calculator v2.0 - Enhanced with HSM"
         )
-        self.setMinimumSize(1000, 700)  # Increased height to accommodate CuttingBox spacing
-        self.resize(1200, 700)
+        self.setMinimumSize(1000, 1100)  # Set to match successful large size test
+        self.resize(1200, 1100)
         settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
 
         try:
@@ -1318,6 +1422,11 @@ class GUI(QtWidgets.QMainWindow):
         fs.smm = self.cutting_box.get_surface_speed_sfm() * FT_TO_M  # Convert SFM to SMM
         fs.mmpt = self.cutting_box.get_feed_per_tooth_mm()
         fs.kc = self.cutting_box.Kc.value()
+        
+        # HSM and chip thinning parameters
+        fs.hsm_enabled = self.cutting_box.is_hsm_enabled()
+        fs.chip_thinning_enabled = self.cutting_box.is_chip_thinning_enabled()
+        fs.tool_stickout = self.cutting_box.get_tool_stickout_mm()
         
         # Machine rigidity
         fs.rigidity_level = self.machine_box.get_selected_rigidity()

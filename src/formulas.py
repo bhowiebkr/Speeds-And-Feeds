@@ -589,6 +589,73 @@ def validate_machining_parameters(rpm: float, feed_rate: float, depth_of_cut: fl
     return warnings
 
 
+def calculate_chip_thinning_factor(woc_mm: float, tool_diameter_mm: float) -> float:
+    """
+    Calculate radial chip thinning factor (RCTF).
+    
+    Formula: RCTF = 1/√(1 - [1 - (2 × Ae/D)]²)
+    
+    Args:
+        woc_mm: Width of cut (radial engagement) in mm
+        tool_diameter_mm: Tool diameter in mm
+        
+    Returns:
+        Chip thinning factor (1.0 = no thinning, >1.0 = compensation needed)
+    """
+    if tool_diameter_mm <= 0:
+        return 1.0
+        
+    ae_ratio = woc_mm / tool_diameter_mm
+    
+    if ae_ratio >= 0.5:
+        return 1.0  # No chip thinning at ≥50% engagement
+    
+    if ae_ratio <= 0.01:  # Very small engagement
+        return min(2.5, 1.0 / math.sqrt(max(0.01, 1 - (1 - 2 * ae_ratio) ** 2)))
+    
+    # RCTF = 1/√(1 - [1 - (2 × Ae/D)]²)
+    inner_term = 1 - 2 * ae_ratio
+    denominator = 1 - inner_term ** 2
+    
+    if denominator <= 0:
+        return 2.5  # Cap at 2.5x for extreme cases
+    
+    return min(2.5, 1.0 / math.sqrt(denominator))
+
+
+def apply_hsm_speed_boost(surface_speed: float, material_type: str, hsm_enabled: bool) -> float:
+    """
+    Apply HSM speed boost for reduced heat engagement.
+    
+    Args:
+        surface_speed: Base surface speed
+        material_type: Material being cut
+        hsm_enabled: Whether HSM mode is active
+        
+    Returns:
+        Adjusted surface speed
+    """
+    if not hsm_enabled:
+        return surface_speed
+    
+    # HSM speed multipliers by material
+    hsm_multipliers = {
+        'aluminum': 1.25,    # 25% increase
+        'steel': 1.15,       # 15% increase
+        'stainless': 1.10,   # 10% increase
+        'titanium': 1.05,    # 5% increase (conservative)
+        'cast_iron': 1.20    # 20% increase
+    }
+    
+    material_lower = material_type.lower() if material_type else ''
+    
+    for material, multiplier in hsm_multipliers.items():
+        if material in material_lower:
+            return surface_speed * multiplier
+    
+    return surface_speed * 1.15  # Default 15% increase
+
+
 def get_material_property(material_key: str, property_name: str, 
                          materials_db: Dict = None) -> Optional[float]:
     """
@@ -675,16 +742,70 @@ class StandardMachiningCalculator:
         
         return chipload
     
+    def calculate_tool_deflection(self, force_n: float, diameter_mm: float, stickout_mm: float) -> float:
+        """
+        Calculate tool deflection using cantilever beam theory for standard tools.
+        
+        Formula: δ = F*L³/(3*E*I)
+        
+        Args:
+            force_n: Cutting force in Newtons
+            diameter_mm: Tool diameter in mm
+            stickout_mm: Tool stickout length in mm
+            
+        Returns:
+            Tool tip deflection in mm
+        """
+        # Material properties for carbide
+        E = CARBIDE_YOUNGS_MODULUS  # Young's modulus (Pa)
+        
+        # Convert to meters
+        radius_m = (diameter_mm / 2) / 1000  # Convert to meters
+        stickout_m = stickout_mm / 1000
+        
+        # Moment of inertia for circular cross-section: I = π*r⁴/4
+        moment_inertia = (math.pi * (radius_m ** 4)) / 4
+        
+        # Cantilever beam deflection formula
+        deflection_m = (force_n * (stickout_m ** 3)) / (3 * E * moment_inertia)
+        
+        return deflection_m * 1000  # Convert back to mm
+    
+    def calculate_cutting_force(self, kc: float, doc_mm: float, woc_mm: float, feed_per_tooth: float) -> float:
+        """
+        Calculate cutting force for standard tools.
+        
+        Args:
+            kc: Specific cutting force (N/mm²)
+            doc_mm: Depth of cut (mm)
+            woc_mm: Width of cut (mm)
+            feed_per_tooth: Feed per tooth (mm)
+            
+        Returns:
+            Cutting force in Newtons
+        """
+        # Chip area = DOC × feed per tooth
+        chip_area = doc_mm * feed_per_tooth
+        
+        # Force = Kc × chip_area (simplified for standard tools)
+        return kc * chip_area
+
     def calculate_cutting_parameters(self, diameter: float, flute_num: int, doc: float, 
                                    woc: float, smm: float, mmpt: float, kc: float,
-                                   rigidity_level: str, material_type: str) -> dict:
+                                   rigidity_level: str, material_type: str, 
+                                   tool_stickout: float = 15.0, hsm_enabled: bool = False,
+                                   chip_thinning_enabled: bool = False) -> dict:
         """
-        Calculate standard machining parameters.
+        Calculate standard machining parameters with deflection analysis and HSM support.
         
         Returns:
             Dictionary with calculated values and warnings
         """
         self.warnings = []
+        
+        # Apply HSM speed boost if enabled
+        if hsm_enabled:
+            smm = apply_hsm_speed_boost(smm * 3.28084, material_type, hsm_enabled) * 0.3048
         
         # Apply rigidity adjustments to cutting parameters
         adjusted_doc = adjust_for_machine_rigidity(doc, 'doc', rigidity_level, material_type)
@@ -695,6 +816,12 @@ class StandardMachiningCalculator:
         adjusted_mmpt = self.calculate_chipload(
             diameter, material_type, flute_num, mmpt, rigidity_level
         )
+        
+        # Apply chip thinning compensation if enabled
+        chip_thinning_factor = 1.0
+        if chip_thinning_enabled:
+            chip_thinning_factor = calculate_chip_thinning_factor(adjusted_woc, diameter)
+            adjusted_mmpt *= chip_thinning_factor
         
         # Standard RPM calculation
         if diameter > 0 and adjusted_smm > 0:
@@ -720,12 +847,23 @@ class StandardMachiningCalculator:
         else:
             power_kw = 0.0
         
+        # Calculate deflection for all tool sizes now
+        cutting_force = self.calculate_cutting_force(kc, adjusted_doc, adjusted_woc, adjusted_mmpt)
+        tool_deflection = self.calculate_tool_deflection(cutting_force, diameter, tool_stickout)
+        
         # Get standard warnings
         param_warnings = validate_machining_parameters(rpm, feed_rate, doc, woc, diameter)
         rigidity_warnings = get_rigidity_warnings(
             rpm, adjusted_smm * 3.28084, adjusted_mmpt, rigidity_level, material_type, diameter
         )
         self.warnings = param_warnings + rigidity_warnings
+        
+        # Add deflection warnings
+        deflection_percent = (tool_deflection / diameter) * 100 if diameter > 0 else 0
+        if deflection_percent > 5:
+            self.warnings.append(f"High deflection: {tool_deflection:.4f}mm ({deflection_percent:.1f}% of diameter)")
+        elif deflection_percent > 1:
+            self.warnings.append("Monitor surface finish - deflection may affect quality")
         
         return {
             'rpm': rpm,
@@ -736,6 +874,9 @@ class StandardMachiningCalculator:
             'adjusted_doc': adjusted_doc,
             'adjusted_woc': adjusted_woc,
             'adjusted_smm': adjusted_smm,
+            'tool_deflection': tool_deflection,
+            'cutting_force': cutting_force,
+            'chip_thinning_factor': chip_thinning_factor,
             'warnings': self.warnings
         }
 
@@ -895,7 +1036,8 @@ class MicroMachiningCalculator:
     
     def iterative_calculation(self, diameter: float, flute_num: int, doc: float, 
                             woc: float, smm: float, kc: float, rigidity_level: str,
-                            material_type: str) -> dict:
+                            material_type: str, hsm_enabled: bool = False,
+                            chip_thinning_enabled: bool = False) -> dict:
         """
         Perform iterative calculation considering tool deflection effects.
         
@@ -905,6 +1047,10 @@ class MicroMachiningCalculator:
         Returns:
             Dictionary with converged values
         """
+        # Apply HSM speed boost if enabled
+        if hsm_enabled:
+            smm = apply_hsm_speed_boost(smm * 3.28084, material_type, hsm_enabled) * 0.3048
+        
         # Initial chipload calculation
         target_chipload = self.calculate_micro_chipload(
             diameter, material_type, flute_num, rigidity_level
@@ -914,6 +1060,12 @@ class MicroMachiningCalculator:
         adjusted_doc = adjust_for_machine_rigidity(doc, 'doc', rigidity_level, material_type)
         adjusted_woc = adjust_for_machine_rigidity(woc, 'woc', rigidity_level, material_type) 
         adjusted_smm = adjust_for_machine_rigidity(smm, 'surface_speed', rigidity_level, material_type)
+        
+        # Apply chip thinning compensation if enabled
+        chip_thinning_factor = 1.0
+        if chip_thinning_enabled:
+            chip_thinning_factor = calculate_chip_thinning_factor(adjusted_woc, diameter)
+            target_chipload *= chip_thinning_factor
         
         # Initial calculations
         rpm = calculate_rpm(adjusted_smm, diameter, 'metric') if diameter > 0 and adjusted_smm > 0 else 0.0
@@ -972,13 +1124,16 @@ class MicroMachiningCalculator:
             'adjusted_smm': adjusted_smm,
             'tool_deflection': deflection,
             'cutting_force': cutting_force,
+            'chip_thinning_factor': chip_thinning_factor,
             'iterations': iteration + 1,
             'target_chipload': target_chipload
         }
     
     def calculate_cutting_parameters(self, diameter: float, flute_num: int, doc: float,
                                    woc: float, smm: float, mmpt: float, kc: float,
-                                   rigidity_level: str, material_type: str) -> dict:
+                                   rigidity_level: str, material_type: str,
+                                   tool_stickout: float = 15.0, hsm_enabled: bool = False,
+                                   chip_thinning_enabled: bool = False) -> dict:
         """
         Main calculation method for micro machining parameters.
         
@@ -989,7 +1144,7 @@ class MicroMachiningCalculator:
         
         # Perform iterative calculation
         results = self.iterative_calculation(
-            diameter, flute_num, doc, woc, smm, kc, rigidity_level, material_type
+            diameter, flute_num, doc, woc, smm, kc, rigidity_level, material_type, hsm_enabled, chip_thinning_enabled
         )
         
         # Generate micro-specific warnings
@@ -1074,6 +1229,10 @@ class FeedsAndSpeeds:
         self.mmpt = 0.0              # Feed per tooth (mm/tooth)
         self.kc = 0.0                # Specific cutting force (N/mm²)
         
+        # HSM and chip thinning parameters
+        self.hsm_enabled = False     # High speed machining mode
+        self.chip_thinning_enabled = False  # Chip thinning compensation
+        
         # Machine rigidity parameters
         self.rigidity_level = MachineRigidity.VMC_INDUSTRIAL  # Default to industrial
         self.material_type = None    # Material type for rigidity-aware adjustments
@@ -1093,6 +1252,7 @@ class FeedsAndSpeeds:
         # Micro machining specific results
         self.tool_deflection = 0.0   # Tool deflection (mm)
         self.cutting_force = 0.0     # Cutting force (N)
+        self.chip_thinning_factor = 1.0  # Chip thinning compensation factor
         self.is_micro_tool = False   # True if using micro calculator
         
         # Calculator instances
@@ -1156,7 +1316,8 @@ class FeedsAndSpeeds:
         # Perform calculation using selected engine
         results = calculator.calculate_cutting_parameters(
             self.diameter, self.flute_num, self.doc, self.woc,
-            self.smm, self.mmpt, self.kc, self.rigidity_level, self.material_type
+            self.smm, self.mmpt, self.kc, self.rigidity_level, self.material_type,
+            self.tool_stickout, self.hsm_enabled, self.chip_thinning_enabled
         )
         
         # Update instance variables with results
@@ -1171,13 +1332,10 @@ class FeedsAndSpeeds:
         self.adjusted_woc = results.get('adjusted_woc', 0.0)
         self.adjusted_smm = results.get('adjusted_smm', 0.0)
         
-        # Update micro-specific results if applicable
-        if self.is_micro_tool:
-            self.tool_deflection = results.get('tool_deflection', 0.0)
-            self.cutting_force = results.get('cutting_force', 0.0)
-        else:
-            self.tool_deflection = 0.0
-            self.cutting_force = 0.0
+        # Update tool deflection and cutting force (now available for all tools)
+        self.tool_deflection = results.get('tool_deflection', 0.0)
+        self.cutting_force = results.get('cutting_force', 0.0)
+        self.chip_thinning_factor = results.get('chip_thinning_factor', 1.0)
         
         # Return warnings from calculation
         return results.get('warnings', [])
@@ -1194,6 +1352,7 @@ class FeedsAndSpeeds:
         self.adjusted_smm = 0.0
         self.tool_deflection = 0.0
         self.cutting_force = 0.0
+        self.chip_thinning_factor = 1.0
     
     def set_tool_stickout(self, stickout_mm: float):
         """
