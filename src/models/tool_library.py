@@ -65,7 +65,7 @@ class ToolLibrary:
         self.load_library()
         
         # Qt settings for user preferences
-        self.settings = QtCore.QSettings("speeds-and-feeds-calc", "ToolLibrary")
+        self.settings = QtCore.QSettings("cnc-toolhub", "ToolLibrary")
         
         # Initialize project manager
         self.project_manager = ProjectManager()

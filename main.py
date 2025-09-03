@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Main entry point for Speeds and Feeds Calculator
+Main entry point for CNC ToolHub
 
 This is the primary entry point used by Nuitka for building the standalone executable.
 It provides a clean interface for the application startup.
@@ -21,13 +21,13 @@ def main():
             app = QtWidgets.QApplication(sys.argv)
             msg = QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setWindowTitle("Speeds & Feeds Calculator - Startup Error")
+            msg.setWindowTitle("CNC ToolHub - Startup Error")
             msg.setText("An error occurred while starting the application:")
             msg.setDetailedText(f"{str(e)}\n\n{traceback.format_exc()}")
             msg.exec()
         except:
             # If Qt fails, fall back to console output
-            print("Error starting Speeds & Feeds Calculator:")
+            print("Error starting CNC ToolHub:")
             print(f"{str(e)}")
             traceback.print_exc()
             input("Press Enter to exit...")

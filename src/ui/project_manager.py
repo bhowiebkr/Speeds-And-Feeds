@@ -18,6 +18,8 @@ class ProjectListWidget(QtWidgets.QTableWidget):
     """Custom table widget for displaying projects."""
     
     projectSelected = QtCore.Signal(Project)
+    projectEditRequested = QtCore.Signal(Project)
+    projectContextMenuRequested = QtCore.Signal(Project, QtCore.QPoint)
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -62,8 +64,13 @@ class ProjectListWidget(QtWidgets.QTableWidget):
         # Disable alternating row colors that interfere with setBackground
         self.setAlternatingRowColors(False)
         
-        # Connect selection
+        # Connect selection and interactions
         self.itemSelectionChanged.connect(self.on_selection_changed)
+        self.itemDoubleClicked.connect(self.on_double_click)
+        
+        # Enable context menu
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_context_menu)
     
     def populate_projects(self, projects: List[Project]):
         """Populate table with project data."""
@@ -122,6 +129,21 @@ class ProjectListWidget(QtWidgets.QTableWidget):
         if selected_items:
             return selected_items[0].data(QtCore.Qt.UserRole)
         return None
+    
+    def on_double_click(self, item):
+        """Handle double-click on project item."""
+        project = item.data(QtCore.Qt.UserRole)
+        if project:
+            self.projectEditRequested.emit(project)
+    
+    def on_context_menu(self, position):
+        """Handle right-click context menu."""
+        item = self.itemAt(position)
+        if item:
+            project = item.data(QtCore.Qt.UserRole)
+            if project:
+                global_pos = self.mapToGlobal(position)
+                self.projectContextMenuRequested.emit(project, global_pos)
 
 
 class ProjectEditorDialog(QtWidgets.QDialog):
@@ -228,22 +250,34 @@ class ProjectEditorDialog(QtWidgets.QDialog):
         super().accept()
 
 
-class ProjectManagerDialog(QtWidgets.QDialog):
-    """Main project management dialog."""
+class ProjectManagerDialog(QtWidgets.QWidget):
+    """Main project management dialog/widget."""
     
     projectsModified = QtCore.Signal()
     
-    def __init__(self, tool_library: ToolLibrary, parent=None):
+    def __init__(self, tool_library: ToolLibrary, parent=None, embed_mode=False):
         super().__init__(parent)
         self.tool_library = tool_library
         self.project_manager = tool_library.project_manager
         self.current_project: Optional[Project] = None
+        self.embed_mode = embed_mode
         
-        self.setWindowTitle("📁 Project Manager")
-        self.setModal(True)
-        self.resize(800, 600)
+        if not embed_mode:
+            # Only set window properties when used as a dialog
+            self.setWindowTitle("📁 Project Manager")
+            self.setModal(True)
+            self.resize(800, 600)
         self.setup_ui()
         self.refresh_projects()
+    
+    def close_widget(self):
+        """Close the widget (handle both dialog and embed modes)."""
+        if self.embed_mode:
+            # In embed mode, just clear selection or do nothing
+            pass
+        else:
+            # In dialog mode, close the dialog
+            self.close()
     
     def setup_ui(self):
         """Setup the main UI."""
@@ -301,6 +335,8 @@ class ProjectManagerDialog(QtWidgets.QDialog):
         # Project list
         self.project_list = ProjectListWidget()
         self.project_list.projectSelected.connect(self.on_project_selected)
+        self.project_list.projectEditRequested.connect(self.edit_project)
+        self.project_list.projectContextMenuRequested.connect(self.show_project_context_menu)
         
         # Project details panel
         details_group = QtWidgets.QGroupBox("Project Details")
@@ -326,13 +362,17 @@ class ProjectManagerDialog(QtWidgets.QDialog):
         project_actions_layout.addWidget(self.archive_btn)
         project_actions_layout.addStretch()
         
-        # Dialog buttons
+        # Dialog buttons (only in dialog mode)
         button_layout = QtWidgets.QHBoxLayout()
-        self.close_button = QtWidgets.QPushButton("Close")
-        self.close_button.clicked.connect(self.accept)
-        
-        button_layout.addStretch()
-        button_layout.addWidget(self.close_button)
+        if not self.embed_mode:
+            self.close_button = QtWidgets.QPushButton("Close")
+            self.close_button.clicked.connect(self.close_widget)
+            
+            button_layout.addStretch()
+            button_layout.addWidget(self.close_button)
+        else:
+            # In embed mode, just add stretch for consistent layout
+            button_layout.addStretch()
         
         # Assemble layout
         layout.addLayout(header_layout)
@@ -541,3 +581,64 @@ class ProjectManagerDialog(QtWidgets.QDialog):
             self.refresh_projects()
             if self.current_project:
                 self.update_project_details(self.current_project)
+    
+    def show_project_context_menu(self, project: Project, global_pos: QtCore.QPoint):
+        """Show context menu for project actions."""
+        menu = QtWidgets.QMenu(self)
+        
+        # Edit action
+        edit_action = menu.addAction("✏️ Edit Project")
+        edit_action.triggered.connect(lambda: self.edit_project_context(project))
+        
+        # Tools action
+        tools_action = menu.addAction("🔧 Manage Tools")
+        tools_action.triggered.connect(lambda: self.manage_tools_context(project))
+        
+        menu.addSeparator()
+        
+        # Clone action
+        clone_action = menu.addAction("📋 Clone Project")
+        clone_action.triggered.connect(lambda: self.clone_project_context(project))
+        
+        # Archive action (only if not already archived)
+        if project.status != ProjectStatus.ARCHIVED:
+            archive_action = menu.addAction("📦 Archive")
+            archive_action.triggered.connect(lambda: self.archive_project_context(project))
+        
+        menu.addSeparator()
+        
+        # Delete action
+        delete_action = menu.addAction("🗑️ Delete Project")
+        delete_action.triggered.connect(lambda: self.delete_project_context(project))
+        
+        menu.exec_(global_pos)
+    
+    def edit_project_context(self, project: Project):
+        """Edit project from context menu."""
+        # Set as current project and call edit
+        self.current_project = project
+        self.edit_project()
+    
+    def manage_tools_context(self, project: Project):
+        """Manage tools from context menu."""
+        # Set as current project and call manage tools
+        self.current_project = project
+        self.manage_project_tools()
+    
+    def clone_project_context(self, project: Project):
+        """Clone project from context menu."""
+        # Set as current project and call clone
+        self.current_project = project
+        self.clone_project()
+    
+    def archive_project_context(self, project: Project):
+        """Archive project from context menu."""
+        # Set as current project and call archive
+        self.current_project = project
+        self.archive_project()
+    
+    def delete_project_context(self, project: Project):
+        """Delete project from context menu."""
+        # Set as current project and call delete
+        self.current_project = project
+        self.delete_project()

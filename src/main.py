@@ -1,5 +1,5 @@
 """
-Main GUI class for the Speeds and Feeds Calculator.
+Main GUI class for CNC ToolHub.
 
 Contains the simplified GUI class with updated imports.
 """
@@ -12,6 +12,9 @@ from .calculators.base import FeedsAndSpeeds
 from .constants.units import FT_TO_M
 from .constants.machining import MACHINE_RIGIDITY_FACTORS
 from .formulas.validation import validate_machining_parameters
+from .ui.tool_library_widget import ToolLibraryWidget
+from .ui.project_manager import ProjectManagerDialog
+from .models.tool_library import ToolLibrary
 
 
 class GUI(QtWidgets.QMainWindow):
@@ -20,11 +23,11 @@ class GUI(QtWidgets.QMainWindow):
         self.settings = None
 
         self.setWindowTitle(
-            "⚙️ Speeds & Feeds Calculator v2.0 - Enhanced with HSM"
+            "🔧 CNC ToolHub v2.0 - Tool Management & Machining Optimization"
         )
         self.setMinimumSize(1000, 1100)  # Set to match successful large size test
         self.resize(1200, 1100)
-        settings = QtCore.QSettings("speeds-and-feeds-calc", "SpeedsAndFeedsCalculator")
+        settings = QtCore.QSettings("cnc-toolhub", "CNCToolHub")
 
         try:
             self.restoreGeometry(settings.value("geometry"))
@@ -34,26 +37,68 @@ class GUI(QtWidgets.QMainWindow):
                 "Unable to load settings. First time opening the tool?\n" + str(e)
             )
 
+        # Initialize tool library
+        self.tool_library = ToolLibrary()
+        
+        # Create main tab widget
+        main_widget = QtWidgets.QTabWidget()
+        self.setCentralWidget(main_widget)
+        
+        # Create tabs
+        self.create_feeds_speeds_tab(main_widget)
+        self.create_tool_library_tab(main_widget)
+        self.create_projects_tab(main_widget)
+        
+        # Set tab icons and styling
+        main_widget.setTabPosition(QtWidgets.QTabWidget.North)
+        main_widget.setStyleSheet("""
+            QTabWidget::pane {
+                border: 1px solid #555555;
+                background-color: #2a2a2a;
+            }
+            QTabBar::tab {
+                background-color: #3c3c3c;
+                color: #ffffff;
+                padding: 8px 20px;
+                margin-right: 2px;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+            QTabBar::tab:selected {
+                background-color: #0078d4;
+            }
+            QTabBar::tab:hover {
+                background-color: #505050;
+            }
+        """)
+
+        # Initialize the feeds and speeds calculations
+        self.setup_feeds_speeds_connections()
+        
+    def create_feeds_speeds_tab(self, parent_widget):
+        """Create the Feeds & Speeds calculation tab."""
+        # Create tab widget
+        feeds_speeds_widget = QtWidgets.QWidget()
+        parent_widget.addTab(feeds_speeds_widget, "⚙️ Feeds & Speeds")
+        
         # Layouts with improved spacing
-        main_widget = QtWidgets.QWidget()
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.setSpacing(15)
         main_layout.setContentsMargins(15, 15, 15, 15)
         
         sections_layout = QtWidgets.QHBoxLayout()
         sections_layout.setSpacing(15)
-
-        self.setCentralWidget(main_widget)
-        main_widget.setLayout(main_layout)
+        
+        feeds_speeds_widget.setLayout(main_layout)
         form = QtWidgets.QFormLayout()
-
-        self.tool_box = ToolBox(self)
+        
+        self.tool_box = ToolBox(self, show_library_button=False)  # Hide library button
         self.material_box = MaterialBox(self)
         self.cutting_box = CuttingBox(self)
         self.machine_box = MachineBox(self)
-
+        
         self.results_box = ResultsBox()
-
+        
         # Add Widgets
         main_layout.addLayout(form)
         main_layout.addLayout(sections_layout)
@@ -62,7 +107,22 @@ class GUI(QtWidgets.QMainWindow):
         sections_layout.addWidget(self.cutting_box)
         sections_layout.addWidget(self.machine_box)
         main_layout.addWidget(self.results_box)
-
+        
+    def create_tool_library_tab(self, parent_widget):
+        """Create the Tool Library tab."""
+        self.tool_library_widget = ToolLibraryWidget(self.tool_library, self, embed_mode=True)
+        parent_widget.addTab(self.tool_library_widget, "🔧 Tool Library")
+        
+        # Connect tool selection to feeds & speeds
+        self.tool_library_widget.toolSelected.connect(self.on_tool_selected_from_library)
+        
+    def create_projects_tab(self, parent_widget):
+        """Create the Projects tab."""
+        self.project_manager_widget = ProjectManagerDialog(self.tool_library, self, embed_mode=True)
+        parent_widget.addTab(self.project_manager_widget, "📁 Projects")
+        
+    def setup_feeds_speeds_connections(self):
+        """Setup all signal connections for feeds and speeds calculations."""
         # Logic - Use valueChanged for real-time updates
         self.tool_box.fluteNum.valueChanged.connect(self.update)
         self.cutting_box.DOC.valueChanged.connect(self.update)
@@ -82,9 +142,17 @@ class GUI(QtWidgets.QMainWindow):
         
         # Machine box signals
         self.machine_box.rigidityCombo.currentTextChanged.connect(self.update)  # Update when rigidity changes
-
+        
         self.cutting_box.init()
         self.update()
+        
+    def on_tool_selected_from_library(self, tool_id: str):
+        """Handle tool selection from the tool library tab."""
+        tool = self.tool_library.get_tool(tool_id)
+        if tool:
+            # Update tool diameter and flute count in the feeds & speeds tab
+            self.tool_box.set_tool_diameter(tool.diameter)
+            self.tool_box.fluteNum.setValue(tool.flutes)
 
     def toolDiameterChanged(self):
         self.cutting_box.init()

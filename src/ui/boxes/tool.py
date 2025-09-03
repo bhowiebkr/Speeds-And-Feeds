@@ -11,7 +11,7 @@ from ..tool_library_widget import ToolLibraryWidget
 
 
 class ToolBox(QtWidgets.QGroupBox):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, show_library_button=True):
         super(ToolBox, self).__init__(parent)
         self.setTitle("🔧 Tool Info")
         self.setObjectName("tool_box")
@@ -58,27 +58,30 @@ class ToolBox(QtWidgets.QGroupBox):
         # Tool library integration
         tool_library_layout = QtWidgets.QHBoxLayout()
         
-        # Tool selection button
-        self.tool_library_btn = QtWidgets.QPushButton("📚 Tool Library")
-        self.tool_library_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #0078d4;
-                color: white;
-                border: none;
-                padding: 6px 12px;
-                border-radius: 4px;
-                font-weight: bold;
-            }
-            QPushButton:hover { background-color: #106ebe; }
-            QPushButton:pressed { background-color: #005a9e; }
-        """)
-        self.tool_library_btn.clicked.connect(self.open_tool_library)
+        # Tool selection button (conditional)
+        self.show_library_button = show_library_button
+        if show_library_button:
+            self.tool_library_btn = QtWidgets.QPushButton("📚 Tool Library")
+            self.tool_library_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #0078d4;
+                    color: white;
+                    border: none;
+                    padding: 6px 12px;
+                    border-radius: 4px;
+                    font-weight: bold;
+                }
+                QPushButton:hover { background-color: #106ebe; }
+                QPushButton:pressed { background-color: #005a9e; }
+            """)
+            self.tool_library_btn.clicked.connect(self.open_tool_library)
         
         # Current tool info display
         self.current_tool_label = QtWidgets.QLabel("Manual Entry")
         self.current_tool_label.setStyleSheet("color: #666; font-size: 11px; font-style: italic;")
         
-        tool_library_layout.addWidget(self.tool_library_btn)
+        if show_library_button:
+            tool_library_layout.addWidget(self.tool_library_btn)
         tool_library_layout.addWidget(self.current_tool_label)
         tool_library_layout.addStretch()
         
@@ -143,6 +146,20 @@ class ToolBox(QtWidgets.QGroupBox):
     def is_metric(self):
         """Return True if metric units are selected"""
         return self.metric_radio.isChecked()
+    
+    def set_tool_diameter(self, diameter_mm: float):
+        """Set tool diameter from external source (e.g., tool library)"""
+        self.toolDiameter.blockSignals(True)
+        if self.is_metric():
+            self.toolDiameter.setValue(diameter_mm)
+        else:
+            # Convert mm to inches
+            from ...constants.units import MM_TO_IN
+            self.toolDiameter.setValue(diameter_mm * MM_TO_IN)
+        self.toolDiameter.blockSignals(False)
+        
+        # Emit signal to update calculations
+        self.toolDiameter.valueChanged.emit(self.toolDiameter.value())
     
     def open_tool_library(self):
         """Open the tool library dialog."""

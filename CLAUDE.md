@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Speeds and Feeds Calculator for CNC machines built with PySide6 (Qt for Python). The application calculates optimal cutting parameters (RPM, feed rates, material removal rates) based on tool specifications, material properties, and cutting parameters.
+CNC ToolHub is a comprehensive CNC tool management and machining optimization application built with PySide6 (Qt for Python). The application combines advanced cutting parameter calculations with project-based tool organization, providing a complete solution for managing CNC operations from tool inventory to optimal machining parameters.
 
 **Major Version**: v2.0 - Enhanced with HSM (High Speed Machining), micro tool support, and comprehensive refactored architecture.
 
@@ -16,6 +16,8 @@ This is a Speeds and Feeds Calculator for CNC machines built with PySide6 (Qt fo
 
 ## Key Features
 
+- **Project Management**: Create, organize, and track multiple CNC projects with tool assignments
+- **Tool Library Management**: Comprehensive tool database with filtering and organization
 - **Advanced Calculations**: Standard and micro tool machining calculations (<3mm tools)
 - **Tool Deflection Analysis**: Cantilever beam theory for all tool sizes with deflection warnings
 - **HSM Support**: High Speed Machining mode with chip thinning compensation

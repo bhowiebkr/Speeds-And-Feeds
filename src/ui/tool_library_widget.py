@@ -277,21 +277,24 @@ class ToolCard(QtWidgets.QFrame):
             self.toolDeleted.emit(self.tool.id)
 
 
-class ToolLibraryWidget(QtWidgets.QDialog):
+class ToolLibraryWidget(QtWidgets.QWidget):
     """Main tool library widget with modern interface."""
     
-    toolSelected = QtCore.Signal(ToolSpecs)
+    toolSelected = QtCore.Signal(str)  # Changed to emit tool_id string instead of ToolSpecs
     
-    def __init__(self, library: ToolLibrary = None, parent=None):
+    def __init__(self, library: ToolLibrary = None, parent=None, embed_mode=False):
         super().__init__(parent)
         self.library = library or ToolLibrary()
         self.current_tools: List[ToolSpecs] = []
         self.tool_cards: List[ToolCard] = []
         self._refreshing = False  # Flag to prevent filtering during refresh
+        self.embed_mode = embed_mode
         
-        self.setWindowTitle("🔧 Tool Library")
-        self.setModal(True)
-        self.resize(1200, 800)
+        if not embed_mode:
+            # Only set window properties when used as a dialog
+            self.setWindowTitle("🔧 Tool Library")
+            self.setModal(True)
+            self.resize(1200, 800)
         self.setup_ui()
         self.refresh_tools()
         
@@ -466,19 +469,26 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         self.status_label = QtWidgets.QLabel("0 tools loaded")
         self.status_label.setStyleSheet("color: #666; font-size: 11px;")
         
-        # Dialog buttons
+        # Buttons layout (different for embed vs dialog mode)
         button_layout = QtWidgets.QHBoxLayout()
-        self.select_button = QtWidgets.QPushButton("Select Tool")
-        self.select_button.setEnabled(False)
-        self.cancel_button = QtWidgets.QPushButton("Cancel")
         
-        self.select_button.clicked.connect(self.select_current_tool)
-        self.cancel_button.clicked.connect(self.reject)
-        
-        button_layout.addWidget(self.status_label)
-        button_layout.addStretch()
-        button_layout.addWidget(self.select_button)
-        button_layout.addWidget(self.cancel_button)
+        if not self.embed_mode:
+            # Dialog mode: show select/cancel buttons
+            self.select_button = QtWidgets.QPushButton("Select Tool")
+            self.select_button.setEnabled(False)
+            self.cancel_button = QtWidgets.QPushButton("Cancel")
+            
+            self.select_button.clicked.connect(self.select_current_tool)
+            self.cancel_button.clicked.connect(self.close_widget)
+            
+            button_layout.addWidget(self.status_label)
+            button_layout.addStretch()
+            button_layout.addWidget(self.select_button)
+            button_layout.addWidget(self.cancel_button)
+        else:
+            # Embed mode: just show status
+            button_layout.addWidget(self.status_label)
+            button_layout.addStretch()
         
         # Assemble main layout
         layout.addLayout(header_layout)
@@ -608,7 +618,12 @@ class ToolLibraryWidget(QtWidgets.QDialog):
     def on_tool_selected(self, tool: ToolSpecs):
         """Handle tool selection."""
         self.selected_tool = tool
-        self.select_button.setEnabled(True)
+        
+        if not self.embed_mode:
+            self.select_button.setEnabled(True)
+        else:
+            # In embed mode, emit signal immediately on selection
+            self.toolSelected.emit(tool.id)
         
         # Mark as recently used
         self.library.mark_as_used(tool.id)
@@ -676,10 +691,20 @@ class ToolLibraryWidget(QtWidgets.QDialog):
             self.refresh_tools()
     
     def select_current_tool(self):
-        """Select the current tool and close dialog."""
+        """Select the current tool and close dialog/emit signal."""
         if self.selected_tool:
-            self.toolSelected.emit(self.selected_tool)
-            self.accept()
+            self.toolSelected.emit(self.selected_tool.id)  # Emit tool ID instead of ToolSpecs object
+            if not self.embed_mode:
+                self.close_widget()
+    
+    def close_widget(self):
+        """Close the widget (handle both dialog and embed modes)."""
+        if self.embed_mode:
+            # In embed mode, just clear selection or do nothing
+            pass
+        else:
+            # In dialog mode, close the dialog
+            self.close()
     
     def clear_search(self):
         """Clear search and filters."""
@@ -709,14 +734,16 @@ class ToolLibraryWidget(QtWidgets.QDialog):
     
     def show_tool_guide(self):
         """Show tool selection guide."""
-        dialog = ToolGuideDialog(self)
-        dialog.exec_()
+        if not self.embed_mode:
+            dialog = ToolGuideDialog(self)
+            dialog.exec_()
     
     def show_project_manager(self):
         """Show project manager dialog."""
-        dialog = ProjectManagerDialog(self.library, self)
-        dialog.projectsModified.connect(self.refresh_project_filter)
-        dialog.exec_()
+        if not self.embed_mode:
+            dialog = ProjectManagerDialog(self.library, self)
+            dialog.projectsModified.connect(self.refresh_project_filter)
+            dialog.exec_()
 
 
 class ToolEditorDialog(QtWidgets.QDialog):
