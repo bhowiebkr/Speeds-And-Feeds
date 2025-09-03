@@ -1,1 +1,26 @@
-{}
+{
+  "proj_001": {
+    "id": "proj_001",
+    "name": "Svalboard",
+    "description": "cnc maching in aluminum",
+    "customer_name": "",
+    "status": "active",
+    "date_created": "2025-09-03T00:43:47.948560",
+    "date_modified": "2025-09-03T00:43:59.807024",
+    "notes": "",
+    "tools": [
+      {
+        "tool_id": "991250",
+        "quantity_needed": 1,
+        "notes": "",
+        "date_added": "2025-09-03T00:43:58.043208"
+      },
+      {
+        "tool_id": "B282A06250HP",
+        "quantity_needed": 1,
+        "notes": "",
+        "date_added": "2025-09-03T00:43:59.807024"
+      }
+    ]
+  }
+}

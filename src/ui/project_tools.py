@@ -34,6 +34,7 @@ class ProjectToolListWidget(QtWidgets.QListWidget):
     """Enhanced list widget for project tools with quantity support."""
     
     toolQuantityChanged = QtCore.Signal(str, int)  # tool_id, quantity
+    toolNotesChanged = QtCore.Signal(str, str)  # tool_id, notes
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -45,14 +46,19 @@ class ProjectToolListWidget(QtWidgets.QListWidget):
         """Add a tool association to the list."""
         item = ToolListItem(tool)
         
-        # Create widget for quantity control
+        # Create widget for quantity and notes control
         widget = QtWidgets.QWidget()
-        layout = QtWidgets.QHBoxLayout(widget)
-        layout.setContentsMargins(5, 2, 5, 2)
+        main_layout = QtWidgets.QVBoxLayout(widget)
+        main_layout.setContentsMargins(5, 5, 5, 5)
+        main_layout.setSpacing(3)
+        
+        # Top row - tool info and quantity
+        top_layout = QtWidgets.QHBoxLayout()
         
         # Tool info
         info_label = QtWidgets.QLabel(f"{tool.name} ({tool.diameter_mm:.3f}mm)")
         info_label.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        info_label.setStyleSheet("font-weight: bold;")
         
         # Quantity control
         qty_label = QtWidgets.QLabel("Qty:")
@@ -62,14 +68,162 @@ class ProjectToolListWidget(QtWidgets.QListWidget):
         qty_spin.setFixedWidth(60)
         qty_spin.valueChanged.connect(lambda value: self.toolQuantityChanged.emit(tool.id, value))
         
-        layout.addWidget(info_label)
-        layout.addWidget(qty_label)
-        layout.addWidget(qty_spin)
+        # Notes button
+        notes_btn = QtWidgets.QPushButton("📝 Notes")
+        notes_btn.setFixedSize(70, 24)
+        notes_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 3px;
+                font-size: 10px;
+            }
+            QPushButton:hover { background-color: #45a049; }
+        """)
+        notes_btn.clicked.connect(lambda: self.edit_tool_notes(tool.id, association.notes))
+        
+        top_layout.addWidget(info_label)
+        top_layout.addWidget(qty_label)
+        top_layout.addWidget(qty_spin)
+        top_layout.addWidget(notes_btn)
+        
+        # Bottom row - notes preview
+        notes_preview = QtWidgets.QLabel()
+        if association.notes:
+            preview_text = association.notes[:50] + ("..." if len(association.notes) > 50 else "")
+            notes_preview.setText(f"📝 {preview_text}")
+            notes_preview.setStyleSheet("color: #888888; font-style: italic; font-size: 10px;")
+        else:
+            notes_preview.setText("No notes")
+            notes_preview.setStyleSheet("color: #666666; font-style: italic; font-size: 10px;")
+        
+        # Store references for updates
+        item.notes_preview = notes_preview
+        item.notes_btn = notes_btn
+        
+        main_layout.addLayout(top_layout)
+        main_layout.addWidget(notes_preview)
         
         self.addItem(item)
         self.setItemWidget(item, widget)
         
         return item
+    
+    def edit_tool_notes(self, tool_id: str, current_notes: str):
+        """Open dialog to edit tool notes."""
+        dialog = ToolNotesDialog(tool_id, current_notes, self)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            new_notes = dialog.get_notes()
+            self.toolNotesChanged.emit(tool_id, new_notes)
+            
+            # Update the preview for this tool
+            for i in range(self.count()):
+                item = self.item(i)
+                if hasattr(item, 'tool') and item.tool.id == tool_id:
+                    if hasattr(item, 'notes_preview'):
+                        if new_notes:
+                            preview_text = new_notes[:50] + ("..." if len(new_notes) > 50 else "")
+                            item.notes_preview.setText(f"📝 {preview_text}")
+                            item.notes_preview.setStyleSheet("color: #888888; font-style: italic; font-size: 10px;")
+                        else:
+                            item.notes_preview.setText("No notes")
+                            item.notes_preview.setStyleSheet("color: #666666; font-style: italic; font-size: 10px;")
+                    break
+
+
+class ToolNotesDialog(QtWidgets.QDialog):
+    """Dialog for editing project-specific tool notes."""
+    
+    def __init__(self, tool_id: str, current_notes: str, parent=None):
+        super().__init__(parent)
+        self.tool_id = tool_id
+        self.current_notes = current_notes
+        
+        self.setWindowTitle("📝 Edit Tool Notes")
+        self.setModal(True)
+        self.resize(400, 300)
+        self.setup_ui()
+    
+    def setup_ui(self):
+        """Setup the dialog UI."""
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(15, 15, 15, 15)
+        layout.setSpacing(10)
+        
+        # Header
+        header_label = QtWidgets.QLabel(f"📝 Project Notes for Tool: {self.tool_id}")
+        header_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #ffffff;")
+        
+        # Instructions
+        instructions = QtWidgets.QLabel(
+            "Add notes specific to this tool's use in this project:\n"
+            "• Operations (roughing, finishing, slotting)\n" 
+            "• Speeds & feeds recommendations\n"
+            "• Special considerations or warnings"
+        )
+        instructions.setStyleSheet("color: #cccccc; font-size: 11px;")
+        instructions.setWordWrap(True)
+        
+        # Notes text area
+        self.notes_text = QtWidgets.QTextEdit()
+        self.notes_text.setPlainText(self.current_notes)
+        self.notes_text.setStyleSheet("""
+            QTextEdit {
+                background-color: #2a2a2a;
+                border: 1px solid #555555;
+                border-radius: 4px;
+                color: #ffffff;
+                font-family: 'Consolas', 'Monaco', monospace;
+                font-size: 11px;
+                padding: 8px;
+            }
+        """)
+        self.notes_text.setPlaceholderText("Enter notes for this tool in this project...")
+        
+        # Character count
+        self.char_count = QtWidgets.QLabel("0 characters")
+        self.char_count.setStyleSheet("color: #888888; font-size: 10px;")
+        self.update_char_count()
+        self.notes_text.textChanged.connect(self.update_char_count)
+        
+        # Buttons
+        button_layout = QtWidgets.QHBoxLayout()
+        
+        clear_btn = QtWidgets.QPushButton("🗑️ Clear")
+        clear_btn.clicked.connect(self.clear_notes)
+        
+        cancel_btn = QtWidgets.QPushButton("Cancel")
+        cancel_btn.clicked.connect(self.reject)
+        
+        save_btn = QtWidgets.QPushButton("💾 Save")
+        save_btn.clicked.connect(self.accept)
+        save_btn.setDefault(True)
+        
+        button_layout.addWidget(clear_btn)
+        button_layout.addStretch()
+        button_layout.addWidget(cancel_btn)
+        button_layout.addWidget(save_btn)
+        
+        # Assemble layout
+        layout.addWidget(header_label)
+        layout.addWidget(instructions)
+        layout.addWidget(self.notes_text, 1)
+        layout.addWidget(self.char_count)
+        layout.addLayout(button_layout)
+    
+    def update_char_count(self):
+        """Update character count label."""
+        count = len(self.notes_text.toPlainText())
+        self.char_count.setText(f"{count} characters")
+    
+    def clear_notes(self):
+        """Clear the notes text."""
+        self.notes_text.clear()
+    
+    def get_notes(self) -> str:
+        """Get the notes text."""
+        return self.notes_text.toPlainText().strip()
 
 
 class ProjectToolsDialog(QtWidgets.QDialog):
@@ -156,6 +310,7 @@ class ProjectToolsDialog(QtWidgets.QDialog):
         # Project tools list
         self.project_tools = ProjectToolListWidget()
         self.project_tools.toolQuantityChanged.connect(self.update_tool_quantity)
+        self.project_tools.toolNotesChanged.connect(self.update_tool_notes)
         self.project_tools.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.project_tools.customContextMenuRequested.connect(self.show_project_tool_context_menu)
         
@@ -302,6 +457,13 @@ class ProjectToolsDialog(QtWidgets.QDialog):
                 tool_assoc.quantity_needed = quantity
                 break
     
+    def update_tool_notes(self, tool_id: str, notes: str):
+        """Update tool notes in project."""
+        for tool_assoc in self.project.tools:
+            if tool_assoc.tool_id == tool_id:
+                tool_assoc.notes = notes
+                break
+    
     def show_project_tool_context_menu(self, position):
         """Show context menu for project tools."""
         item = self.project_tools.itemAt(position)
@@ -309,6 +471,10 @@ class ProjectToolsDialog(QtWidgets.QDialog):
             return
         
         menu = QtWidgets.QMenu(self)
+        
+        # Edit notes
+        edit_notes_action = menu.addAction("📝 Edit Notes")
+        menu.addSeparator()
         
         # View tool details
         view_action = menu.addAction("🔍 View Details")
@@ -318,12 +484,21 @@ class ProjectToolsDialog(QtWidgets.QDialog):
         if tool.url:
             open_url_action = menu.addAction("🌐 Open URL")
         
+        menu.addSeparator()
         # Remove from project
         remove_action = menu.addAction("❌ Remove from Project")
         
         action = menu.exec_(self.project_tools.mapToGlobal(position))
         
-        if action == view_action:
+        if action == edit_notes_action:
+            # Find current notes for this tool
+            current_notes = ""
+            for tool_assoc in self.project.tools:
+                if tool_assoc.tool_id == tool.id:
+                    current_notes = tool_assoc.notes
+                    break
+            self.project_tools.edit_tool_notes(tool.id, current_notes)
+        elif action == view_action:
             self.show_tool_details(tool)
         elif tool.url and action == open_url_action:
             webbrowser.open(tool.url)
