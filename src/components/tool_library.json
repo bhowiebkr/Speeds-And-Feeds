@@ -29,6 +29,7 @@
           "notes": "Precision micro endmill for ultra-fine features",
           "part_number": "894054",
           "price": 45.99,
+          "url": "",
           "tags": [
             "micro",
             "precision",
@@ -63,6 +64,7 @@
           "notes": "Versatile general purpose endmill with excellent wear resistance",
           "part_number": "991250",
           "price": 28.75,
+          "url": "",
           "tags": [
             "general_purpose",
             "coated",
@@ -99,6 +101,7 @@
           "notes": "High performance ball end mill for 3D profiling",
           "part_number": "VF2XBR0300",
           "price": 65.5,
+          "url": "",
           "tags": [
             "ball_nose",
             "3d_profiling",
@@ -135,6 +138,7 @@
           "notes": "High performance 4-flute for increased productivity",
           "part_number": "B282A06250HP",
           "price": 42.8,
+          "url": "",
           "tags": [
             "4_flute",
             "high_performance",
@@ -163,6 +167,7 @@
           "notes": "",
           "part_number": "",
           "price": 0.0,
+          "url": "",
           "tags": [
             "test"
           ]
@@ -188,12 +193,37 @@
           "notes": "Part of Micro Series - optimized for specific applications",
           "part_number": "MICRO-05MM",
           "price": 89.99,
+          "url": "",
           "tags": [
             "micro",
             "precision",
             "electronics",
             "medical"
           ]
+        }
+      },
+      "shitty_aliexpress_company": {
+        "6": {
+          "id": "6",
+          "manufacturer": "Shitty ALiexpress company",
+          "series": "",
+          "name": "penetrator",
+          "type": "square_endmill",
+          "diameter_mm": 0.001,
+          "diameter_inch": 3.937007874015748e-05,
+          "flutes": 1,
+          "length_of_cut_mm": 0.1,
+          "overall_length_mm": 1.0,
+          "shank_diameter_mm": 0.001,
+          "coating": "DLC",
+          "material": "carbide",
+          "manufacturer_speeds": {},
+          "manufacturer_feeds": {},
+          "notes": "",
+          "part_number": "",
+          "price": 0.0,
+          "url": "https://www.aliexpress.com/item/1005008827360811.html?sourceType=562&pvid=87c51510-c73d-47a6-8c05-8a1270265502&pdp_ext_f=%7B%22ship_from%22:%22CN%22,%22sku_id%22:%2212000046865507272%22%7D&scm=1007.28480.422277.0&scm-url=1007.28480.422277.0&scm_id=1007.28480.422277.0&channel=sd&spm=a2g0o.tm1000009216.4932245180.d0&aecmd=true",
+          "tags": []
         }
       }
     },
@@ -226,6 +256,7 @@
           "notes": "High precision solid carbide drill",
           "part_number": "5512 3.00",
           "price": 18.95,
+          "url": "",
           "tags": [
             "drill",
             "solid_carbide",
@@ -245,7 +276,8 @@
     "Walter",
     "Custom",
     "Test Co",
-    "Precision Tools"
+    "Precision Tools",
+    "Shitty ALiexpress company"
   ],
   "tool_types": [
     "square_endmill",

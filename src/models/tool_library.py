@@ -32,6 +32,7 @@ class ToolSpecs:
     notes: str = ""
     part_number: str = ""
     price: float = 0.0
+    url: str = ""
     tags: List[str] = None
     
     def __post_init__(self):

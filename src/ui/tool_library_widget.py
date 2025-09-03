@@ -37,14 +37,17 @@ class ToolCard(QtWidgets.QFrame):
         
         # Set dark theme compatible styling
         self.setStyleSheet("""
-            QFrame {
-                background-color: #3c3c3c;
-                border: 1px solid #555;
-                border-radius: 6px;
+            ToolCard {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                           stop:0 #3c3c3c, stop:1 #2a2a2a);
+                border: 1px solid #555555;
+                border-radius: 8px;
+                color: #ffffff;
             }
-            QFrame:hover {
-                background-color: #4a4a4a;
-                border-color: #0078d4;
+            ToolCard:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                           stop:0 #4a4a4a, stop:1 #383838);
+                border: 2px solid #0078d4;
             }
         """)
         
@@ -60,20 +63,13 @@ class ToolCard(QtWidgets.QFrame):
         manufacturer_label = QtWidgets.QLabel(f"{self.tool.manufacturer}")
         manufacturer_label.setStyleSheet("font-weight: bold; color: #0078d4; font-size: 11px;")
         
-        # Favorite button
-        self.favorite_btn = QtWidgets.QPushButton("★" if self.is_favorite else "☆")
+        # Favorite button - using QLabel instead of QPushButton
+        self.favorite_btn = QtWidgets.QLabel()
         self.favorite_btn.setFixedSize(24, 24)
-        self.favorite_btn.setStyleSheet("""
-            QPushButton { 
-                background: transparent; 
-                border: none; 
-                color: #ffd700; 
-                font-size: 14px;
-                font-weight: bold;
-            }
-            QPushButton:hover { color: #ffed4e; }
-        """)
-        self.favorite_btn.clicked.connect(self.toggle_favorite)
+        self.favorite_btn.setAlignment(QtCore.Qt.AlignCenter)
+        self.favorite_btn.setCursor(QtCore.Qt.PointingHandCursor)
+        self.update_favorite_icon()
+        self.favorite_btn.setToolTip("Add to Favorites" if not self.is_favorite else "Remove from Favorites")
         
         header_layout.addWidget(manufacturer_label)
         header_layout.addStretch()
@@ -82,7 +78,7 @@ class ToolCard(QtWidgets.QFrame):
         # Tool name
         name_label = QtWidgets.QLabel(self.tool.name)
         name_label.setWordWrap(True)
-        name_label.setStyleSheet("font-size: 12px; font-weight: bold; color: #2c2c2c;")
+        name_label.setStyleSheet("font-size: 12px; font-weight: bold; color: #ffffff;")
         name_label.setMaximumHeight(30)
         
         # Specifications layout
@@ -91,27 +87,27 @@ class ToolCard(QtWidgets.QFrame):
         
         # Diameter
         diameter_label = QtWidgets.QLabel("Diameter:")
-        diameter_label.setStyleSheet("font-size: 10px; color: #666;")
+        diameter_label.setStyleSheet("font-size: 10px; color: #cccccc;")
         diameter_value = QtWidgets.QLabel(f"{self.tool.diameter_mm:.3f}mm ({self.tool.diameter_inch:.4f}\")")
-        diameter_value.setStyleSheet("font-size: 10px; font-weight: bold;")
+        diameter_value.setStyleSheet("font-size: 10px; font-weight: bold; color: #ffffff;")
         
         # Flutes
         flutes_label = QtWidgets.QLabel("Flutes:")
-        flutes_label.setStyleSheet("font-size: 10px; color: #666;")
+        flutes_label.setStyleSheet("font-size: 10px; color: #cccccc;")
         flutes_value = QtWidgets.QLabel(str(self.tool.flutes))
-        flutes_value.setStyleSheet("font-size: 10px; font-weight: bold;")
+        flutes_value.setStyleSheet("font-size: 10px; font-weight: bold; color: #ffffff;")
         
         # Coating
         coating_label = QtWidgets.QLabel("Coating:")
-        coating_label.setStyleSheet("font-size: 10px; color: #666;")
+        coating_label.setStyleSheet("font-size: 10px; color: #cccccc;")
         coating_value = QtWidgets.QLabel(self.tool.coating.upper())
-        coating_value.setStyleSheet("font-size: 10px; font-weight: bold; color: #0078d4;")
+        coating_value.setStyleSheet("font-size: 10px; font-weight: bold; color: #2196F3;")
         
         # Material
         material_label = QtWidgets.QLabel("Material:")
-        material_label.setStyleSheet("font-size: 10px; color: #666;")
+        material_label.setStyleSheet("font-size: 10px; color: #cccccc;")
         material_value = QtWidgets.QLabel(self.tool.material.upper())
-        material_value.setStyleSheet("font-size: 10px; font-weight: bold;")
+        material_value.setStyleSheet("font-size: 10px; font-weight: bold; color: #ffffff;")
         
         specs_layout.addWidget(diameter_label, 0, 0)
         specs_layout.addWidget(diameter_value, 0, 1)
@@ -125,11 +121,11 @@ class ToolCard(QtWidgets.QFrame):
         # Part number and price
         part_price_layout = QtWidgets.QHBoxLayout()
         part_number = QtWidgets.QLabel(f"P/N: {self.tool.part_number}")
-        part_number.setStyleSheet("font-size: 9px; color: #888; font-family: monospace;")
+        part_number.setStyleSheet("font-size: 9px; color: #aaaaaa; font-family: monospace;")
         
         if self.tool.price > 0:
             price_label = QtWidgets.QLabel(f"${self.tool.price:.2f}")
-            price_label.setStyleSheet("font-size: 10px; color: #008000; font-weight: bold;")
+            price_label.setStyleSheet("font-size: 10px; color: #4CAF50; font-weight: bold;")
             part_price_layout.addWidget(price_label)
         
         part_price_layout.addWidget(part_number)
@@ -142,8 +138,9 @@ class ToolCard(QtWidgets.QFrame):
             for tag in self.tool.tags[:3]:  # Show max 3 tags
                 tag_label = QtWidgets.QLabel(tag)
                 tag_label.setStyleSheet("""
-                    background-color: #e1ecf4; 
-                    color: #39739d; 
+                    background-color: #404040; 
+                    color: #2196F3; 
+                    border: 1px solid #2196F3;
                     border-radius: 3px; 
                     padding: 2px 6px; 
                     font-size: 9px;
@@ -181,15 +178,52 @@ class ToolCard(QtWidgets.QFrame):
         }
         return type_colors.get(tool_type, "#666666")
         
+    def update_favorite_icon(self):
+        """Update favorite button icon and styling based on state."""
+        if self.is_favorite:
+            # Favorited state - using QLabel with star
+            self.favorite_btn.setText("★")
+            self.favorite_btn.setStyleSheet("""
+                QLabel {
+                    background: #ffd700;
+                    border: 2px solid #333333;
+                    color: #000000;
+                    font-size: 16px;
+                    font-weight: bold;
+                    border-radius: 12px;
+                }
+            """)
+        else:
+            # Non-favorited state - empty star
+            self.favorite_btn.setText("☆")
+            self.favorite_btn.setStyleSheet("""
+                QLabel {
+                    background: transparent;
+                    border: 2px solid #666666;
+                    color: #888888;
+                    font-size: 16px;
+                    font-weight: normal;
+                    border-radius: 12px;
+                }
+            """)
+    
     def toggle_favorite(self):
         """Toggle favorite status."""
         self.is_favorite = not self.is_favorite
-        self.favorite_btn.setText("★" if self.is_favorite else "☆")
+        self.update_favorite_icon()
+        self.favorite_btn.setToolTip("Add to Favorites" if not self.is_favorite else "Remove from Favorites")
         self.toolFavorited.emit(self.tool.id, self.is_favorite)
-        
+    
     def mousePressEvent(self, event):
-        """Handle mouse click to select tool."""
+        """Handle mouse click events."""
         if event.button() == QtCore.Qt.LeftButton:
+            # Check if click was on the favorite button
+            favorite_btn_geometry = self.favorite_btn.geometry()
+            if favorite_btn_geometry.contains(event.pos()):
+                self.toggle_favorite()
+                event.accept()
+                return
+            # Otherwise, handle tool selection
             self.toolSelected.emit(self.tool)
         super().mousePressEvent(event)
         
@@ -235,7 +269,7 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         header_layout = QtWidgets.QHBoxLayout()
         
         title_label = QtWidgets.QLabel("🔧 Tool Library")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c2c2c;")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #ffffff;")
         
         # Action buttons
         self.add_tool_btn = QtWidgets.QPushButton("➕ Add Tool")
@@ -259,27 +293,12 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         self.export_btn = QtWidgets.QPushButton("💾 Export")  
         self.export_btn.clicked.connect(self.export_tools)
         
-        self.presets_btn = QtWidgets.QPushButton("🎯 Quick Start")
-        self.presets_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #28a745;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-weight: bold;
-            }
-            QPushButton:hover { background-color: #218838; }
-            QPushButton:pressed { background-color: #1e7e34; }
-        """)
-        self.presets_btn.clicked.connect(self.show_quick_start)
         
         self.help_btn = QtWidgets.QPushButton("❓ Guide")
         self.help_btn.clicked.connect(self.show_tool_guide)
         
         header_layout.addWidget(title_label)
         header_layout.addStretch()
-        header_layout.addWidget(self.presets_btn)
         header_layout.addWidget(self.add_tool_btn)
         header_layout.addWidget(self.import_btn)
         header_layout.addWidget(self.export_btn)
@@ -487,31 +506,37 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         # Mark as recently used
         self.library.mark_as_used(tool.id)
         
-        # Highlight selected card
+        # Highlight selected card - only change the perimeter border
         for card in self.tool_cards:
             if card.tool.id == tool.id:
                 card.setStyleSheet("""
-                    QFrame {
-                        background-color: #2d4a5c;
-                        border: 2px solid #0078d4;
-                        border-radius: 6px;
+                    ToolCard {
+                        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                   stop:0 #3c3c3c, stop:1 #2a2a2a);
+                        border: 3px solid #0078d4;
+                        border-radius: 8px;
+                        color: #ffffff;
                     }
-                    QFrame:hover {
-                        background-color: #2d4a5c;
-                        border-color: #0078d4;
+                    ToolCard:hover {
+                        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                   stop:0 #4a4a4a, stop:1 #383838);
+                        border: 3px solid #2196F3;
                     }
                 """)
             else:
                 # Reset to default dark styling
                 card.setStyleSheet("""
-                    QFrame {
-                        background-color: #3c3c3c;
-                        border: 1px solid #555;
-                        border-radius: 6px;
+                    ToolCard {
+                        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                   stop:0 #3c3c3c, stop:1 #2a2a2a);
+                        border: 1px solid #555555;
+                        border-radius: 8px;
+                        color: #ffffff;
                     }
-                    QFrame:hover {
-                        background-color: #4a4a4a;
-                        border-color: #0078d4;
+                    ToolCard:hover {
+                        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                   stop:0 #4a4a4a, stop:1 #383838);
+                        border: 2px solid #0078d4;
                     }
                 """)
     
@@ -574,11 +599,6 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         """Export tools to file."""
         QtWidgets.QMessageBox.information(self, "Export Tools", "CSV export functionality coming soon!")
     
-    def show_quick_start(self):
-        """Show quick start presets dialog."""
-        dialog = QuickStartDialog(self.library, self)
-        dialog.toolsAdded.connect(self.refresh_tools)
-        dialog.exec_()
     
     def show_tool_guide(self):
         """Show tool selection guide."""
@@ -668,6 +688,22 @@ class ToolEditorDialog(QtWidgets.QDialog):
         self.tags_input = QtWidgets.QLineEdit()
         self.tags_input.setPlaceholderText("comma, separated, tags")
         
+        # URL field with button
+        self.url_input = QtWidgets.QLineEdit()
+        self.url_input.setPlaceholderText("https://manufacturer.com/tool-page")
+        
+        url_layout = QtWidgets.QHBoxLayout()
+        self.open_url_btn = QtWidgets.QPushButton("🌐 Open")
+        self.open_url_btn.setFixedWidth(80)
+        self.open_url_btn.clicked.connect(self.open_url)
+        self.open_url_btn.setEnabled(False)
+        
+        url_layout.addWidget(self.url_input)
+        url_layout.addWidget(self.open_url_btn)
+        
+        # Enable/disable button based on URL content
+        self.url_input.textChanged.connect(self.on_url_changed)
+        
         # Add to form
         form.addRow("Tool ID*:", self.id_input)
         form.addRow("Manufacturer*:", self.manufacturer_combo)
@@ -682,6 +718,7 @@ class ToolEditorDialog(QtWidgets.QDialog):
         form.addRow("Material*:", self.material_combo)
         form.addRow("Part Number:", self.part_number_input)
         form.addRow("Price:", self.price_input)
+        form.addRow("URL:", url_layout)
         form.addRow("Notes:", self.notes_input)
         form.addRow("Tags:", self.tags_input)
         
@@ -732,6 +769,7 @@ class ToolEditorDialog(QtWidgets.QDialog):
         
         self.part_number_input.setText(self.tool.part_number)
         self.price_input.setValue(self.tool.price)
+        self.url_input.setText(getattr(self.tool, 'url', ''))
         self.notes_input.setPlainText(self.tool.notes)
         self.tags_input.setText(", ".join(self.tool.tags))
     
@@ -740,6 +778,22 @@ class ToolEditorDialog(QtWidgets.QDialog):
         mm_value = self.diameter_mm_input.value()
         inch_value = mm_value * MM_TO_IN
         # This would update a read-only inch display if we had one
+    
+    def on_url_changed(self):
+        """Enable/disable open button based on URL validity."""
+        url = self.url_input.text().strip()
+        is_valid = url and (url.startswith('http://') or url.startswith('https://'))
+        self.open_url_btn.setEnabled(is_valid)
+    
+    def open_url(self):
+        """Open the URL in the default browser."""
+        import webbrowser
+        url = self.url_input.text().strip()
+        if url:
+            try:
+                webbrowser.open(url)
+            except Exception as e:
+                QtWidgets.QMessageBox.warning(self, "Error", f"Failed to open URL: {str(e)}")
     
     def save_tool(self):
         """Save the tool."""
@@ -785,6 +839,7 @@ class ToolEditorDialog(QtWidgets.QDialog):
             notes=self.notes_input.toPlainText().strip(),
             part_number=self.part_number_input.text().strip(),
             price=self.price_input.value(),
+            url=self.url_input.text().strip(),
             tags=tags
         )
         
@@ -1008,6 +1063,7 @@ class QuickStartDialog(QtWidgets.QDialog):
             notes=f"Part of {series} - optimized for specific applications",
             part_number=part_number,
             price=price,
+            url="",
             tags=tags
         )
     
