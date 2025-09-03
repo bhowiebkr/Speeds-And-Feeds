@@ -167,6 +167,34 @@
             "test"
           ]
         }
+      },
+      "precision_tools": {
+        "micro_001": {
+          "id": "micro_001",
+          "manufacturer": "Precision Tools",
+          "series": "Micro Series",
+          "name": "Micro End Mill - 0.5mm",
+          "type": "square_endmill",
+          "diameter_mm": 0.5,
+          "diameter_inch": 0.0197,
+          "flutes": 2,
+          "length_of_cut_mm": 1.5,
+          "overall_length_mm": 38.1,
+          "shank_diameter_mm": 0.5,
+          "coating": "DLC",
+          "material": "carbide",
+          "manufacturer_speeds": {},
+          "manufacturer_feeds": {},
+          "notes": "Part of Micro Series - optimized for specific applications",
+          "part_number": "MICRO-05MM",
+          "price": 89.99,
+          "tags": [
+            "micro",
+            "precision",
+            "electronics",
+            "medical"
+          ]
+        }
       }
     },
     "drills": {
@@ -216,7 +244,8 @@
     "Iscar",
     "Walter",
     "Custom",
-    "Test Co"
+    "Test Co",
+    "Precision Tools"
   ],
   "tool_types": [
     "square_endmill",
