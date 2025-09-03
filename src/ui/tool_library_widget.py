@@ -11,7 +11,9 @@ import os
 import json
 
 from ..models.tool_library import ToolLibrary, ToolSpecs
+from ..models.project import Project
 from ..constants.units import MM_TO_IN, IN_TO_MM
+from .project_manager import ProjectManagerDialog
 
 
 class ToolCard(QtWidgets.QFrame):
@@ -131,6 +133,33 @@ class ToolCard(QtWidgets.QFrame):
         part_price_layout.addWidget(part_number)
         part_price_layout.addStretch()
         
+        # Project indicators
+        projects_using_tool = self.parent().library.get_projects_using_tool(self.tool.id) if hasattr(self.parent(), 'library') else []
+        if projects_using_tool:
+            project_layout = QtWidgets.QHBoxLayout()
+            project_layout.setSpacing(2)
+            for project in projects_using_tool[:2]:  # Show max 2 projects
+                project_label = QtWidgets.QLabel(f"📁 {project.name}")
+                project_label.setStyleSheet("""
+                    background-color: #9C27B0; 
+                    color: #ffffff; 
+                    border-radius: 3px; 
+                    padding: 2px 6px; 
+                    font-size: 9px;
+                """)
+                project_layout.addWidget(project_label)
+            if len(projects_using_tool) > 2:
+                more_label = QtWidgets.QLabel(f"+{len(projects_using_tool) - 2}")
+                more_label.setStyleSheet("""
+                    background-color: #666666; 
+                    color: #ffffff; 
+                    border-radius: 3px; 
+                    padding: 2px 6px; 
+                    font-size: 9px;
+                """)
+                project_layout.addWidget(more_label)
+            project_layout.addStretch()
+        
         # Tags
         if self.tool.tags:
             tags_layout = QtWidgets.QHBoxLayout()
@@ -153,6 +182,8 @@ class ToolCard(QtWidgets.QFrame):
         layout.addWidget(name_label)
         layout.addLayout(specs_layout)
         layout.addLayout(part_price_layout)
+        if projects_using_tool:
+            layout.addLayout(project_layout)
         if self.tool.tags:
             layout.addLayout(tags_layout)
         layout.addStretch()
@@ -297,8 +328,24 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         self.help_btn = QtWidgets.QPushButton("❓ Guide")
         self.help_btn.clicked.connect(self.show_tool_guide)
         
+        self.projects_btn = QtWidgets.QPushButton("📁 Projects")
+        self.projects_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9C27B0;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover { background-color: #7B1FA2; }
+            QPushButton:pressed { background-color: #6A1B9A; }
+        """)
+        self.projects_btn.clicked.connect(self.show_project_manager)
+        
         header_layout.addWidget(title_label)
         header_layout.addStretch()
+        header_layout.addWidget(self.projects_btn)
         header_layout.addWidget(self.add_tool_btn)
         header_layout.addWidget(self.import_btn)
         header_layout.addWidget(self.export_btn)
@@ -368,8 +415,17 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         self.diameter_max.setSpecialValueText("Max")
         self.diameter_max.valueChanged.connect(self.filter_tools)
         
+        # Project filter
+        self.project_combo = QtWidgets.QComboBox()
+        self.project_combo.addItem("All Tools", None)
+        self.project_combo.addItem("No Project", "no_project")
+        self.refresh_project_filter()
+        self.project_combo.currentTextChanged.connect(self.filter_tools)
+        
         filters_layout.addWidget(self.favorites_btn)
         filters_layout.addWidget(self.recent_btn)
+        filters_layout.addWidget(QtWidgets.QLabel("Project:"))
+        filters_layout.addWidget(self.project_combo)
         filters_layout.addWidget(QtWidgets.QLabel("Manufacturer:"))
         filters_layout.addWidget(self.manufacturer_combo)
         filters_layout.addWidget(QtWidgets.QLabel("Type:"))
@@ -431,7 +487,28 @@ class ToolLibraryWidget(QtWidgets.QDialog):
     def refresh_tools(self):
         """Refresh the tools display."""
         self.current_tools = self.library.get_all_tools()
+        self.refresh_project_filter()
         self.filter_tools()
+    
+    def refresh_project_filter(self):
+        """Refresh the project filter dropdown."""
+        current_selection = self.project_combo.currentData()
+        
+        # Clear and repopulate
+        self.project_combo.clear()
+        self.project_combo.addItem("All Tools", None)
+        self.project_combo.addItem("No Project", "no_project")
+        
+        # Add active projects
+        active_projects = self.library.project_manager.get_active_projects()
+        for project in active_projects:
+            self.project_combo.addItem(f"📁 {project.name}", project.id)
+        
+        # Restore selection if possible
+        if current_selection:
+            index = self.project_combo.findData(current_selection)
+            if index >= 0:
+                self.project_combo.setCurrentIndex(index)
         
     def filter_tools(self):
         """Apply filters and update display."""
@@ -447,8 +524,9 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         
         diameter_min = self.diameter_min.value()
         diameter_max = self.diameter_max.value()
+        project_filter = self.project_combo.currentData()
         
-        # Apply filters
+        # Start with base tool search
         filtered_tools = self.library.search_tools(
             query=search_query,
             manufacturer=manufacturer,
@@ -456,6 +534,19 @@ class ToolLibraryWidget(QtWidgets.QDialog):
             diameter_min=diameter_min,
             diameter_max=diameter_max
         )
+        
+        # Apply project filter
+        if project_filter == "no_project":
+            # Show tools not assigned to any project
+            all_project_tool_ids = set()
+            for project in self.library.project_manager.get_all_projects():
+                all_project_tool_ids.update(project.get_tool_ids())
+            filtered_tools = [t for t in filtered_tools if t.id not in all_project_tool_ids]
+        elif project_filter:
+            # Show tools assigned to specific project
+            project_tools = self.library.get_project_tools(project_filter)
+            project_tool_ids = {t.id for t in project_tools}
+            filtered_tools = [t for t in filtered_tools if t.id in project_tool_ids]
         
         # Apply quick filters
         if self.favorites_btn.isChecked():
@@ -603,6 +694,12 @@ class ToolLibraryWidget(QtWidgets.QDialog):
     def show_tool_guide(self):
         """Show tool selection guide."""
         dialog = ToolGuideDialog(self)
+        dialog.exec_()
+    
+    def show_project_manager(self):
+        """Show project manager dialog."""
+        dialog = ProjectManagerDialog(self.library, self)
+        dialog.projectsModified.connect(self.refresh_project_filter)
         dialog.exec_()
 
 

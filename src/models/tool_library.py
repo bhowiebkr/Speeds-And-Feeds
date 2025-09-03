@@ -9,6 +9,7 @@ import os
 from typing import Dict, List, Optional, Union, Any
 from dataclasses import dataclass, asdict
 from PySide6 import QtCore
+from .project import ProjectManager, Project
 
 
 @dataclass
@@ -65,6 +66,9 @@ class ToolLibrary:
         
         # Qt settings for user preferences
         self.settings = QtCore.QSettings("speeds-and-feeds-calc", "ToolLibrary")
+        
+        # Initialize project manager
+        self.project_manager = ProjectManager()
         
     def _get_default_library_path(self) -> str:
         """Get default path for tool library file."""
@@ -323,3 +327,50 @@ class ToolLibrary:
             recent.remove(tool_id)
         recent.insert(0, tool_id)
         self.settings.setValue("recent_tools", recent[:20])  # Keep max 20
+    
+    # Project-related methods
+    
+    def get_project_tools(self, project_id: str) -> List[ToolSpecs]:
+        """Get all tools assigned to a specific project."""
+        project = self.project_manager.get_project(project_id)
+        if not project:
+            return []
+        
+        project_tools = []
+        for tool_assoc in project.tools:
+            tool = self.get_tool(tool_assoc.tool_id)
+            if tool:
+                project_tools.append(tool)
+        
+        return project_tools
+    
+    def get_tools_by_project(self, project_ids: List[str]) -> List[ToolSpecs]:
+        """Get tools that belong to any of the specified projects."""
+        if not project_ids:
+            return []
+        
+        tool_ids = set()
+        for project_id in project_ids:
+            project = self.project_manager.get_project(project_id)
+            if project:
+                tool_ids.update(project.get_tool_ids())
+        
+        return [self.get_tool(tool_id) for tool_id in tool_ids if self.get_tool(tool_id)]
+    
+    def get_projects_using_tool(self, tool_id: str) -> List[Project]:
+        """Get all projects that use a specific tool."""
+        return self.project_manager.get_projects_using_tool(tool_id)
+    
+    def add_tool_to_project(self, project_id: str, tool_id: str, quantity: int = 1, notes: str = "") -> bool:
+        """Add a tool to a project."""
+        project = self.project_manager.get_project(project_id)
+        if project and self.get_tool(tool_id):
+            return project.add_tool(tool_id, quantity, notes) and self.project_manager.save_projects()
+        return False
+    
+    def remove_tool_from_project(self, project_id: str, tool_id: str) -> bool:
+        """Remove a tool from a project."""
+        project = self.project_manager.get_project(project_id)
+        if project:
+            return project.remove_tool(tool_id) and self.project_manager.save_projects()
+        return False
