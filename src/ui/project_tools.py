@@ -30,6 +30,111 @@ class ToolListItem(QtWidgets.QListWidgetItem):
             self.setText(f"{tool.name} ({tool.diameter_mm:.3f}mm) - ${tool.price:.2f}")
 
 
+class ProjectToolWidget(QtWidgets.QWidget):
+    """Custom widget for project tool items with proper sizing."""
+    
+    def __init__(self, tool: ToolSpecs, association: ProjectToolAssociation, parent=None):
+        super().__init__(parent)
+        self.tool = tool
+        self.association = association
+        self.setup_ui()
+    
+    def setup_ui(self):
+        """Setup the project tool widget UI."""
+        # Main layout with proper margins and spacing
+        main_layout = QtWidgets.QVBoxLayout(self)
+        main_layout.setContentsMargins(8, 6, 8, 6)
+        main_layout.setSpacing(4)
+        
+        # Top row - tool info and controls
+        top_layout = QtWidgets.QHBoxLayout()
+        top_layout.setSpacing(6)
+        
+        # Tool info - let it expand naturally
+        info_label = QtWidgets.QLabel(f"{self.tool.name} ({self.tool.diameter_mm:.3f}mm)")
+        info_label.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        info_label.setStyleSheet("font-weight: bold; font-size: 11px;")
+        info_label.setWordWrap(True)
+        
+        # Quantity control
+        qty_label = QtWidgets.QLabel("Qty:")
+        qty_label.setStyleSheet("font-size: 10px;")
+        
+        self.qty_spin = QtWidgets.QSpinBox()
+        self.qty_spin.setRange(1, 99)
+        self.qty_spin.setValue(self.association.quantity_needed)
+        self.qty_spin.setMinimumWidth(50)  # Use minimum instead of fixed
+        self.qty_spin.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        
+        # Notes button - remove fixed size, let it size naturally
+        self.notes_btn = QtWidgets.QPushButton("📝")
+        self.notes_btn.setToolTip("Edit notes for this tool")
+        self.notes_btn.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        self.notes_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 3px;
+                font-size: 12px;
+                padding: 4px 6px;
+                min-width: 24px;
+            }
+            QPushButton:hover { background-color: #45a049; }
+        """)
+        
+        top_layout.addWidget(info_label, 1)  # Give it stretch priority
+        top_layout.addWidget(qty_label)
+        top_layout.addWidget(self.qty_spin)
+        top_layout.addWidget(self.notes_btn)
+        
+        # Bottom row - notes preview
+        self.notes_preview = QtWidgets.QLabel()
+        self.notes_preview.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        self.notes_preview.setWordWrap(True)
+        self.update_notes_preview()
+        
+        main_layout.addLayout(top_layout)
+        main_layout.addWidget(self.notes_preview)
+        
+        # Set a reasonable minimum height
+        self.setMinimumHeight(50)
+    
+    def update_notes_preview(self):
+        """Update the notes preview display."""
+        if self.association.notes:
+            preview_text = self.association.notes[:80] + ("..." if len(self.association.notes) > 80 else "")
+            self.notes_preview.setText(f"📝 {preview_text}")
+            self.notes_preview.setStyleSheet("color: #888888; font-style: italic; font-size: 10px;")
+        else:
+            self.notes_preview.setText("No notes")
+            self.notes_preview.setStyleSheet("color: #666666; font-style: italic; font-size: 10px;")
+    
+    def sizeHint(self):
+        """Return proper size hint for this widget."""
+        # Calculate based on content
+        base_height = 50  # Minimum height for single line
+        
+        # Add height for wrapped text if tool name is long
+        font_metrics = self.fontMetrics()
+        info_text = f"{self.tool.name} ({self.tool.diameter_mm:.3f}mm)"
+        available_width = self.width() - 150  # Account for controls
+        
+        if available_width > 0:
+            text_rect = font_metrics.boundingRect(0, 0, available_width, 0, 
+                                                QtCore.Qt.TextWordWrap, info_text)
+            text_height = text_rect.height()
+            if text_height > font_metrics.height():
+                base_height += text_height - font_metrics.height()
+        
+        # Add height for notes if present
+        if self.association.notes:
+            notes_height = font_metrics.height()  # Notes are single line with ellipsis
+            base_height += notes_height
+        
+        return QtCore.QSize(self.width(), base_height + 16)  # Add padding
+
+
 class ProjectToolListWidget(QtWidgets.QListWidget):
     """Enhanced list widget for project tools with quantity support."""
     
@@ -42,71 +147,34 @@ class ProjectToolListWidget(QtWidgets.QListWidget):
         self.setDefaultDropAction(QtCore.Qt.MoveAction)
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         
+        # Configure for proper sizing
+        self.setResizeMode(QtWidgets.QListView.Adjust)
+        self.setSpacing(2)  # Small spacing between items
+        
     def add_tool_association(self, tool: ToolSpecs, association: ProjectToolAssociation):
         """Add a tool association to the list."""
-        item = ToolListItem(tool)
+        # Create a plain list item without text (widget will handle display)
+        item = QtWidgets.QListWidgetItem()
+        item.tool = tool  # Store tool reference for context menus
         
-        # Create widget for quantity and notes control
-        widget = QtWidgets.QWidget()
-        main_layout = QtWidgets.QVBoxLayout(widget)
-        main_layout.setContentsMargins(5, 5, 5, 5)
-        main_layout.setSpacing(3)
+        # Create the custom widget
+        widget = ProjectToolWidget(tool, association, self)
         
-        # Top row - tool info and quantity
-        top_layout = QtWidgets.QHBoxLayout()
-        
-        # Tool info
-        info_label = QtWidgets.QLabel(f"{tool.name} ({tool.diameter_mm:.3f}mm)")
-        info_label.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
-        info_label.setStyleSheet("font-weight: bold;")
-        
-        # Quantity control
-        qty_label = QtWidgets.QLabel("Qty:")
-        qty_spin = QtWidgets.QSpinBox()
-        qty_spin.setRange(1, 99)
-        qty_spin.setValue(association.quantity_needed)
-        qty_spin.setFixedWidth(60)
-        qty_spin.valueChanged.connect(lambda value: self.toolQuantityChanged.emit(tool.id, value))
-        
-        # Notes button
-        notes_btn = QtWidgets.QPushButton("📝 Notes")
-        notes_btn.setFixedSize(70, 24)
-        notes_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 3px;
-                font-size: 10px;
-            }
-            QPushButton:hover { background-color: #45a049; }
-        """)
-        notes_btn.clicked.connect(lambda: self.edit_tool_notes(tool.id, association.notes))
-        
-        top_layout.addWidget(info_label)
-        top_layout.addWidget(qty_label)
-        top_layout.addWidget(qty_spin)
-        top_layout.addWidget(notes_btn)
-        
-        # Bottom row - notes preview
-        notes_preview = QtWidgets.QLabel()
-        if association.notes:
-            preview_text = association.notes[:50] + ("..." if len(association.notes) > 50 else "")
-            notes_preview.setText(f"📝 {preview_text}")
-            notes_preview.setStyleSheet("color: #888888; font-style: italic; font-size: 10px;")
-        else:
-            notes_preview.setText("No notes")
-            notes_preview.setStyleSheet("color: #666666; font-style: italic; font-size: 10px;")
+        # Connect signals
+        widget.qty_spin.valueChanged.connect(lambda value: self.toolQuantityChanged.emit(tool.id, value))
+        widget.notes_btn.clicked.connect(lambda: self.edit_tool_notes(tool.id, association.notes))
         
         # Store references for updates
-        item.notes_preview = notes_preview
-        item.notes_btn = notes_btn
+        item.widget = widget
+        item.notes_preview = widget.notes_preview
+        item.notes_btn = widget.notes_btn
         
-        main_layout.addLayout(top_layout)
-        main_layout.addWidget(notes_preview)
-        
+        # Add to list and set proper sizing
         self.addItem(item)
         self.setItemWidget(item, widget)
+        
+        # Force item to use widget's size hint
+        item.setSizeHint(widget.sizeHint())
         
         return item
     
@@ -121,14 +189,13 @@ class ProjectToolListWidget(QtWidgets.QListWidget):
             for i in range(self.count()):
                 item = self.item(i)
                 if hasattr(item, 'tool') and item.tool.id == tool_id:
-                    if hasattr(item, 'notes_preview'):
-                        if new_notes:
-                            preview_text = new_notes[:50] + ("..." if len(new_notes) > 50 else "")
-                            item.notes_preview.setText(f"📝 {preview_text}")
-                            item.notes_preview.setStyleSheet("color: #888888; font-style: italic; font-size: 10px;")
-                        else:
-                            item.notes_preview.setText("No notes")
-                            item.notes_preview.setStyleSheet("color: #666666; font-style: italic; font-size: 10px;")
+                    if hasattr(item, 'widget'):
+                        # Update the association data
+                        item.widget.association.notes = new_notes
+                        # Update the preview display
+                        item.widget.update_notes_preview()
+                        # Recalculate size in case notes changed height
+                        item.setSizeHint(item.widget.sizeHint())
                     break
 
 
@@ -236,15 +303,16 @@ class ProjectToolsDialog(QtWidgets.QDialog):
         
         self.setWindowTitle(f"🔧 Tools for Project: {project.name}")
         self.setModal(True)
-        self.resize(1000, 700)
+        self.resize(1200, 800)  # Larger default size
+        self.setMinimumSize(1000, 600)  # Minimum size to prevent clipping
         self.setup_ui()
         self.populate_tools()
     
     def setup_ui(self):
         """Setup the main UI."""
         layout = QtWidgets.QVBoxLayout(self)
-        layout.setContentsMargins(15, 15, 15, 15)
-        layout.setSpacing(15)
+        layout.setContentsMargins(20, 20, 20, 20)  # Increased margins
+        layout.setSpacing(18)  # Increased spacing
         
         # Header
         header_layout = QtWidgets.QHBoxLayout()
@@ -274,6 +342,7 @@ class ProjectToolsDialog(QtWidgets.QDialog):
         
         # Filter controls
         filter_layout = QtWidgets.QHBoxLayout()
+        filter_layout.setSpacing(12)  # Add proper spacing
         
         self.favorites_only = QtWidgets.QCheckBox("Favorites Only")
         self.favorites_only.stateChanged.connect(self.filter_available_tools)
@@ -316,6 +385,7 @@ class ProjectToolsDialog(QtWidgets.QDialog):
         
         # Project tools actions
         project_actions = QtWidgets.QHBoxLayout()
+        project_actions.setSpacing(12)  # Add proper spacing
         
         remove_tools_btn = QtWidgets.QPushButton("❌ Remove Selected")
         remove_tools_btn.clicked.connect(self.remove_selected_tools)

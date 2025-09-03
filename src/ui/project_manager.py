@@ -41,8 +41,26 @@ class ProjectListWidget(QtWidgets.QTableWidget):
         # Configure table
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.setAlternatingRowColors(True)
         self.setSortingEnabled(True)
+        
+        # Minimal styling that ONLY affects table background and headers - NOT items
+        self.setStyleSheet("""
+            QTableWidget {
+                background-color: #2a2a2a;
+                gridline-color: #555555;
+                color: #ffffff;
+            }
+            QHeaderView::section {
+                background-color: #3c3c3c;
+                color: #ffffff;
+                border: 1px solid #555555;
+                padding: 6px;
+                font-weight: bold;
+            }
+        """)
+        
+        # Disable alternating row colors that interfere with setBackground
+        self.setAlternatingRowColors(False)
         
         # Connect selection
         self.itemSelectionChanged.connect(self.on_selection_changed)

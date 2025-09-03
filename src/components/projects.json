@@ -6,8 +6,8 @@
     "customer_name": "",
     "status": "active",
     "date_created": "2025-09-03T00:43:47.948560",
-    "date_modified": "2025-09-03T00:43:59.807024",
-    "notes": "",
+    "date_modified": "2025-09-03T01:06:44.037609",
+    "notes": "Svalboard is cool",
     "tools": [
       {
         "tool_id": "991250",
@@ -22,5 +22,16 @@
         "date_added": "2025-09-03T00:43:59.807024"
       }
     ]
+  },
+  "proj_002": {
+    "id": "proj_002",
+    "name": "bla",
+    "description": "",
+    "customer_name": "",
+    "status": "completed",
+    "date_created": "2025-09-03T01:07:06.137595",
+    "date_modified": "2025-09-03T01:07:16.218189",
+    "notes": "",
+    "tools": []
   }
 }

@@ -140,3 +140,7 @@ The application supports both metric and imperial units with automatic conversio
 - **Documentation**: Detailed docstrings for all functions and classes
 - **Error Handling**: Graceful handling of invalid inputs and edge cases
 - **Validation**: Parameter bounds checking with user-friendly warnings
+
+## Important Instructions
+
+**COMMIT POLICY**: NEVER commit changes automatically. ONLY commit when the user EXPLICITLY asks you to commit. Do not commit on your own initiative - wait for explicit user instruction to commit.

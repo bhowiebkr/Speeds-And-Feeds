@@ -34,7 +34,9 @@ class ToolCard(QtWidgets.QFrame):
         """Setup the tool card UI."""
         self.setFrameStyle(QtWidgets.QFrame.Box | QtWidgets.QFrame.Raised)
         self.setLineWidth(1)
-        self.setFixedSize(280, 180)
+        self.setMinimumSize(280, 180)  # Use minimum instead of fixed
+        self.setMaximumWidth(320)      # Set max width to prevent over-stretching
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         self.setCursor(QtCore.Qt.PointingHandCursor)
         
         # Set dark theme compatible styling
@@ -53,13 +55,14 @@ class ToolCard(QtWidgets.QFrame):
             }
         """)
         
-        # Main layout
+        # Main layout with better spacing
         layout = QtWidgets.QVBoxLayout(self)
-        layout.setContentsMargins(10, 8, 10, 8)
-        layout.setSpacing(6)
+        layout.setContentsMargins(12, 10, 12, 10)  # Increased margins
+        layout.setSpacing(8)  # Increased spacing
         
         # Header with manufacturer and favorite button
         header_layout = QtWidgets.QHBoxLayout()
+        header_layout.setSpacing(8)  # Add spacing between header elements
         
         # Manufacturer and series
         manufacturer_label = QtWidgets.QLabel(f"{self.tool.manufacturer}")
@@ -67,7 +70,8 @@ class ToolCard(QtWidgets.QFrame):
         
         # Favorite button - using QLabel instead of QPushButton
         self.favorite_btn = QtWidgets.QLabel()
-        self.favorite_btn.setFixedSize(24, 24)
+        self.favorite_btn.setMinimumSize(24, 24)  # Use minimum instead of fixed
+        self.favorite_btn.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.favorite_btn.setAlignment(QtCore.Qt.AlignCenter)
         self.favorite_btn.setCursor(QtCore.Qt.PointingHandCursor)
         self.update_favorite_icon()
@@ -283,6 +287,7 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         self.library = library or ToolLibrary()
         self.current_tools: List[ToolSpecs] = []
         self.tool_cards: List[ToolCard] = []
+        self._refreshing = False  # Flag to prevent filtering during refresh
         
         self.setWindowTitle("🔧 Tool Library")
         self.setModal(True)
@@ -370,7 +375,8 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         
         # Clear search button
         self.clear_search_btn = QtWidgets.QPushButton("✖")
-        self.clear_search_btn.setFixedSize(30, 30)
+        self.clear_search_btn.setMinimumSize(30, 30)  # Use minimum instead of fixed
+        self.clear_search_btn.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.clear_search_btn.clicked.connect(self.clear_search)
         
         search_layout.addWidget(self.search_input)
@@ -420,7 +426,7 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         self.project_combo.addItem("All Tools", None)
         self.project_combo.addItem("No Project", "no_project")
         self.refresh_project_filter()
-        self.project_combo.currentTextChanged.connect(self.filter_tools)
+        self.project_combo.currentIndexChanged.connect(self.filter_tools)
         
         filters_layout.addWidget(self.favorites_btn)
         filters_layout.addWidget(self.recent_btn)
@@ -494,6 +500,9 @@ class ToolLibraryWidget(QtWidgets.QDialog):
         """Refresh the project filter dropdown."""
         current_selection = self.project_combo.currentData()
         
+        # Set flag to prevent filtering during refresh
+        self._refreshing = True
+        
         # Clear and repopulate
         self.project_combo.clear()
         self.project_combo.addItem("All Tools", None)
@@ -510,8 +519,15 @@ class ToolLibraryWidget(QtWidgets.QDialog):
             if index >= 0:
                 self.project_combo.setCurrentIndex(index)
         
+        # Clear flag
+        self._refreshing = False
+        
     def filter_tools(self):
         """Apply filters and update display."""
+        # Skip filtering if we're in the middle of refreshing
+        if self._refreshing:
+            return
+            
         # Get filter values
         search_query = self.search_input.text().strip()
         manufacturer = self.manufacturer_combo.currentText()
@@ -791,7 +807,7 @@ class ToolEditorDialog(QtWidgets.QDialog):
         
         url_layout = QtWidgets.QHBoxLayout()
         self.open_url_btn = QtWidgets.QPushButton("🌐 Open")
-        self.open_url_btn.setFixedWidth(80)
+        self.open_url_btn.setMinimumWidth(80)  # Use minimum instead of fixed
         self.open_url_btn.clicked.connect(self.open_url)
         self.open_url_btn.setEnabled(False)
         
