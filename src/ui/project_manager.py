@@ -398,7 +398,21 @@ class ProjectManagerDialog(QtWidgets.QDialog):
         dialog = ProjectEditorDialog(parent=self)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             project_data = dialog.get_project_data()
-            project = self.project_manager.create_project(**project_data)
+            # Extract only the parameters that create_project accepts
+            create_params = {
+                'name': project_data['name'],
+                'description': project_data['description'],
+                'customer_name': project_data['customer_name']
+            }
+            project = self.project_manager.create_project(**create_params)
+            
+            # Update additional fields after creation
+            if project:
+                if 'status' in project_data:
+                    project.status = project_data['status']
+                if 'notes' in project_data:
+                    project.notes = project_data['notes']
+                self.project_manager.update_project(project)
             if project:
                 self.refresh_projects()
                 self.projectsModified.emit()
