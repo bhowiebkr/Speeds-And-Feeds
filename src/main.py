@@ -14,6 +14,7 @@ from .constants.machining import MACHINE_RIGIDITY_FACTORS
 from .formulas.validation import validate_machining_parameters
 from .ui.tool_library_widget import ToolLibraryWidget
 from .ui.project_manager import ProjectManagerDialog
+from .ui.integrated_project_manager import IntegratedProjectManager
 from .models.tool_library import ToolLibrary
 
 
@@ -118,7 +119,7 @@ class GUI(QtWidgets.QMainWindow):
         
     def create_projects_tab(self, parent_widget):
         """Create the Projects tab."""
-        self.project_manager_widget = ProjectManagerDialog(self.tool_library, self, embed_mode=True)
+        self.project_manager_widget = IntegratedProjectManager(self.tool_library, self)
         parent_widget.addTab(self.project_manager_widget, "📁 Projects")
         
     def setup_feeds_speeds_connections(self):
@@ -151,7 +152,7 @@ class GUI(QtWidgets.QMainWindow):
         tool = self.tool_library.get_tool(tool_id)
         if tool:
             # Update tool diameter and flute count in the feeds & speeds tab
-            self.tool_box.set_tool_diameter(tool.diameter)
+            self.tool_box.set_tool_diameter(tool.diameter_mm)
             self.tool_box.fluteNum.setValue(tool.flutes)
 
     def toolDiameterChanged(self):

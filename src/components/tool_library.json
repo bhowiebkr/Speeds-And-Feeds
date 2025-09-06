@@ -202,10 +202,10 @@
           ]
         }
       },
-      "shitty_aliexpress_company": {
+      "some_aliexpress_supplier": {
         "6": {
           "id": "6",
-          "manufacturer": "Shitty ALiexpress company",
+          "manufacturer": "Some Aliexpress Supplier",
           "series": "",
           "name": "penetrator",
           "type": "square_endmill",

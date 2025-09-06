@@ -786,11 +786,21 @@ class ToolEditorDialog(QtWidgets.QDialog):
         self.type_combo = QtWidgets.QComboBox()
         self.type_combo.addItems([t.replace('_', ' ').title() for t in self.library.tool_types])
         
-        # Dimensions
-        self.diameter_mm_input = QtWidgets.QDoubleSpinBox()
-        self.diameter_mm_input.setRange(0.001, 1000.0)
-        self.diameter_mm_input.setDecimals(4)
-        self.diameter_mm_input.setSuffix(" mm")
+        # Dimensions with unit selection
+        diameter_layout = QtWidgets.QHBoxLayout()
+        
+        self.diameter_input = QtWidgets.QDoubleSpinBox()
+        self.diameter_input.setRange(0.001, 1000.0)
+        self.diameter_input.setDecimals(4)
+        
+        self.unit_combo = QtWidgets.QComboBox()
+        self.unit_combo.addItems(["mm", "inch"])
+        self.unit_combo.currentTextChanged.connect(self.on_unit_changed)
+        
+        self.diameter_input.valueChanged.connect(self.on_diameter_changed)
+        
+        diameter_layout.addWidget(self.diameter_input, 1)
+        diameter_layout.addWidget(self.unit_combo, 0)
         
         self.flutes_input = QtWidgets.QSpinBox()
         self.flutes_input.setRange(1, 20)
@@ -850,7 +860,7 @@ class ToolEditorDialog(QtWidgets.QDialog):
         form.addRow("Series:", self.series_input)
         form.addRow("Name*:", self.name_input)
         form.addRow("Type*:", self.type_combo)
-        form.addRow("Diameter (mm)*:", self.diameter_mm_input)
+        form.addRow("Diameter*:", diameter_layout)
         form.addRow("Number of Flutes*:", self.flutes_input)
         form.addRow("Length of Cut:", self.length_of_cut_input)
         form.addRow("Overall Length:", self.overall_length_input)
@@ -878,8 +888,9 @@ class ToolEditorDialog(QtWidgets.QDialog):
         layout.addLayout(form)
         layout.addLayout(button_layout)
         
-        # Auto-calculate diameter in inches
-        self.diameter_mm_input.valueChanged.connect(self.update_diameter_inch)
+        # Initialize unit tracking
+        self.original_unit = "mm"  # Default to mm
+        self.updating_diameter = False  # Flag to prevent recursive updates
         
     def populate_fields(self):
         """Populate fields with existing tool data."""
@@ -899,7 +910,22 @@ class ToolEditorDialog(QtWidgets.QDialog):
         if type_index >= 0:
             self.type_combo.setCurrentIndex(type_index)
         
-        self.diameter_mm_input.setValue(self.tool.diameter_mm)
+        # Set diameter and unit based on tool's original unit
+        original_unit = getattr(self.tool, 'original_unit', 'mm')
+        original_diameter = getattr(self.tool, 'original_diameter', self.tool.diameter_mm)
+        
+        self.original_unit = original_unit
+        self.unit_combo.setCurrentText(original_unit)
+        
+        # If we have the original diameter, use that, otherwise use the stored value in the correct unit
+        if original_diameter > 0:
+            self.diameter_input.setValue(original_diameter)
+        else:
+            # Fallback: use diameter_mm if original unit is mm, or convert if inch
+            if original_unit == "mm":
+                self.diameter_input.setValue(self.tool.diameter_mm)
+            else:
+                self.diameter_input.setValue(self.tool.diameter_inch)
         self.flutes_input.setValue(self.tool.flutes)
         self.length_of_cut_input.setValue(self.tool.length_of_cut_mm)
         self.overall_length_input.setValue(self.tool.overall_length_mm)
@@ -913,11 +939,32 @@ class ToolEditorDialog(QtWidgets.QDialog):
         self.notes_input.setPlainText(self.tool.notes)
         self.tags_input.setText(", ".join(self.tool.tags))
     
-    def update_diameter_inch(self):
-        """Auto-update inch diameter when mm changes."""
-        mm_value = self.diameter_mm_input.value()
-        inch_value = mm_value * MM_TO_IN
-        # This would update a read-only inch display if we had one
+    def on_unit_changed(self):
+        """Handle unit change - convert diameter value."""
+        if self.updating_diameter:
+            return
+        
+        self.updating_diameter = True
+        current_value = self.diameter_input.value()
+        current_unit = self.unit_combo.currentText()
+        
+        # Convert value when switching units
+        if current_unit == "mm" and self.original_unit == "inch":
+            # Convert from inch to mm
+            converted_value = current_value * 25.4
+            self.diameter_input.setValue(converted_value)
+        elif current_unit == "inch" and self.original_unit == "mm":
+            # Convert from mm to inch  
+            converted_value = current_value / 25.4
+            self.diameter_input.setValue(converted_value)
+        
+        self.original_unit = current_unit
+        self.updating_diameter = False
+    
+    def on_diameter_changed(self):
+        """Handle diameter value change."""
+        # This can be used for validation or real-time updates if needed
+        pass
     
     def on_url_changed(self):
         """Enable/disable open button based on URL validity."""
@@ -942,7 +989,7 @@ class ToolEditorDialog(QtWidgets.QDialog):
             self.id_input.text().strip(),
             self.manufacturer_combo.currentText().strip(),
             self.name_input.text().strip(),
-            self.diameter_mm_input.value() > 0,
+            self.diameter_input.value() > 0,
             self.flutes_input.value() > 0
         ]):
             QtWidgets.QMessageBox.warning(self, "Validation Error", "Please fill in all required fields (marked with *).")
@@ -955,10 +1002,19 @@ class ToolEditorDialog(QtWidgets.QDialog):
                 QtWidgets.QMessageBox.warning(self, "ID Conflict", "A tool with this ID already exists. Please choose a different ID.")
                 return
         
-        # Create tool specs
+        # Create tool specs with unit tracking
         tool_type = self.type_combo.currentText().lower().replace(' ', '_')
-        diameter_mm = self.diameter_mm_input.value()
+        original_diameter = self.diameter_input.value()
+        original_unit = self.unit_combo.currentText()
         tags = [tag.strip() for tag in self.tags_input.text().split(',') if tag.strip()]
+        
+        # Calculate both mm and inch values
+        if original_unit == "mm":
+            diameter_mm = original_diameter
+            diameter_inch = original_diameter / 25.4
+        else:  # inch
+            diameter_mm = original_diameter * 25.4
+            diameter_inch = original_diameter
         
         tool = ToolSpecs(
             id=self.id_input.text().strip(),
@@ -967,7 +1023,7 @@ class ToolEditorDialog(QtWidgets.QDialog):
             name=self.name_input.text().strip(),
             type=tool_type,
             diameter_mm=diameter_mm,
-            diameter_inch=diameter_mm * MM_TO_IN,
+            diameter_inch=diameter_inch,
             flutes=self.flutes_input.value(),
             length_of_cut_mm=self.length_of_cut_input.value(),
             overall_length_mm=self.overall_length_input.value(),
@@ -980,7 +1036,10 @@ class ToolEditorDialog(QtWidgets.QDialog):
             part_number=self.part_number_input.text().strip(),
             price=self.price_input.value(),
             url=self.url_input.text().strip(),
-            tags=tags
+            tags=tags,
+            # Unit tracking to prevent rounding errors
+            original_unit=original_unit,
+            original_diameter=original_diameter
         )
         
         # Save tool

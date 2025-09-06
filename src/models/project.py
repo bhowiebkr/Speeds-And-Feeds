@@ -34,13 +34,16 @@ class ProjectToolAssociation:
 
 
 @dataclass
-class Project:
-    """Project data structure for organizing tool collections."""
+class Setup:
+    """Setup data structure for organizing tools by machining setup."""
     id: str
     name: str
+    part_id: str
     description: str = ""
-    customer_name: str = ""
-    status: ProjectStatus = ProjectStatus.ACTIVE
+    work_offset: str = "G54"  # G54-G59
+    fixture_notes: str = ""
+    machine_config: str = ""
+    operation_type: str = ""  # roughing, finishing, drilling, etc.
     date_created: str = ""
     date_modified: str = ""
     notes: str = ""
@@ -49,6 +52,174 @@ class Project:
     def __post_init__(self):
         if self.tools is None:
             self.tools = []
+        
+        if not self.date_created:
+            self.date_created = datetime.now().isoformat()
+        
+        if not self.date_modified:
+            self.date_modified = self.date_created
+    
+    def add_tool(self, tool_id: str, quantity: int = 1, notes: str = "") -> bool:
+        """Add a tool to this setup."""
+        # Check if tool already exists
+        for tool_assoc in self.tools:
+            if tool_assoc.tool_id == tool_id:
+                # Update existing association
+                tool_assoc.quantity_needed = quantity
+                tool_assoc.notes = notes
+                self.date_modified = datetime.now().isoformat()
+                return True
+        
+        # Add new association
+        self.tools.append(ProjectToolAssociation(
+            tool_id=tool_id,
+            quantity_needed=quantity,
+            notes=notes
+        ))
+        self.date_modified = datetime.now().isoformat()
+        return True
+    
+    def remove_tool(self, tool_id: str) -> bool:
+        """Remove a tool from this setup."""
+        for i, tool_assoc in enumerate(self.tools):
+            if tool_assoc.tool_id == tool_id:
+                self.tools.pop(i)
+                self.date_modified = datetime.now().isoformat()
+                return True
+        return False
+    
+    def has_tool(self, tool_id: str) -> bool:
+        """Check if setup contains a specific tool."""
+        return any(tool_assoc.tool_id == tool_id for tool_assoc in self.tools)
+    
+    def get_tool_ids(self) -> Set[str]:
+        """Get set of all tool IDs in this setup."""
+        return {tool_assoc.tool_id for tool_assoc in self.tools}
+    
+    def get_tool_count(self) -> int:
+        """Get total number of tools in this setup."""
+        return len(self.tools)
+
+
+@dataclass
+class Part:
+    """Part data structure for organizing setups within a project."""
+    id: str
+    name: str
+    project_id: str
+    description: str = ""
+    material: str = ""
+    drawing_number: str = ""
+    quantity_required: int = 1
+    date_created: str = ""
+    date_modified: str = ""
+    notes: str = ""
+    setups: List[Setup] = None
+    tools: List[ProjectToolAssociation] = None  # Part-level tools
+    
+    def __post_init__(self):
+        if self.setups is None:
+            self.setups = []
+        
+        if self.tools is None:
+            self.tools = []
+        
+        if not self.date_created:
+            self.date_created = datetime.now().isoformat()
+        
+        if not self.date_modified:
+            self.date_modified = self.date_created
+    
+    def add_setup(self, setup: Setup) -> bool:
+        """Add a setup to this part."""
+        setup.part_id = self.id
+        self.setups.append(setup)
+        self.date_modified = datetime.now().isoformat()
+        return True
+    
+    def remove_setup(self, setup_id: str) -> bool:
+        """Remove a setup from this part."""
+        for i, setup in enumerate(self.setups):
+            if setup.id == setup_id:
+                self.setups.pop(i)
+                self.date_modified = datetime.now().isoformat()
+                return True
+        return False
+    
+    def get_setup(self, setup_id: str) -> Optional[Setup]:
+        """Get a setup by ID."""
+        for setup in self.setups:
+            if setup.id == setup_id:
+                return setup
+        return None
+    
+    def add_tool(self, tool_id: str, quantity: int = 1, notes: str = "") -> bool:
+        """Add a tool to this part (part-level tool)."""
+        # Check if tool already exists
+        for tool_assoc in self.tools:
+            if tool_assoc.tool_id == tool_id:
+                # Update existing association
+                tool_assoc.quantity_needed = quantity
+                tool_assoc.notes = notes
+                self.date_modified = datetime.now().isoformat()
+                return True
+        
+        # Add new association
+        self.tools.append(ProjectToolAssociation(
+            tool_id=tool_id,
+            quantity_needed=quantity,
+            notes=notes
+        ))
+        self.date_modified = datetime.now().isoformat()
+        return True
+    
+    def remove_tool(self, tool_id: str) -> bool:
+        """Remove a tool from this part."""
+        for i, tool_assoc in enumerate(self.tools):
+            if tool_assoc.tool_id == tool_id:
+                self.tools.pop(i)
+                self.date_modified = datetime.now().isoformat()
+                return True
+        return False
+    
+    def get_all_tool_ids(self) -> Set[str]:
+        """Get all tool IDs from this part and all its setups."""
+        all_tool_ids = set()
+        
+        # Add part-level tools
+        all_tool_ids.update(tool_assoc.tool_id for tool_assoc in self.tools)
+        
+        # Add setup-level tools
+        for setup in self.setups:
+            all_tool_ids.update(setup.get_tool_ids())
+        
+        return all_tool_ids
+    
+    def get_setup_count(self) -> int:
+        """Get total number of setups in this part."""
+        return len(self.setups)
+
+
+@dataclass
+class Project:
+    """Project data structure for organizing tool collections with hierarchical parts and setups."""
+    id: str
+    name: str
+    description: str = ""
+    customer_name: str = ""
+    status: ProjectStatus = ProjectStatus.ACTIVE
+    date_created: str = ""
+    date_modified: str = ""
+    notes: str = ""
+    parts: List[Part] = None
+    tools: List[ProjectToolAssociation] = None  # Project-level tools (shared across parts)
+    
+    def __post_init__(self):
+        if self.tools is None:
+            self.tools = []
+        
+        if self.parts is None:
+            self.parts = []
         
         if not self.date_created:
             self.date_created = datetime.now().isoformat()
@@ -94,12 +265,60 @@ class Project:
         return any(tool_assoc.tool_id == tool_id for tool_assoc in self.tools)
     
     def get_tool_ids(self) -> Set[str]:
-        """Get set of all tool IDs in this project."""
+        """Get set of all tool IDs in this project (project-level only)."""
         return {tool_assoc.tool_id for tool_assoc in self.tools}
     
+    def get_all_tool_ids(self) -> Set[str]:
+        """Get all tool IDs from project, parts, and setups."""
+        all_tool_ids = set()
+        
+        # Add project-level tools
+        all_tool_ids.update(self.get_tool_ids())
+        
+        # Add tools from all parts
+        for part in self.parts:
+            all_tool_ids.update(part.get_all_tool_ids())
+        
+        return all_tool_ids
+    
     def get_tool_count(self) -> int:
-        """Get total number of tools in this project."""
+        """Get total number of project-level tools."""
         return len(self.tools)
+    
+    def get_total_tool_count(self) -> int:
+        """Get total number of tools across project, parts, and setups."""
+        return len(self.get_all_tool_ids())
+    
+    def add_part(self, part: Part) -> bool:
+        """Add a part to this project."""
+        part.project_id = self.id
+        self.parts.append(part)
+        self.date_modified = datetime.now().isoformat()
+        return True
+    
+    def remove_part(self, part_id: str) -> bool:
+        """Remove a part from this project."""
+        for i, part in enumerate(self.parts):
+            if part.id == part_id:
+                self.parts.pop(i)
+                self.date_modified = datetime.now().isoformat()
+                return True
+        return False
+    
+    def get_part(self, part_id: str) -> Optional[Part]:
+        """Get a part by ID."""
+        for part in self.parts:
+            if part.id == part_id:
+                return part
+        return None
+    
+    def get_part_count(self) -> int:
+        """Get total number of parts in this project."""
+        return len(self.parts)
+    
+    def get_setup_count(self) -> int:
+        """Get total number of setups across all parts."""
+        return sum(part.get_setup_count() for part in self.parts)
 
 
 class ProjectManager:
@@ -141,6 +360,33 @@ class ProjectManager:
                         ProjectToolAssociation(**tool_data) 
                         for tool_data in project_data['tools']
                     ]
+                
+                # Convert parts and their setups
+                if 'parts' in project_data:
+                    parts = []
+                    for part_data in project_data['parts']:
+                        # Convert part-level tools
+                        if 'tools' in part_data:
+                            part_data['tools'] = [
+                                ProjectToolAssociation(**tool_data)
+                                for tool_data in part_data['tools']
+                            ]
+                        
+                        # Convert setups
+                        if 'setups' in part_data:
+                            setups = []
+                            for setup_data in part_data['setups']:
+                                # Convert setup-level tools
+                                if 'tools' in setup_data:
+                                    setup_data['tools'] = [
+                                        ProjectToolAssociation(**tool_data)
+                                        for tool_data in setup_data['tools']
+                                    ]
+                                setups.append(Setup(**setup_data))
+                            part_data['setups'] = setups
+                        
+                        parts.append(Part(**part_data))
+                    project_data['parts'] = parts
                 
                 project = Project(**project_data)
                 self.projects[project.id] = project
@@ -280,3 +526,152 @@ class ProjectManager:
                 results.append(project)
         
         return results
+    
+    # Part management methods
+    def create_part(self, project_id: str, name: str, **kwargs) -> Optional[Part]:
+        """Create a new part in a project."""
+        project = self.get_project(project_id)
+        if not project:
+            return None
+        
+        part_id = f"part_{len(project.parts) + 1:03d}"
+        part = Part(
+            id=part_id,
+            name=name,
+            project_id=project_id,
+            **kwargs
+        )
+        
+        project.add_part(part)
+        self.save_projects()
+        return part
+    
+    def delete_part(self, project_id: str, part_id: str) -> bool:
+        """Delete a part from a project."""
+        project = self.get_project(project_id)
+        if not project:
+            return False
+        
+        if project.remove_part(part_id):
+            self.save_projects()
+            return True
+        return False
+    
+    def get_part(self, project_id: str, part_id: str) -> Optional[Part]:
+        """Get a specific part."""
+        project = self.get_project(project_id)
+        if not project:
+            return None
+        return project.get_part(part_id)
+    
+    def update_part(self, project_id: str, part: Part) -> bool:
+        """Update a part."""
+        project = self.get_project(project_id)
+        if not project:
+            return False
+        
+        for i, existing_part in enumerate(project.parts):
+            if existing_part.id == part.id:
+                project.parts[i] = part
+                project.date_modified = datetime.now().isoformat()
+                self.save_projects()
+                return True
+        return False
+    
+    # Setup management methods
+    def create_setup(self, project_id: str, part_id: str, name: str, **kwargs) -> Optional[Setup]:
+        """Create a new setup in a part."""
+        part = self.get_part(project_id, part_id)
+        if not part:
+            return None
+        
+        setup_id = f"setup_{len(part.setups) + 1:03d}"
+        setup = Setup(
+            id=setup_id,
+            name=name,
+            part_id=part_id,
+            **kwargs
+        )
+        
+        part.add_setup(setup)
+        self.save_projects()
+        return setup
+    
+    def delete_setup(self, project_id: str, part_id: str, setup_id: str) -> bool:
+        """Delete a setup from a part."""
+        part = self.get_part(project_id, part_id)
+        if not part:
+            return False
+        
+        if part.remove_setup(setup_id):
+            self.save_projects()
+            return True
+        return False
+    
+    def get_setup(self, project_id: str, part_id: str, setup_id: str) -> Optional[Setup]:
+        """Get a specific setup."""
+        part = self.get_part(project_id, part_id)
+        if not part:
+            return None
+        return part.get_setup(setup_id)
+    
+    def update_setup(self, project_id: str, part_id: str, setup: Setup) -> bool:
+        """Update a setup."""
+        part = self.get_part(project_id, part_id)
+        if not part:
+            return False
+        
+        for i, existing_setup in enumerate(part.setups):
+            if existing_setup.id == setup.id:
+                part.setups[i] = setup
+                part.date_modified = datetime.now().isoformat()
+                self.save_projects()
+                return True
+        return False
+    
+    # Helper methods for tool assignment at different levels
+    def add_tool_to_level(self, project_id: str, part_id: str, setup_id: str, tool_id: str, quantity: int = 1, notes: str = "") -> bool:
+        """Add tool at the appropriate level (project, part, or setup)."""
+        if setup_id:
+            # Add to setup level
+            setup = self.get_setup(project_id, part_id, setup_id)
+            if setup and setup.add_tool(tool_id, quantity, notes):
+                self.save_projects()
+                return True
+        elif part_id:
+            # Add to part level
+            part = self.get_part(project_id, part_id)
+            if part and part.add_tool(tool_id, quantity, notes):
+                self.save_projects()
+                return True
+        else:
+            # Add to project level
+            project = self.get_project(project_id)
+            if project and project.add_tool(tool_id, quantity, notes):
+                self.save_projects()
+                return True
+        
+        return False
+    
+    def remove_tool_from_level(self, project_id: str, part_id: str, setup_id: str, tool_id: str) -> bool:
+        """Remove tool from the appropriate level."""
+        if setup_id:
+            # Remove from setup level
+            setup = self.get_setup(project_id, part_id, setup_id)
+            if setup and setup.remove_tool(tool_id):
+                self.save_projects()
+                return True
+        elif part_id:
+            # Remove from part level
+            part = self.get_part(project_id, part_id)
+            if part and part.remove_tool(tool_id):
+                self.save_projects()
+                return True
+        else:
+            # Remove from project level
+            project = self.get_project(project_id)
+            if project and project.remove_tool(tool_id):
+                self.save_projects()
+                return True
+        
+        return False

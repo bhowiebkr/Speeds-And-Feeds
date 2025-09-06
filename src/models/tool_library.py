@@ -35,6 +35,9 @@ class ToolSpecs:
     price: float = 0.0
     url: str = ""
     tags: List[str] = None
+    # Unit tracking to avoid rounding errors
+    original_unit: str = "mm"  # "mm" or "inch" - the unit this tool was originally created in
+    original_diameter: float = 0.0  # The original diameter value in the original unit
     
     def __post_init__(self):
         if self.tags is None:
@@ -98,6 +101,12 @@ class ToolLibrary:
             for category, manufacturers in tools_data.items():
                 for manufacturer, tools in manufacturers.items():
                     for tool_id, tool_data in tools.items():
+                        # Add backward compatibility for new unit fields
+                        if 'original_unit' not in tool_data:
+                            tool_data['original_unit'] = 'mm'  # Default to mm for existing tools
+                        if 'original_diameter' not in tool_data:
+                            tool_data['original_diameter'] = tool_data.get('diameter_mm', 0.0)
+                        
                         tool_spec = ToolSpecs(**tool_data)
                         self.tools[tool_spec.id] = tool_spec
             
