@@ -3,9 +3,9 @@ from typing import Dict, Optional, Tuple
 import sys
 import os
 
-# Import the enhanced formulas module
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.formulas import MATERIALS, load_materials_database, COATING_MULTIPLIERS
+# Import from the refactored modules
+from ..constants.materials import MATERIALS, COATING_MULTIPLIERS
+from ..formulas.validation import load_materials_database
 
 
 class IntInput(QtWidgets.QLineEdit):

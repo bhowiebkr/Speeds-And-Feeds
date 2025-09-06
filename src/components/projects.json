@@ -1,0 +1,124 @@
+{
+  "proj_001": {
+    "id": "proj_001",
+    "name": "Svalboard",
+    "description": "cnc maching in aluminum",
+    "customer_name": "",
+    "status": "active",
+    "date_created": "2025-09-03T00:43:47.948560",
+    "date_modified": "2025-09-03T12:15:02.060399",
+    "notes": "Svalboard is cool",
+    "parts": [
+      {
+        "id": "part_001",
+        "name": "Base",
+        "project_id": "proj_001",
+        "description": "",
+        "material": "",
+        "drawing_number": "",
+        "quantity_required": 1,
+        "date_created": "2025-09-03T12:15:02.060399",
+        "date_modified": "2025-09-03T12:15:08.503000",
+        "notes": "",
+        "setups": [
+          {
+            "id": "setup_001",
+            "name": "Main Setup",
+            "part_id": "part_001",
+            "description": "",
+            "work_offset": "G54",
+            "fixture_notes": "",
+            "machine_config": "",
+            "operation_type": "",
+            "date_created": "2025-09-03T12:15:08.503000",
+            "date_modified": "2025-09-04T00:36:26.180927",
+            "notes": "",
+            "tools": []
+          }
+        ],
+        "tools": []
+      }
+    ],
+    "tools": [
+      {
+        "tool_id": "991250",
+        "quantity_needed": 1,
+        "notes": "",
+        "date_added": "2025-09-03T00:43:58.043208"
+      },
+      {
+        "tool_id": "B282A06250HP",
+        "quantity_needed": 1,
+        "notes": "",
+        "date_added": "2025-09-03T00:43:59.807024"
+      }
+    ]
+  },
+  "proj_002": {
+    "id": "proj_002",
+    "name": "bla",
+    "description": "",
+    "customer_name": "",
+    "status": "completed",
+    "date_created": "2025-09-03T01:07:06.137595",
+    "date_modified": "2025-09-03T01:07:16.218189",
+    "notes": "",
+    "parts": [],
+    "tools": []
+  },
+  "proj_003": {
+    "id": "proj_003",
+    "name": "Z-Axis Cable Chain Attachment",
+    "description": "",
+    "customer_name": "",
+    "status": "active",
+    "date_created": "2025-09-05T13:19:44.911769",
+    "date_modified": "2025-09-05T13:20:15.870691",
+    "notes": "",
+    "parts": [
+      {
+        "id": "part_001",
+        "name": "Z-Attachment",
+        "project_id": "proj_003",
+        "description": "This attaches to the spindle",
+        "material": "Aluminum",
+        "drawing_number": "",
+        "quantity_required": 1,
+        "date_created": "2025-09-05T13:20:15.870691",
+        "date_modified": "2025-09-05T13:20:23.889124",
+        "notes": "",
+        "setups": [
+          {
+            "id": "setup_001",
+            "name": "Main",
+            "part_id": "part_001",
+            "description": "",
+            "work_offset": "G54",
+            "fixture_notes": "",
+            "machine_config": "",
+            "operation_type": "",
+            "date_created": "2025-09-05T13:20:23.889124",
+            "date_modified": "2025-09-05T23:57:16.315706",
+            "notes": "",
+            "tools": [
+              {
+                "tool_id": "991250",
+                "quantity_needed": 1,
+                "notes": "I'll use this the cutout the shape. ",
+                "date_added": "2025-09-05T13:20:47.337991"
+              },
+              {
+                "tool_id": "micro_001",
+                "quantity_needed": 1,
+                "notes": "Mill some small holes with this one. ",
+                "date_added": "2025-09-05T13:22:12.847764"
+              }
+            ]
+          }
+        ],
+        "tools": []
+      }
+    ],
+    "tools": []
+  }
+}

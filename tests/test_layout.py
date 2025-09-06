@@ -10,7 +10,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from PySide6 import QtWidgets, QtCore
-from src.main import GUI, load_stylesheet
+from src.main import GUI
+from src.ui.styles import load_stylesheet
 
 def check_widget_overlaps(parent_widget, widget_name=""):
     """Check if any child widgets are overlapping"""
@@ -63,10 +64,10 @@ def test_layout_at_sizes():
     app.processEvents()
     
     test_sizes = [
-        (1000, 750, "Minimum Size"),
+        (1000, 1100, "Minimum Size"),
         (800, 600, "Below Minimum"),
-        (1200, 800, "Default Size"),
-        (1400, 900, "Large Size")
+        (1200, 1100, "Default Size"),
+        (1400, 1200, "Large Size")
     ]
     
     results = {}

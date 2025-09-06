@@ -1,6 +1,6 @@
 # Build Instructions
 
-This document describes how to build the Speeds and Feeds Calculator using Nuitka for distribution.
+This document describes how to build CNC ToolHub using Nuitka for distribution.
 
 ## Prerequisites
 

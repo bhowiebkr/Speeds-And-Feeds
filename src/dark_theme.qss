@@ -310,3 +310,63 @@ QToolTip {
     padding: 6px;
     font-size: 9pt;
 }
+
+/* Tool Library Specific Styles */
+ToolLibraryWidget {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+ToolCard {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+               stop:0 #3c3c3c, stop:1 #2a2a2a);
+    border: 1px solid #555555;
+    border-radius: 8px;
+    color: #ffffff;
+}
+
+ToolCard:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+               stop:0 #4a4a4a, stop:1 #383838);
+    border: 2px solid #0078d4;
+}
+
+/* Tool library dialog buttons */
+ToolLibraryWidget QPushButton {
+    background-color: #404040;
+    color: #ffffff;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: bold;
+}
+
+ToolLibraryWidget QPushButton:hover {
+    background-color: #505050;
+    border-color: #0078d4;
+}
+
+ToolLibraryWidget QPushButton:pressed {
+    background-color: #303030;
+}
+
+/* Tool library search input */
+ToolLibraryWidget QLineEdit {
+    background-color: #404040;
+    color: #ffffff;
+    border: 2px solid #555555;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+ToolLibraryWidget QLineEdit:focus {
+    border-color: #0078d4;
+}
+
+/* Tool library scroll area */
+ToolLibraryWidget QScrollArea {
+    background-color: #2b2b2b;
+    border: 1px solid #555555;
+    border-radius: 4px;
+}

@@ -1,0 +1,163 @@
+{
+  "tools": {
+    "endmills": {
+      "harvey_tool": {
+        "894054": {
+          "id": "894054",
+          "manufacturer": "Harvey Tool",
+          "series": "Micro End Mills",
+          "name": "2-Flute Square End Mill - Uncoated",
+          "type": "square_endmill",
+          "diameter_mm": "0.5",
+          "diameter_inch": "0.02",
+          "flutes": 2,
+          "length_of_cut_mm": 1.5,
+          "overall_length_mm": 38.1,
+          "shank_diameter_mm": 1.587,
+          "coating": "uncoated",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 800,
+            "steel_sfm": 300,
+            "titanium_sfm": 200
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.005,
+            "steel_chipload": 0.003,
+            "titanium_chipload": 0.002
+          },
+          "notes": "Precision micro endmill for ultra-fine features",
+          "part_number": "894054",
+          "price": 45.99,
+          "url": "",
+          "tags": [
+            "micro",
+            "precision",
+            "square",
+            "carbide"
+          ],
+          "original_unit": "mm",
+          "original_diameter": "0.5"
+        },
+        "991250": {
+          "id": "991250",
+          "manufacturer": "Harvey Tool",
+          "series": "General Purpose End Mills",
+          "name": "2-Flute Square End Mill - TiAlN",
+          "type": "square_endmill",
+          "diameter_mm": "6.35",
+          "diameter_inch": "0.25",
+          "flutes": 2,
+          "length_of_cut_mm": 19.05,
+          "overall_length_mm": 63.5,
+          "shank_diameter_mm": 6.35,
+          "coating": "TiAlN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 1000,
+            "steel_sfm": 500,
+            "titanium_sfm": 300
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.012,
+            "steel_chipload": 0.008,
+            "titanium_chipload": 0.005
+          },
+          "notes": "Versatile general purpose endmill with excellent wear resistance",
+          "part_number": "991250",
+          "price": 28.75,
+          "url": "",
+          "tags": [
+            "general_purpose",
+            "coated",
+            "square",
+            "carbide"
+          ],
+          "original_unit": "mm",
+          "original_diameter": "6.35"
+        },
+        "imp tool": {
+          "id": "imp tool",
+          "manufacturer": "Harvey Tool",
+          "series": "",
+          "name": "1/4\" tool",
+          "type": "square_endmill",
+          "diameter_mm": "6.350",
+          "diameter_inch": "0.25",
+          "flutes": 1,
+          "length_of_cut_mm": 0.1,
+          "overall_length_mm": 1.0,
+          "shank_diameter_mm": 6.35,
+          "coating": "uncoated",
+          "material": "carbide",
+          "manufacturer_speeds": {},
+          "manufacturer_feeds": {},
+          "notes": "",
+          "part_number": "",
+          "price": 0.0,
+          "url": "",
+          "tags": [],
+          "original_unit": "inch",
+          "original_diameter": "0.25"
+        },
+        "123": {
+          "id": "123",
+          "manufacturer": "Harvey Tool",
+          "series": "",
+          "name": "1/4\" rougher",
+          "type": "square_endmill",
+          "diameter_mm": "6.350",
+          "diameter_inch": "0.25",
+          "flutes": 1,
+          "length_of_cut_mm": 0.1,
+          "overall_length_mm": 1.0,
+          "shank_diameter_mm": "6.350",
+          "coating": "uncoated",
+          "material": "HSS",
+          "manufacturer_speeds": {},
+          "manufacturer_feeds": {},
+          "notes": "",
+          "part_number": "",
+          "price": 0.0,
+          "url": "",
+          "tags": [],
+          "original_unit": "inch",
+          "original_diameter": "0.25"
+        }
+      }
+    }
+  },
+  "manufacturers": [
+    "Harvey Tool",
+    "Mitsubishi",
+    "Kennametal",
+    "Guhring",
+    "Custom"
+  ],
+  "tool_types": [
+    "square_endmill",
+    "ball_endmill",
+    "drill",
+    "spot_drill",
+    "custom"
+  ],
+  "coatings": [
+    "uncoated",
+    "TiN",
+    "TiAlN",
+    "AlCrN",
+    "DLC",
+    "custom"
+  ],
+  "materials": [
+    "HSS",
+    "carbide",
+    "ceramic",
+    "custom"
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2024-09-02",
+    "description": "Tool library for CNC machining applications"
+  }
+}

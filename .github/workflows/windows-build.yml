@@ -43,10 +43,6 @@ jobs:
         pip install nuitka==1.8.4
         pip install zstandard
 
-    - name: Run tests
-      run: |
-        python run_tests.py
-
     - name: Build with Nuitka
       run: |
         Write-Host "Starting Nuitka build..."

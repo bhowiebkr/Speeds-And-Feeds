@@ -1,5 +1,5 @@
 from __future__ import annotations
 
-import src.main
+import src.app
 
-src.main.start()
+src.app.start()

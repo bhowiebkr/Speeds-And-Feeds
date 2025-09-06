@@ -132,6 +132,9 @@ dmypy.json
 # Claude Code files
 .claude
 
+# User data files
+src/components/projects.json
+
 # Nuitka build directories
 build/
 *.build/

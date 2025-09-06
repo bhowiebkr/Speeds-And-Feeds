@@ -1,17 +1,28 @@
-# CNC Speeds and Feeds Calculator
+# CNC ToolHub
 
-A desktop application for calculating optimal cutting parameters for CNC milling operations. Provides real-time calculation of spindle speeds (RPM), feed rates, and material removal rates based on tool geometry and cutting conditions.
+A comprehensive desktop application for CNC tool management, project organization, and cutting parameter optimization. Combines advanced machining calculations with project-based tool organization, material databases, and real-time parameter validation for professional CNC operations.
 
 ![Application Interface](images/GUI.png)
 
 ## Features
 
-- **Tool Parameter Input**: Tool diameter (metric/imperial) and flute count
-- **Cutting Parameter Configuration**: Depth of cut, width of cut, surface speed, and feed per tooth
-- **Machine Constraints**: Minimum and maximum spindle RPM limits
-- **Real-time Calculations**: Automatic updates when parameters change
-- **Unit Conversion**: Seamless switching between metric and imperial units
-- **Material Database**: Built-in material properties for common workpiece materials
+### Tool Management & Organization
+- **Project-Based Tool Organization**: Organize tools by project with quantity tracking
+- **Comprehensive Tool Library**: Browse and filter extensive tool database
+- **Tool Assignment**: Assign specific tools to projects with notes and quantities
+
+### Advanced Machining Calculations
+- **Standard & Micro Tool Support**: Optimized calculations for tools ≥3mm and <3mm
+- **HSM (High Speed Machining)**: Chip thinning compensation and advanced algorithms
+- **Tool Deflection Analysis**: Cantilever beam theory with deflection warnings
+- **Machine Rigidity Adjustment**: Router, DIY/Medium, and Industrial VMC settings
+- **Real-time Parameter Validation**: Comprehensive warnings and recommendations
+
+### User Interface & Workflow  
+- **Dual Unit System**: Seamless metric/imperial conversion with real-time switching
+- **Graphical Dashboard**: Visual feedback with gradient bars and status indicators
+- **Material Database**: Extensive material properties with coating multipliers
+- **Project Management**: Create, track, and manage multiple CNC projects
 
 ## Calculations
 
@@ -25,7 +36,7 @@ The application computes the following machining parameters:
 
 ### Pre-built Executable (Recommended)
 
-Download the latest Windows executable from the [Releases](https://github.com/bhowiebkr/Speeds-And-Feeds/releases) page. No Python installation required.
+Download the latest Windows executable from the [Releases](https://github.com/bhowiebkr/CNC-ToolHub/releases) page. No Python installation required.
 
 ### From Source
 
@@ -35,8 +46,8 @@ Download the latest Windows executable from the [Releases](https://github.com/bh
 
 **Installation:**
 ```bash
-git clone https://github.com/bhowiebkr/Speeds-And-Feeds.git
-cd Speeds-And-Feeds
+git clone https://github.com/bhowiebkr/CNC-ToolHub.git
+cd CNC-ToolHub
 pip install -r requirements.txt
 ```
 
