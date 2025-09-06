@@ -2,14 +2,9 @@
 
 A comprehensive desktop application for CNC tool management, project organization, and cutting parameter optimization. Combines advanced machining calculations with project-based tool organization, material databases, and real-time parameter validation for professional CNC operations.
 
-![Application Interface](images/GUI.png)
+![Application Interface](images/main-interface.png)
 
-## Features
-
-### Tool Management & Organization
-- **Project-Based Tool Organization**: Organize tools by project with quantity tracking
-- **Comprehensive Tool Library**: Browse and filter extensive tool database
-- **Tool Assignment**: Assign specific tools to projects with notes and quantities
+## Key Features
 
 ### Advanced Machining Calculations
 - **Standard & Micro Tool Support**: Optimized calculations for tools ≥3mm and <3mm
@@ -18,19 +13,94 @@ A comprehensive desktop application for CNC tool management, project organizatio
 - **Machine Rigidity Adjustment**: Router, DIY/Medium, and Industrial VMC settings
 - **Real-time Parameter Validation**: Comprehensive warnings and recommendations
 
-### User Interface & Workflow  
-- **Dual Unit System**: Seamless metric/imperial conversion with real-time switching
-- **Graphical Dashboard**: Visual feedback with gradient bars and status indicators
+### Tool & Project Management
+- **Project-Based Organization**: Organize tools by project with quantity tracking
+- **Comprehensive Tool Library**: Browse and filter extensive tool database
 - **Material Database**: Extensive material properties with coating multipliers
-- **Project Management**: Create, track, and manage multiple CNC projects
+- **Dual Unit System**: Seamless metric/imperial conversion with real-time switching
 
-## Calculations
+## Application Overview
 
-The application computes the following machining parameters:
+### Feeds & Speeds Calculator
 
-- **Spindle Speed (RPM)**: `RPM = (Surface Speed × 1000) / (π × Tool Diameter)`
-- **Feed Rate**: `Feed = RPM × Feed per Tooth × Number of Flutes`
-- **Material Removal Rate (MRR)**: `MRR = Width of Cut × Depth of Cut × Feed Rate`
+![Feeds and Speeds Tab](images/feeds-speeds-tab.png)
+
+The core machining calculation engine that computes optimal cutting parameters:
+
+**Input Parameters:**
+- Tool diameter and flute count with unit conversion
+- Material selection with automatic property loading
+- Cutting parameters (depth/width of cut, surface speed, feed per tooth)
+- Machine specifications and rigidity settings
+- Advanced options (HSM mode, tool stickout, chip thinning)
+
+**Calculated Results:**
+- Spindle Speed (RPM)
+- Feed Rate (IPM/mm/min)
+- Material Removal Rate (MRR)
+- Cutting forces and power requirements
+- Tool deflection analysis with warnings
+
+**Key Formulas:**
+- **RPM**: `(Surface Speed × 1000) / (π × Tool Diameter)`
+- **Feed Rate**: `RPM × Feed per Tooth × Flute Count`
+- **MRR**: `Width of Cut × Depth of Cut × Feed Rate`
+
+### Tool Library
+
+![Tool Library Tab](images/tool-library-tab.png)
+
+Comprehensive tool database with advanced filtering and management:
+
+**Features:**
+- Browse extensive tool database with specifications
+- Filter by diameter, flute count, coating, application
+- View detailed tool information and recommendations
+- Material, application, and coating reference guides
+- Export tool data for external use
+
+**Tool Categories:**
+- End mills (standard, micro, specialty)
+- Drill bits and reamers  
+- Face mills and fly cutters
+- Custom tool definitions
+
+### Project Manager
+
+![Projects Tab](images/projects-tab.png)
+
+Project-based tool organization and workflow management:
+
+**Project Management:**
+- Create and organize multiple CNC projects
+- Assign tools to projects with quantities and notes
+- Track project progress and tool usage
+- Import/export project data
+- Project-specific cutting parameters
+
+**Tool Assignment:**
+- Assign specific tools from library to projects
+- Track tool quantities and availability
+- Add project-specific notes and parameters
+- Generate tool lists and setup sheets
+
+### Settings & Configuration
+
+![Settings Tab](images/settings-tab.png)
+
+System configuration and data management:
+
+**Configuration Options:**
+- Unit system preferences (metric/imperial)
+- Default machine settings and rigidity
+- Application theme and interface options
+- Data file locations and backup settings
+
+**Data Management:**
+- Import/export tool library data
+- Backup and restore project files
+- Material database updates
+- System diagnostics and file verification
 
 ## Installation
 
@@ -60,28 +130,19 @@ run.bat
 python src/cnc_toolhub.py
 ```
 
-## Usage
+## Technical Specifications
 
-1. **Tool Setup**: Enter tool diameter and number of flutes
-2. **Cutting Parameters**: Set depth of cut, width of cut, and desired surface speed
-3. **Feed Rate**: Specify feed per tooth based on material and tool manufacturer recommendations
-4. **Machine Limits**: Configure spindle RPM constraints
-5. **Results**: View calculated RPM, feed rate, and material removal rate
+### Calculation Engine
+- **Strategy Pattern**: Automatic selection between standard and micro tool calculators
+- **Physics-Based**: Cantilever beam theory for deflection analysis
+- **Industry Standards**: Formulas from garrtool.com and major tooling manufacturers
+- **Machine Aware**: Rigidity adjustments for Router, DIY, and Industrial VMC
 
-### Input Parameters
-
-- **Tool Diameter**: Cutting tool diameter (mm or inches)
-- **Flute Count**: Number of cutting edges on the tool
-- **Depth of Cut (DOC)**: Axial cutting depth (mm or inches)
-- **Width of Cut (WOC)**: Radial cutting width (mm or inches)
-- **Surface Speed**: Cutting speed (SFM or m/min)
-- **Feed per Tooth**: Chip load per cutting edge (inches or mm per tooth)
-
-### Output Values
-
-- **Spindle Speed**: Calculated RPM for the spindle
-- **Feed Rate**: Table feed rate (IPM or mm/min)
-- **Material Removal Rate**: Volume of material removed per unit time
+### Architecture
+- **Modular Design**: Separate packages for calculators, formulas, UI components
+- **Qt Framework**: PySide6 for cross-platform GUI
+- **JSON Data**: Human-readable material and tool databases
+- **Real-time Updates**: Automatic recalculation on parameter changes
 
 ## System Requirements
 
@@ -108,6 +169,6 @@ python run_tests.py
 
 Open source project. See repository for license details.
 
-## Formula References
+## References
 
-Machining formulas based on industry standards referenced from [garrtool.com](https://www.garrtool.com/resources/machining-formulas/).
+Machining formulas based on industry standards from [garrtool.com](https://www.garrtool.com/resources/machining-formulas/).

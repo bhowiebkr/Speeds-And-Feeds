@@ -43,6 +43,12 @@ jobs:
         pip install nuitka==1.8.4
         pip install zstandard
 
+    - name: Process version
+      run: |
+        $version = "${{ github.ref_name }}" -replace '^v', ''
+        Write-Host "Processed version: $version"
+        echo "CLEAN_VERSION=$version" >> $env:GITHUB_ENV
+
     - name: Build with Nuitka
       run: |
         Write-Host "Starting Nuitka build..."
@@ -67,7 +73,7 @@ jobs:
           --assume-yes-for-downloads `
           --company-name="CNC ToolHub" `
           --product-name="CNC ToolHub" `
-          --product-version="${{ github.ref_name }}" `
+          --product-version="$env:CLEAN_VERSION" `
           --file-description="CNC Tool Management and Machining Optimization" `
           main.py
 
