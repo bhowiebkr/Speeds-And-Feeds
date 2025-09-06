@@ -57,22 +57,23 @@ jobs:
           --enable-plugin=pyside6 `
           --include-qt-plugins=platforms,styles,iconengines `
           --output-dir=build `
-          --output-filename=SpeedsAndFeeds.exe `
+          --output-filename=CNCToolHub.exe `
           --nofollow-import-to=tkinter,unittest,setuptools,pip,wheel `
           --windows-disable-console `
           --remove-output `
           --lto=yes `
           --include-data-file=src/dark_theme.qss=src/dark_theme.qss `
+          --include-data-dir=data=data `
           --assume-yes-for-downloads `
-          --company-name="Speeds and Feeds Calculator" `
-          --product-name="Speeds and Feeds Calculator" `
-          --product-version="2.0.0" `
-          --file-description="CNC Speeds and Feeds Calculator" `
+          --company-name="CNC ToolHub" `
+          --product-name="CNC ToolHub" `
+          --product-version="${{ github.ref_name }}" `
+          --file-description="CNC Tool Management and Machining Optimization" `
           main.py
 
     - name: Verify build
       run: |
-        if (Test-Path "build/main.dist/SpeedsAndFeeds.exe") {
+        if (Test-Path "build/main.dist/CNCToolHub.exe") {
           Write-Host "✅ Build successful - executable found"
           Get-ChildItem "build/main.dist" -Recurse | Select-Object Name, Length | Format-Table
         } else {
@@ -94,7 +95,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/v')
       uses: actions/upload-artifact@v4
       with:
-        name: SpeedsAndFeeds-${{ github.ref_name }}-windows
+        name: CNCToolHub-${{ github.ref_name }}-windows
         path: build/main.dist/
         retention-days: 30
         compression-level: 6
@@ -108,8 +109,8 @@ jobs:
         Write-Host "- **Commit**: ${{ github.sha }}" >> $env:GITHUB_STEP_SUMMARY
         Write-Host "- **Build Date**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC')" >> $env:GITHUB_STEP_SUMMARY
         Write-Host "" >> $env:GITHUB_STEP_SUMMARY
-        if (Test-Path "build/main.dist/SpeedsAndFeeds.exe") {
-          $size = (Get-Item "build/main.dist/SpeedsAndFeeds.exe").Length / 1MB
+        if (Test-Path "build/main.dist/CNCToolHub.exe") {
+          $size = (Get-Item "build/main.dist/CNCToolHub.exe").Length / 1MB
           Write-Host "- **Status**: ✅ Build Successful" >> $env:GITHUB_STEP_SUMMARY
           Write-Host "- **Executable Size**: $([math]::Round($size, 2)) MB" >> $env:GITHUB_STEP_SUMMARY
         } else {

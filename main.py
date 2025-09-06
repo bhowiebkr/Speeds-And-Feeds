@@ -9,8 +9,8 @@ It provides a clean interface for the application startup.
 def main():
     """Main application entry point"""
     try:
-        import src.main
-        src.main.start()
+        import src.app
+        src.app.start()
     except Exception as e:
         import sys
         import traceback
