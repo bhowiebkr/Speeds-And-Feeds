@@ -172,7 +172,7 @@ class ToolBox(QtWidgets.QGroupBox):
         self.current_tool = tool
         
         # Update tool diameter (convert to current units)
-        diameter_mm = tool.diameter_mm
+        diameter_mm = float(tool.diameter_mm)
         
         self.toolDiameter.blockSignals(True)
         if self.is_metric():
@@ -195,7 +195,7 @@ class ToolBox(QtWidgets.QGroupBox):
         tooltip = f"""
         <b>{tool.manufacturer} {tool.name}</b><br>
         Part Number: {tool.part_number}<br>
-        Diameter: {tool.diameter_mm:.3f}mm ({tool.diameter_inch:.4f}")<br>
+        Diameter: {float(tool.diameter_mm):.3f}mm ({float(tool.diameter_inch):.4f}")<br>
         Flutes: {tool.flutes}<br>
         Material: {tool.material}<br>
         Coating: {tool.coating}<br>

@@ -6,22 +6,38 @@ Provides data structures and persistence for managing a comprehensive tool libra
 
 import json
 import os
+from decimal import Decimal, getcontext
 from typing import Dict, List, Optional, Union, Any
 from dataclasses import dataclass, asdict
 from PySide6 import QtCore
 from .project import ProjectManager, Project
 
+# Set decimal precision for tool measurements (high precision for manufacturing)
+getcontext().prec = 28
+
+# Exact conversion constants using Decimal for precision
+MM_TO_INCH_DECIMAL = Decimal('0.0393700787401574803149606299213')
+INCH_TO_MM_DECIMAL = Decimal('25.4')  # Exactly 25.4 by definition
+
+
+class DecimalJSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder that handles Decimal objects."""
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return str(obj)
+        return super().default(obj)
+
 
 @dataclass
 class ToolSpecs:
-    """Tool specifications data structure."""
+    """Tool specifications data structure with high-precision Decimal measurements."""
     id: str
     manufacturer: str
     series: str
     name: str
     type: str
-    diameter_mm: float
-    diameter_inch: float
+    diameter_mm: Decimal
+    diameter_inch: Decimal
     flutes: int
     length_of_cut_mm: float
     overall_length_mm: float
@@ -35,13 +51,69 @@ class ToolSpecs:
     price: float = 0.0
     url: str = ""
     tags: List[str] = None
-    # Unit tracking to avoid rounding errors
+    # Unit tracking with high-precision Decimal to avoid rounding errors
     original_unit: str = "mm"  # "mm" or "inch" - the unit this tool was originally created in
-    original_diameter: float = 0.0  # The original diameter value in the original unit
+    original_diameter: Decimal = Decimal('0.0')  # The original diameter value in the original unit
     
     def __post_init__(self):
         if self.tags is None:
             self.tags = []
+        
+        # Ensure diameter fields are Decimal objects
+        if not isinstance(self.diameter_mm, Decimal):
+            self.diameter_mm = Decimal(str(self.diameter_mm))
+        if not isinstance(self.diameter_inch, Decimal):
+            self.diameter_inch = Decimal(str(self.diameter_inch))
+        if not isinstance(self.original_diameter, Decimal):
+            self.original_diameter = Decimal(str(self.original_diameter))
+    
+    @classmethod
+    def mm_to_inch(cls, mm_value: Union[Decimal, float, str]) -> Decimal:
+        """Convert mm to inches with high precision."""
+        return Decimal(str(mm_value)) * MM_TO_INCH_DECIMAL
+    
+    @classmethod
+    def inch_to_mm(cls, inch_value: Union[Decimal, float, str]) -> Decimal:
+        """Convert inches to mm with high precision."""
+        return Decimal(str(inch_value)) * INCH_TO_MM_DECIMAL
+    
+    def get_diameter_in_unit(self, unit: str) -> Decimal:
+        """Get diameter in specified unit with original precision."""
+        if self.original_unit == unit:
+            return self.original_diameter
+        elif unit == "mm":
+            return self.diameter_mm
+        else:  # inch
+            return self.diameter_inch
+    
+    def to_dict_serializable(self) -> dict:
+        """Convert to dictionary with Decimal values as strings for JSON serialization."""
+        # Manually create dict to handle Decimal conversion properly
+        data = {
+            'id': self.id,
+            'manufacturer': self.manufacturer,
+            'series': self.series,
+            'name': self.name,
+            'type': self.type,
+            'diameter_mm': str(self.diameter_mm),
+            'diameter_inch': str(self.diameter_inch),
+            'flutes': self.flutes,
+            'length_of_cut_mm': self.length_of_cut_mm,
+            'overall_length_mm': self.overall_length_mm,
+            'shank_diameter_mm': self.shank_diameter_mm,
+            'coating': self.coating,
+            'material': self.material,
+            'manufacturer_speeds': self.manufacturer_speeds,
+            'manufacturer_feeds': self.manufacturer_feeds,
+            'notes': self.notes,
+            'part_number': self.part_number,
+            'price': self.price,
+            'url': self.url,
+            'tags': self.tags,
+            'original_unit': self.original_unit,
+            'original_diameter': str(self.original_diameter)
+        }
+        return data
 
 
 class ToolLibrary:
@@ -107,6 +179,22 @@ class ToolLibrary:
                         if 'original_diameter' not in tool_data:
                             tool_data['original_diameter'] = tool_data.get('diameter_mm', 0.0)
                         
+                        # Convert string values to Decimal for diameter fields
+                        if isinstance(tool_data.get('diameter_mm'), str):
+                            tool_data['diameter_mm'] = Decimal(tool_data['diameter_mm'])
+                        elif 'diameter_mm' in tool_data:
+                            tool_data['diameter_mm'] = Decimal(str(tool_data['diameter_mm']))
+                        
+                        if isinstance(tool_data.get('diameter_inch'), str):
+                            tool_data['diameter_inch'] = Decimal(tool_data['diameter_inch'])
+                        elif 'diameter_inch' in tool_data:
+                            tool_data['diameter_inch'] = Decimal(str(tool_data['diameter_inch']))
+                        
+                        if isinstance(tool_data.get('original_diameter'), str):
+                            tool_data['original_diameter'] = Decimal(tool_data['original_diameter'])
+                        elif 'original_diameter' in tool_data:
+                            tool_data['original_diameter'] = Decimal(str(tool_data['original_diameter']))
+                        
                         tool_spec = ToolSpecs(**tool_data)
                         self.tools[tool_spec.id] = tool_spec
             
@@ -120,6 +208,9 @@ class ToolLibrary:
     def save_library(self) -> bool:
         """Save tool library to JSON file."""
         try:
+            # Create backup before saving (if auto-backup is enabled)
+            self._create_backup_if_enabled()
+            
             # Organize tools by category and manufacturer
             tools_data = {}
             
@@ -140,7 +231,7 @@ class ToolLibrary:
                 if manufacturer_key not in tools_data[category]:
                     tools_data[category][manufacturer_key] = {}
                 
-                tools_data[category][manufacturer_key][tool.id] = asdict(tool)
+                tools_data[category][manufacturer_key][tool.id] = tool.to_dict_serializable()
             
             # Create complete data structure
             data = {
@@ -157,12 +248,44 @@ class ToolLibrary:
             }
             
             with open(self.library_file, 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
+                json.dump(data, f, indent=2, ensure_ascii=False, cls=DecimalJSONEncoder)
             
             return True
             
         except Exception as e:
             print(f"Error saving tool library: {e}")
+            return False
+    
+    def _create_backup_if_enabled(self) -> bool:
+        """Create backup if auto-backup is enabled."""
+        try:
+            # Import here to avoid circular imports
+            from ..utils.backup_manager import BackupManager, get_file_type_from_path
+            from PySide6 import QtCore
+            
+            settings = QtCore.QSettings("CNC_ToolHub", "Settings")
+            auto_backup_enabled = settings.value("backup/auto_backup", True, type=bool)
+            
+            if not auto_backup_enabled:
+                return True  # Not enabled, no error
+            
+            # Only create backup if file exists
+            if not os.path.exists(self.library_file):
+                return True  # No existing file to backup
+            
+            backup_manager = BackupManager()
+            backup_type = get_file_type_from_path(self.library_file)
+            
+            if backup_type and backup_manager.create_backup(self.library_file, backup_type):
+                # Rotate backups based on settings
+                max_backups = int(settings.value("backup/max_backups", 10))
+                backup_manager.rotate_backups(backup_type, max_backups)
+                return True
+            
+            return False
+            
+        except Exception as e:
+            print(f"Error creating backup: {e}")
             return False
     
     def _create_default_library(self):
@@ -265,7 +388,7 @@ class ToolLibrary:
                 continue
             
             # Filter by diameter range
-            if not (diameter_min <= tool.diameter_mm <= diameter_max):
+            if not (diameter_min <= float(tool.diameter_mm) <= diameter_max):
                 continue
             
             # Filter by tags
@@ -276,7 +399,7 @@ class ToolLibrary:
             results.append(tool)
         
         # Sort by diameter, then by name
-        return sorted(results, key=lambda t: (t.diameter_mm, t.name))
+        return sorted(results, key=lambda t: (float(t.diameter_mm), t.name))
     
     def get_tools_by_manufacturer(self, manufacturer: str) -> List[ToolSpecs]:
         """Get all tools from a specific manufacturer."""
@@ -289,7 +412,7 @@ class ToolLibrary:
     def get_tools_by_diameter_range(self, min_mm: float, max_mm: float) -> List[ToolSpecs]:
         """Get tools within a diameter range."""
         return [tool for tool in self.tools.values() 
-                if min_mm <= tool.diameter_mm <= max_mm]
+                if min_mm <= float(tool.diameter_mm) <= max_mm]
     
     def import_from_csv(self, csv_file: str) -> bool:
         """Import tools from CSV file."""

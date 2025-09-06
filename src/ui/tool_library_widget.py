@@ -10,9 +10,11 @@ from typing import List, Optional
 import os
 import json
 
-from ..models.tool_library import ToolLibrary, ToolSpecs
+from decimal import Decimal
+from ..models.tool_library import ToolLibrary, ToolSpecs, MM_TO_INCH_DECIMAL, INCH_TO_MM_DECIMAL
 from ..models.project import Project
 from ..constants.units import MM_TO_IN, IN_TO_MM
+from ..utils.fractions import parse_fractional_input, decimal_to_fraction_string, get_common_imperial_fractions, FractionalInputError
 from .project_manager import ProjectManagerDialog
 
 
@@ -94,7 +96,7 @@ class ToolCard(QtWidgets.QFrame):
         # Diameter
         diameter_label = QtWidgets.QLabel("Diameter:")
         diameter_label.setStyleSheet("font-size: 10px; color: #cccccc;")
-        diameter_value = QtWidgets.QLabel(f"{self.tool.diameter_mm:.3f}mm ({self.tool.diameter_inch:.4f}\")")
+        diameter_value = QtWidgets.QLabel(f"{float(self.tool.diameter_mm):.3f}mm ({float(self.tool.diameter_inch):.4f}\")")
         diameter_value.setStyleSheet("font-size: 10px; font-weight: bold; color: #ffffff;")
         
         # Flutes
@@ -786,21 +788,40 @@ class ToolEditorDialog(QtWidgets.QDialog):
         self.type_combo = QtWidgets.QComboBox()
         self.type_combo.addItems([t.replace('_', ' ').title() for t in self.library.tool_types])
         
-        # Dimensions with unit selection
-        diameter_layout = QtWidgets.QHBoxLayout()
+        # Dimensions with unit selection and fractional input support
+        diameter_layout = QtWidgets.QVBoxLayout()
         
-        self.diameter_input = QtWidgets.QDoubleSpinBox()
-        self.diameter_input.setRange(0.001, 1000.0)
-        self.diameter_input.setDecimals(4)
+        # Input row with text input, dropdown, and unit selector
+        input_row = QtWidgets.QHBoxLayout()
         
+        # Fractional/decimal input field
+        self.diameter_input = QtWidgets.QLineEdit()
+        self.diameter_input.setPlaceholderText("1/4 or 0.25")
+        self.diameter_input.textChanged.connect(self.on_diameter_text_changed)
+        input_row.addWidget(self.diameter_input, 2)
+        
+        # Common fractions dropdown
+        self.fraction_combo = QtWidgets.QComboBox()
+        self.fraction_combo.addItem("Common Fractions...")
+        common_fractions = get_common_imperial_fractions()
+        for display_str, decimal_val in common_fractions:
+            if decimal_val <= Decimal('2.0'):  # Limit to reasonable tool sizes
+                self.fraction_combo.addItem(f"{display_str} ({float(decimal_val):.4f})", display_str)
+        self.fraction_combo.currentTextChanged.connect(self.on_fraction_selected)
+        input_row.addWidget(self.fraction_combo, 1)
+        
+        # Unit selector
         self.unit_combo = QtWidgets.QComboBox()
         self.unit_combo.addItems(["mm", "inch"])
         self.unit_combo.currentTextChanged.connect(self.on_unit_changed)
+        input_row.addWidget(self.unit_combo, 0)
         
-        self.diameter_input.valueChanged.connect(self.on_diameter_changed)
+        diameter_layout.addLayout(input_row)
         
-        diameter_layout.addWidget(self.diameter_input, 1)
-        diameter_layout.addWidget(self.unit_combo, 0)
+        # Preview/validation label
+        self.diameter_preview = QtWidgets.QLabel("")
+        self.diameter_preview.setStyleSheet("color: #666666; font-size: 10px; font-style: italic;")
+        diameter_layout.addWidget(self.diameter_preview)
         
         self.flutes_input = QtWidgets.QSpinBox()
         self.flutes_input.setRange(1, 20)
@@ -892,6 +913,9 @@ class ToolEditorDialog(QtWidgets.QDialog):
         self.original_unit = "mm"  # Default to mm
         self.updating_diameter = False  # Flag to prevent recursive updates
         
+        # Initialize preview
+        self.update_diameter_preview()
+        
     def populate_fields(self):
         """Populate fields with existing tool data."""
         if not self.tool:
@@ -918,14 +942,24 @@ class ToolEditorDialog(QtWidgets.QDialog):
         self.unit_combo.setCurrentText(original_unit)
         
         # If we have the original diameter, use that, otherwise use the stored value in the correct unit
-        if original_diameter > 0:
-            self.diameter_input.setValue(original_diameter)
+        if original_diameter > Decimal('0'):
+            diameter_to_show = original_diameter
         else:
             # Fallback: use diameter_mm if original unit is mm, or convert if inch
             if original_unit == "mm":
-                self.diameter_input.setValue(self.tool.diameter_mm)
+                diameter_to_show = self.tool.diameter_mm
             else:
-                self.diameter_input.setValue(self.tool.diameter_inch)
+                diameter_to_show = self.tool.diameter_inch
+        
+        # Try to display as fraction for imperial units, otherwise decimal
+        if original_unit == "inch":
+            fraction_str = decimal_to_fraction_string(diameter_to_show)
+            if fraction_str:
+                self.diameter_input.setText(fraction_str)
+            else:
+                self.diameter_input.setText(f"{float(diameter_to_show):.4f}")
+        else:
+            self.diameter_input.setText(f"{float(diameter_to_show):.3f}")
         self.flutes_input.setValue(self.tool.flutes)
         self.length_of_cut_input.setValue(self.tool.length_of_cut_mm)
         self.overall_length_input.setValue(self.tool.overall_length_mm)
@@ -940,31 +974,93 @@ class ToolEditorDialog(QtWidgets.QDialog):
         self.tags_input.setText(", ".join(self.tool.tags))
     
     def on_unit_changed(self):
-        """Handle unit change - convert diameter value."""
+        """Handle unit change - convert diameter value using high-precision Decimal."""
         if self.updating_diameter:
             return
         
         self.updating_diameter = True
-        current_value = self.diameter_input.value()
+        current_text = self.diameter_input.text()
         current_unit = self.unit_combo.currentText()
         
-        # Convert value when switching units
-        if current_unit == "mm" and self.original_unit == "inch":
-            # Convert from inch to mm
-            converted_value = current_value * 25.4
-            self.diameter_input.setValue(converted_value)
-        elif current_unit == "inch" and self.original_unit == "mm":
-            # Convert from mm to inch  
-            converted_value = current_value / 25.4
-            self.diameter_input.setValue(converted_value)
+        try:
+            # Parse current value
+            current_value = parse_fractional_input(current_text)
+            
+            # Convert value when switching units using precise Decimal arithmetic
+            if current_unit == "mm" and self.original_unit == "inch":
+                # Convert from inch to mm
+                converted_value = current_value * INCH_TO_MM_DECIMAL
+                self.diameter_input.setText(f"{float(converted_value):.3f}")
+            elif current_unit == "inch" and self.original_unit == "mm":
+                # Convert from mm to inch  
+                converted_value = current_value * MM_TO_INCH_DECIMAL
+                
+                # Try to show as fraction for imperial
+                fraction_str = decimal_to_fraction_string(converted_value)
+                if fraction_str:
+                    self.diameter_input.setText(fraction_str)
+                else:
+                    self.diameter_input.setText(f"{float(converted_value):.4f}")
+            
+            self.original_unit = current_unit
+        except FractionalInputError:
+            # If current input is invalid, just update unit tracking
+            self.original_unit = current_unit
         
-        self.original_unit = current_unit
         self.updating_diameter = False
+        self.update_diameter_preview()
     
-    def on_diameter_changed(self):
-        """Handle diameter value change."""
-        # This can be used for validation or real-time updates if needed
-        pass
+    def on_diameter_text_changed(self):
+        """Handle diameter text input change - update preview."""
+        self.update_diameter_preview()
+    
+    def on_fraction_selected(self):
+        """Handle selection from common fractions dropdown."""
+        if self.fraction_combo.currentIndex() > 0:  # Skip "Common Fractions..." item
+            fraction_str = self.fraction_combo.currentData()
+            if fraction_str:
+                self.diameter_input.setText(fraction_str)
+                self.fraction_combo.setCurrentIndex(0)  # Reset dropdown
+    
+    def update_diameter_preview(self):
+        """Update the diameter preview/validation label."""
+        current_text = self.diameter_input.text().strip()
+        current_unit = self.unit_combo.currentText()
+        
+        if not current_text:
+            self.diameter_preview.setText("")
+            return
+        
+        try:
+            # Parse the input
+            decimal_value = parse_fractional_input(current_text)
+            
+            # Show different formats based on current unit
+            if current_unit == "inch":
+                # For imperial, show both fractional and decimal
+                fraction_str = decimal_to_fraction_string(decimal_value)
+                mm_value = decimal_value * INCH_TO_MM_DECIMAL
+                
+                if fraction_str and fraction_str != current_text:
+                    preview = f"= {fraction_str}\" ({float(decimal_value):.4f}\") = {float(mm_value):.3f}mm"
+                else:
+                    preview = f"= {float(decimal_value):.4f}\" = {float(mm_value):.3f}mm"
+            else:
+                # For metric, show decimal and imperial equivalent
+                inch_value = decimal_value * MM_TO_INCH_DECIMAL
+                fraction_str = decimal_to_fraction_string(inch_value)
+                
+                if fraction_str:
+                    preview = f"= {float(decimal_value):.3f}mm = {fraction_str}\" ({float(inch_value):.4f}\")"
+                else:
+                    preview = f"= {float(decimal_value):.3f}mm = {float(inch_value):.4f}\""
+            
+            self.diameter_preview.setText(preview)
+            self.diameter_preview.setStyleSheet("color: #666666; font-size: 10px; font-style: italic;")
+            
+        except FractionalInputError:
+            self.diameter_preview.setText("Invalid input - use format like 1/4, 0.25, or 1 1/2")
+            self.diameter_preview.setStyleSheet("color: #cc0000; font-size: 10px; font-style: italic;")
     
     def on_url_changed(self):
         """Enable/disable open button based on URL validity."""
@@ -985,11 +1081,18 @@ class ToolEditorDialog(QtWidgets.QDialog):
     def save_tool(self):
         """Save the tool."""
         # Validate required fields
+        diameter_valid = False
+        try:
+            diameter_value = parse_fractional_input(self.diameter_input.text())
+            diameter_valid = diameter_value > 0
+        except FractionalInputError:
+            diameter_valid = False
+        
         if not all([
             self.id_input.text().strip(),
             self.manufacturer_combo.currentText().strip(),
             self.name_input.text().strip(),
-            self.diameter_input.value() > 0,
+            diameter_valid,
             self.flutes_input.value() > 0
         ]):
             QtWidgets.QMessageBox.warning(self, "Validation Error", "Please fill in all required fields (marked with *).")
@@ -1002,18 +1105,18 @@ class ToolEditorDialog(QtWidgets.QDialog):
                 QtWidgets.QMessageBox.warning(self, "ID Conflict", "A tool with this ID already exists. Please choose a different ID.")
                 return
         
-        # Create tool specs with unit tracking
+        # Create tool specs with unit tracking using high-precision Decimal
         tool_type = self.type_combo.currentText().lower().replace(' ', '_')
-        original_diameter = self.diameter_input.value()
+        original_diameter = parse_fractional_input(self.diameter_input.text())
         original_unit = self.unit_combo.currentText()
         tags = [tag.strip() for tag in self.tags_input.text().split(',') if tag.strip()]
         
-        # Calculate both mm and inch values
+        # Calculate both mm and inch values using precise Decimal arithmetic
         if original_unit == "mm":
             diameter_mm = original_diameter
-            diameter_inch = original_diameter / 25.4
+            diameter_inch = ToolSpecs.mm_to_inch(original_diameter)
         else:  # inch
-            diameter_mm = original_diameter * 25.4
+            diameter_mm = ToolSpecs.inch_to_mm(original_diameter)
             diameter_inch = original_diameter
         
         tool = ToolSpecs(

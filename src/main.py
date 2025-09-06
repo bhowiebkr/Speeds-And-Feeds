@@ -15,6 +15,7 @@ from .formulas.validation import validate_machining_parameters
 from .ui.tool_library_widget import ToolLibraryWidget
 from .ui.project_manager import ProjectManagerDialog
 from .ui.integrated_project_manager import IntegratedProjectManager
+from .ui.settings_widget import SettingsWidget
 from .models.tool_library import ToolLibrary
 
 
@@ -49,6 +50,7 @@ class GUI(QtWidgets.QMainWindow):
         self.create_feeds_speeds_tab(main_widget)
         self.create_tool_library_tab(main_widget)
         self.create_projects_tab(main_widget)
+        self.create_settings_tab(main_widget)
         
         # Set tab icons and styling
         main_widget.setTabPosition(QtWidgets.QTabWidget.North)
@@ -121,6 +123,11 @@ class GUI(QtWidgets.QMainWindow):
         """Create the Projects tab."""
         self.project_manager_widget = IntegratedProjectManager(self.tool_library, self)
         parent_widget.addTab(self.project_manager_widget, "📁 Projects")
+    
+    def create_settings_tab(self, parent_widget):
+        """Create the Settings tab."""
+        self.settings_widget = SettingsWidget(self)
+        parent_widget.addTab(self.settings_widget, "⚙️ Settings")
         
     def setup_feeds_speeds_connections(self):
         """Setup all signal connections for feeds and speeds calculations."""
@@ -152,7 +159,7 @@ class GUI(QtWidgets.QMainWindow):
         tool = self.tool_library.get_tool(tool_id)
         if tool:
             # Update tool diameter and flute count in the feeds & speeds tab
-            self.tool_box.set_tool_diameter(tool.diameter_mm)
+            self.tool_box.set_tool_diameter(float(tool.diameter_mm))
             self.tool_box.fluteNum.setValue(tool.flutes)
 
     def toolDiameterChanged(self):

@@ -401,6 +401,9 @@ class ProjectManager:
     def save_projects(self) -> bool:
         """Save projects to JSON file."""
         try:
+            # Create backup before saving (if auto-backup is enabled)
+            self._create_backup_if_enabled()
+            
             # Ensure directory exists
             os.makedirs(os.path.dirname(self.projects_file), exist_ok=True)
             
@@ -419,6 +422,38 @@ class ProjectManager:
             
         except Exception as e:
             print(f"Error saving projects: {e}")
+            return False
+    
+    def _create_backup_if_enabled(self) -> bool:
+        """Create backup if auto-backup is enabled."""
+        try:
+            # Import here to avoid circular imports
+            from ..utils.backup_manager import BackupManager, get_file_type_from_path
+            from PySide6 import QtCore
+            
+            settings = QtCore.QSettings("CNC_ToolHub", "Settings")
+            auto_backup_enabled = settings.value("backup/auto_backup", True, type=bool)
+            
+            if not auto_backup_enabled:
+                return True  # Not enabled, no error
+            
+            # Only create backup if file exists
+            if not os.path.exists(self.projects_file):
+                return True  # No existing file to backup
+            
+            backup_manager = BackupManager()
+            backup_type = get_file_type_from_path(self.projects_file)
+            
+            if backup_type and backup_manager.create_backup(self.projects_file, backup_type):
+                # Rotate backups based on settings
+                max_backups = int(settings.value("backup/max_backups", 10))
+                backup_manager.rotate_backups(backup_type, max_backups)
+                return True
+            
+            return False
+            
+        except Exception as e:
+            print(f"Error creating backup: {e}")
             return False
     
     def _create_default_projects(self):
