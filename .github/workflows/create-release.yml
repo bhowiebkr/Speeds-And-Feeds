@@ -39,11 +39,25 @@ jobs:
         fi
         echo "✅ Tag ${{ inputs.tag }} found"
 
+    - name: Find build run
+      id: find-build
+      run: |
+        # Find the successful Windows Build run for this tag
+        BUILD_RUN=$(gh run list --workflow="Windows Build" --event=push --branch=${{ inputs.tag }} --status=success --limit=1 --json databaseId --jq '.[0].databaseId')
+        if [ -z "$BUILD_RUN" ] || [ "$BUILD_RUN" == "null" ]; then
+          echo "❌ No successful Windows Build run found for tag ${{ inputs.tag }}"
+          exit 1
+        fi
+        echo "✅ Found build run: $BUILD_RUN"
+        echo "build_run_id=$BUILD_RUN" >> $GITHUB_OUTPUT
+      env:
+        GH_TOKEN: ${{ github.token }}
+
     - name: Download build artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: CNCToolHub-${{ inputs.tag }}-windows
-        path: ./artifact
+      run: |
+        gh run download ${{ steps.find-build.outputs.build_run_id }} --name "CNCToolHub-${{ inputs.tag }}-windows" --dir ./artifact
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Verify artifact contents
       run: |
