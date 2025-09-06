@@ -17,15 +17,15 @@ echo Activating virtual environment...
 call venv\Scripts\activate.bat
 
 :: Check if Python script exists
-if not exist "speeds_and_feeds.py" (
-    echo Error: speeds_and_feeds.py not found!
+if not exist "src\cnc_toolhub.py" (
+    echo Error: src\cnc_toolhub.py not found!
     pause
     exit /b 1
 )
 
 :: Run the Python script
-echo Running speeds_and_feeds.py...
-python speeds_and_feeds.py
+echo Running CNC ToolHub...
+python src\cnc_toolhub.py
 
 :: Check if script ran successfully
 if %ERRORLEVEL% neq 0 (
