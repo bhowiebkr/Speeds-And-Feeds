@@ -92,7 +92,6 @@ The codebase has been comprehensively refactored from large monolithic files int
 - `data/materials.json` - Material database with hardness ranges and K-factors for power calculations
 - `data/projects.json` - Project data with tool assignments and organization
 - `data/tool_library.json` - Tool library database with specifications
-- `data/tool_presets.json` - Tool presets for common operations
 - `data/backups/` - Automatic backups of all data files
 
 ### UI Theme

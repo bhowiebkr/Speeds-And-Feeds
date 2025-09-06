@@ -2,18 +2,18 @@
   "tools": {
     "endmills": {
       "harvey_tool": {
-        "894054": {
-          "id": "894054",
+        "HT_001": {
+          "id": "HT_001",
           "manufacturer": "Harvey Tool",
           "series": "Micro End Mills",
-          "name": "2-Flute Square End Mill - Uncoated",
+          "name": "2-Flute Square End Mill - 1/8\"",
           "type": "square_endmill",
-          "diameter_mm": "0.5",
-          "diameter_inch": "0.02",
+          "diameter_mm": "3.175",
+          "diameter_inch": "0.125",
           "flutes": 2,
-          "length_of_cut_mm": 1.5,
-          "overall_length_mm": 38.1,
-          "shank_diameter_mm": 1.587,
+          "length_of_cut_mm": 9.525,
+          "overall_length_mm": 50.8,
+          "shank_diameter_mm": 3.175,
           "coating": "uncoated",
           "material": "carbide",
           "manufacturer_speeds": {
@@ -22,29 +22,120 @@
             "titanium_sfm": 200
           },
           "manufacturer_feeds": {
-            "aluminum_chipload": 0.005,
-            "steel_chipload": 0.003,
-            "titanium_chipload": 0.002
+            "aluminum_chipload": 0.008,
+            "steel_chipload": 0.004,
+            "titanium_chipload": 0.003
           },
-          "notes": "Precision micro endmill for ultra-fine features",
-          "part_number": "894054",
+          "notes": "Versatile 1/8\" endmill for precision work and small features",
+          "part_number": "HT-001-125",
+          "price": 24.99,
+          "url": "https://www.harveytool.com",
+          "tags": ["square", "micro", "precision", "carbide"],
+          "original_unit": "inch",
+          "original_diameter": "0.125"
+        },
+        "HT_002": {
+          "id": "HT_002",
+          "manufacturer": "Harvey Tool",
+          "series": "General Purpose",
+          "name": "3-Flute Square End Mill - 1/4\"",
+          "type": "square_endmill",
+          "diameter_mm": "6.35",
+          "diameter_inch": "0.25",
+          "flutes": 3,
+          "length_of_cut_mm": 19.05,
+          "overall_length_mm": 63.5,
+          "shank_diameter_mm": 6.35,
+          "coating": "TiAlN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 1000,
+            "steel_sfm": 450,
+            "titanium_sfm": 280
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.012,
+            "steel_chipload": 0.008,
+            "titanium_chipload": 0.005
+          },
+          "notes": "High performance 3-flute endmill with TiAlN coating for extended tool life",
+          "part_number": "HT-002-250",
+          "price": 34.99,
+          "url": "https://www.harveytool.com",
+          "tags": ["square", "general_purpose", "coated", "carbide"],
+          "original_unit": "inch",
+          "original_diameter": "0.25"
+        },
+        "HT_003": {
+          "id": "HT_003",
+          "manufacturer": "Harvey Tool",
+          "series": "High Performance",
+          "name": "4-Flute Square End Mill - 3/8\"",
+          "type": "square_endmill",
+          "diameter_mm": "9.525",
+          "diameter_inch": "0.375",
+          "flutes": 4,
+          "length_of_cut_mm": 25.4,
+          "overall_length_mm": 76.2,
+          "shank_diameter_mm": 9.525,
+          "coating": "AlCrN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 1200,
+            "steel_sfm": 550,
+            "titanium_sfm": 350
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.015,
+            "steel_chipload": 0.010,
+            "titanium_chipload": 0.006
+          },
+          "notes": "Premium AlCrN coated endmill for demanding applications",
+          "part_number": "HT-003-375",
           "price": 45.99,
-          "url": "",
-          "tags": [
-            "micro",
-            "precision",
-            "square",
-            "carbide"
-          ],
-          "original_unit": "mm",
+          "url": "https://www.harveytool.com",
+          "tags": ["square", "high_performance", "coated", "carbide"],
+          "original_unit": "inch",
+          "original_diameter": "0.375"
+        },
+        "HT_004": {
+          "id": "HT_004",
+          "manufacturer": "Harvey Tool",
+          "series": "Heavy Duty",
+          "name": "4-Flute Square End Mill - 1/2\"",
+          "type": "square_endmill",
+          "diameter_mm": "12.7",
+          "diameter_inch": "0.5",
+          "flutes": 4,
+          "length_of_cut_mm": 31.75,
+          "overall_length_mm": 88.9,
+          "shank_diameter_mm": 12.7,
+          "coating": "TiN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 900,
+            "steel_sfm": 400,
+            "titanium_sfm": 250
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.018,
+            "steel_chipload": 0.012,
+            "titanium_chipload": 0.008
+          },
+          "notes": "Heavy duty 1/2\" endmill for roughing and general machining",
+          "part_number": "HT-004-500",
+          "price": 52.99,
+          "url": "https://www.harveytool.com",
+          "tags": ["square", "heavy_duty", "coated", "carbide"],
+          "original_unit": "inch",
           "original_diameter": "0.5"
         },
-        "991250": {
-          "id": "991250",
+        "HT_005": {
+          "id": "HT_005",
           "manufacturer": "Harvey Tool",
-          "series": "General Purpose End Mills",
-          "name": "2-Flute Square End Mill - TiAlN",
-          "type": "square_endmill",
+          "series": "Ball End Mills",
+          "name": "2-Flute Ball End Mill - 1/4\"",
+          "type": "ball_endmill",
           "diameter_mm": "6.35",
           "diameter_inch": "0.25",
           "flutes": 2,
@@ -54,99 +145,514 @@
           "coating": "TiAlN",
           "material": "carbide",
           "manufacturer_speeds": {
-            "aluminum_sfm": 1000,
+            "aluminum_sfm": 850,
+            "steel_sfm": 400,
+            "titanium_sfm": 250
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.010,
+            "steel_chipload": 0.006,
+            "titanium_chipload": 0.004
+          },
+          "notes": "Ball endmill for 3D contouring and profiling operations",
+          "part_number": "HT-005-250B",
+          "price": 38.99,
+          "url": "https://www.harveytool.com",
+          "tags": ["ball", "3d_profiling", "coated", "carbide"],
+          "original_unit": "inch",
+          "original_diameter": "0.25"
+        },
+        "HT_006": {
+          "id": "HT_006",
+          "manufacturer": "Harvey Tool",
+          "series": "Ball End Mills",
+          "name": "2-Flute Ball End Mill - 1/2\"",
+          "type": "ball_endmill",
+          "diameter_mm": "12.7",
+          "diameter_inch": "0.5",
+          "flutes": 2,
+          "length_of_cut_mm": 31.75,
+          "overall_length_mm": 88.9,
+          "shank_diameter_mm": 12.7,
+          "coating": "uncoated",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 750,
+            "steel_sfm": 350,
+            "titanium_sfm": 200
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.014,
+            "steel_chipload": 0.008,
+            "titanium_chipload": 0.005
+          },
+          "notes": "Large ball endmill for sculptured surfaces and heavy material removal",
+          "part_number": "HT-006-500B",
+          "price": 48.99,
+          "url": "https://www.harveytool.com",
+          "tags": ["ball", "3d_profiling", "uncoated", "carbide"],
+          "original_unit": "inch",
+          "original_diameter": "0.5"
+        }
+      },
+      "mitsubishi": {
+        "MIT_001": {
+          "id": "MIT_001",
+          "manufacturer": "Mitsubishi",
+          "series": "VF-XBR",
+          "name": "2-Flute Square End Mill - 3mm",
+          "type": "square_endmill",
+          "diameter_mm": "3.0",
+          "diameter_inch": "0.1181",
+          "flutes": 2,
+          "length_of_cut_mm": 9.0,
+          "overall_length_mm": 50.0,
+          "shank_diameter_mm": 3.0,
+          "coating": "DLC",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 900,
+            "steel_sfm": 350,
+            "titanium_sfm": 220
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.007,
+            "steel_chipload": 0.004,
+            "titanium_chipload": 0.002
+          },
+          "notes": "Ultra-precise 3mm endmill with DLC coating for non-ferrous materials",
+          "part_number": "VF-XBR-3MM",
+          "price": 42.50,
+          "url": "https://www.mitsubishicarbide.com",
+          "tags": ["square", "precision", "dlc_coated", "carbide"],
+          "original_unit": "mm",
+          "original_diameter": "3.0"
+        },
+        "MIT_002": {
+          "id": "MIT_002",
+          "manufacturer": "Mitsubishi",
+          "series": "MS2MSD",
+          "name": "3-Flute Square End Mill - 6mm",
+          "type": "square_endmill",
+          "diameter_mm": "6.0",
+          "diameter_inch": "0.2362",
+          "flutes": 3,
+          "length_of_cut_mm": 18.0,
+          "overall_length_mm": 60.0,
+          "shank_diameter_mm": 6.0,
+          "coating": "TiAlN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 1100,
             "steel_sfm": 500,
             "titanium_sfm": 300
           },
           "manufacturer_feeds": {
-            "aluminum_chipload": 0.012,
-            "steel_chipload": 0.008,
+            "aluminum_chipload": 0.011,
+            "steel_chipload": 0.007,
             "titanium_chipload": 0.005
           },
-          "notes": "Versatile general purpose endmill with excellent wear resistance",
-          "part_number": "991250",
-          "price": 28.75,
-          "url": "",
-          "tags": [
-            "general_purpose",
-            "coated",
-            "square",
-            "carbide"
-          ],
+          "notes": "High-performance 6mm endmill optimized for aluminum machining",
+          "part_number": "MS2MSD-6MM",
+          "price": 39.99,
+          "url": "https://www.mitsubishicarbide.com",
+          "tags": ["square", "aluminum_optimized", "coated", "carbide"],
           "original_unit": "mm",
-          "original_diameter": "6.35"
+          "original_diameter": "6.0"
         },
-        "imp tool": {
-          "id": "imp tool",
-          "manufacturer": "Harvey Tool",
-          "series": "",
-          "name": "1/4\" tool",
+        "MIT_003": {
+          "id": "MIT_003",
+          "manufacturer": "Mitsubishi",
+          "series": "WSTAR",
+          "name": "4-Flute Square End Mill - 10mm",
           "type": "square_endmill",
-          "diameter_mm": "6.350",
-          "diameter_inch": "0.25",
-          "flutes": 1,
-          "length_of_cut_mm": 0.1,
-          "overall_length_mm": 1.0,
-          "shank_diameter_mm": 6.35,
+          "diameter_mm": "10.0",
+          "diameter_inch": "0.3937",
+          "flutes": 4,
+          "length_of_cut_mm": 25.0,
+          "overall_length_mm": 75.0,
+          "shank_diameter_mm": 10.0,
           "coating": "uncoated",
           "material": "carbide",
-          "manufacturer_speeds": {},
-          "manufacturer_feeds": {},
-          "notes": "",
-          "part_number": "",
-          "price": 0.0,
-          "url": "",
-          "tags": [],
-          "original_unit": "inch",
-          "original_diameter": "0.25"
-        },
-        "123": {
-          "id": "123",
-          "manufacturer": "Harvey Tool",
-          "series": "",
-          "name": "1/4\" rougher",
-          "type": "square_endmill",
-          "diameter_mm": "6.350",
-          "diameter_inch": "0.25",
-          "flutes": 1,
-          "length_of_cut_mm": 0.1,
-          "overall_length_mm": 1.0,
-          "shank_diameter_mm": "6.350",
-          "coating": "uncoated",
-          "material": "HSS",
-          "manufacturer_speeds": {},
-          "manufacturer_feeds": {},
-          "notes": "",
-          "part_number": "",
-          "price": 0.0,
-          "url": "",
-          "tags": [],
-          "original_unit": "inch",
-          "original_diameter": "0.25"
-        },
-        "232": {
-          "id": "232",
-          "manufacturer": "Harvey Tool",
-          "series": "",
-          "name": "dsfd",
-          "type": "square_endmill",
-          "diameter_mm": "5",
-          "diameter_inch": "0.1968503937007874015748031496",
-          "flutes": 1,
-          "length_of_cut_mm": 0.1,
-          "overall_length_mm": 1.0,
-          "shank_diameter_mm": "5",
-          "coating": "uncoated",
-          "material": "HSS",
-          "manufacturer_speeds": {},
-          "manufacturer_feeds": {},
-          "notes": "",
-          "part_number": "",
-          "price": 0.0,
-          "url": "",
-          "tags": [],
+          "manufacturer_speeds": {
+            "aluminum_sfm": 950,
+            "steel_sfm": 420,
+            "titanium_sfm": 260
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.013,
+            "steel_chipload": 0.009,
+            "titanium_chipload": 0.006
+          },
+          "notes": "Sharp uncoated endmill for superior surface finish in aluminum",
+          "part_number": "WSTAR-10MM",
+          "price": 44.99,
+          "url": "https://www.mitsubishicarbide.com",
+          "tags": ["square", "finishing", "uncoated", "carbide"],
           "original_unit": "mm",
-          "original_diameter": "5"
+          "original_diameter": "10.0"
+        },
+        "MIT_004": {
+          "id": "MIT_004",
+          "manufacturer": "Mitsubishi",
+          "series": "Impact Miracle",
+          "name": "4-Flute Square End Mill - 12mm",
+          "type": "square_endmill",
+          "diameter_mm": "12.0",
+          "diameter_inch": "0.4724",
+          "flutes": 4,
+          "length_of_cut_mm": 30.0,
+          "overall_length_mm": 85.0,
+          "shank_diameter_mm": 12.0,
+          "coating": "AlCrN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 1000,
+            "steel_sfm": 480,
+            "titanium_sfm": 290
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.016,
+            "steel_chipload": 0.011,
+            "titanium_chipload": 0.007
+          },
+          "notes": "High-speed endmill with AlCrN coating for difficult materials",
+          "part_number": "IM-12MM",
+          "price": 58.99,
+          "url": "https://www.mitsubishicarbide.com",
+          "tags": ["square", "high_speed", "coated", "carbide"],
+          "original_unit": "mm",
+          "original_diameter": "12.0"
+        },
+        "MIT_005": {
+          "id": "MIT_005",
+          "manufacturer": "Mitsubishi",
+          "series": "Ball Series",
+          "name": "2-Flute Ball End Mill - 4mm",
+          "type": "ball_endmill",
+          "diameter_mm": "4.0",
+          "diameter_inch": "0.1575",
+          "flutes": 2,
+          "length_of_cut_mm": 12.0,
+          "overall_length_mm": 55.0,
+          "shank_diameter_mm": 4.0,
+          "coating": "DLC",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 800,
+            "steel_sfm": 380,
+            "titanium_sfm": 230
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.008,
+            "steel_chipload": 0.005,
+            "titanium_chipload": 0.003
+          },
+          "notes": "Precision ball endmill with DLC coating for complex 3D geometries",
+          "part_number": "BALL-4MM",
+          "price": 46.99,
+          "url": "https://www.mitsubishicarbide.com",
+          "tags": ["ball", "3d_profiling", "dlc_coated", "carbide"],
+          "original_unit": "mm",
+          "original_diameter": "4.0"
+        },
+        "MIT_006": {
+          "id": "MIT_006",
+          "manufacturer": "Mitsubishi",
+          "series": "Ball Series",
+          "name": "2-Flute Ball End Mill - 8mm",
+          "type": "ball_endmill",
+          "diameter_mm": "8.0",
+          "diameter_inch": "0.3150",
+          "flutes": 2,
+          "length_of_cut_mm": 20.0,
+          "overall_length_mm": 70.0,
+          "shank_diameter_mm": 8.0,
+          "coating": "TiN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 750,
+            "steel_sfm": 360,
+            "titanium_sfm": 210
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.012,
+            "steel_chipload": 0.007,
+            "titanium_chipload": 0.004
+          },
+          "notes": "Medium ball endmill with TiN coating for general 3D machining",
+          "part_number": "BALL-8MM",
+          "price": 51.99,
+          "url": "https://www.mitsubishicarbide.com",
+          "tags": ["ball", "3d_profiling", "coated", "carbide"],
+          "original_unit": "mm",
+          "original_diameter": "8.0"
+        }
+      }
+    },
+    "drills": {
+      "kennametal": {
+        "KEN_001": {
+          "id": "KEN_001",
+          "manufacturer": "Kennametal",
+          "series": "Twist Drills",
+          "name": "HSS Twist Drill - 1/8\"",
+          "type": "drill",
+          "diameter_mm": "3.175",
+          "diameter_inch": "0.125",
+          "flutes": 2,
+          "length_of_cut_mm": 43.0,
+          "overall_length_mm": 79.0,
+          "shank_diameter_mm": 3.175,
+          "coating": "TiN",
+          "material": "HSS",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 200,
+            "steel_sfm": 80,
+            "titanium_sfm": 40
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.004,
+            "steel_chipload": 0.002,
+            "titanium_chipload": 0.001
+          },
+          "notes": "Standard HSS twist drill with TiN coating for general drilling",
+          "part_number": "KEN-DR-125",
+          "price": 8.99,
+          "url": "https://www.kennametal.com",
+          "tags": ["drill", "hss", "coated", "general_purpose"],
+          "original_unit": "inch",
+          "original_diameter": "0.125"
+        },
+        "KEN_002": {
+          "id": "KEN_002",
+          "manufacturer": "Kennametal",
+          "series": "Carbide Drills",
+          "name": "Carbide Twist Drill - 5/16\"",
+          "type": "drill",
+          "diameter_mm": "7.9375",
+          "diameter_inch": "0.3125",
+          "flutes": 2,
+          "length_of_cut_mm": 69.0,
+          "overall_length_mm": 102.0,
+          "shank_diameter_mm": 7.9375,
+          "coating": "uncoated",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 400,
+            "steel_sfm": 180,
+            "titanium_sfm": 90
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.008,
+            "steel_chipload": 0.005,
+            "titanium_chipload": 0.003
+          },
+          "notes": "Sharp carbide drill for precision holes in various materials",
+          "part_number": "KEN-CDC-3125",
+          "price": 28.99,
+          "url": "https://www.kennametal.com",
+          "tags": ["drill", "carbide", "uncoated", "precision"],
+          "original_unit": "inch",
+          "original_diameter": "0.3125"
+        },
+        "KEN_003": {
+          "id": "KEN_003",
+          "manufacturer": "Kennametal",
+          "series": "Carbide Drills",
+          "name": "Carbide Twist Drill - 5mm",
+          "type": "drill",
+          "diameter_mm": "5.0",
+          "diameter_inch": "0.1968",
+          "flutes": 2,
+          "length_of_cut_mm": 52.0,
+          "overall_length_mm": 86.0,
+          "shank_diameter_mm": 5.0,
+          "coating": "TiAlN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 450,
+            "steel_sfm": 200,
+            "titanium_sfm": 100
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.006,
+            "steel_chipload": 0.004,
+            "titanium_chipload": 0.002
+          },
+          "notes": "TiAlN coated carbide drill for extended tool life",
+          "part_number": "KEN-CDC-5MM",
+          "price": 32.50,
+          "url": "https://www.kennametal.com",
+          "tags": ["drill", "carbide", "coated", "metric"],
+          "original_unit": "mm",
+          "original_diameter": "5.0"
+        }
+      },
+      "guhring": {
+        "GUH_001": {
+          "id": "GUH_001",
+          "manufacturer": "Guhring",
+          "series": "Standard Drills",
+          "name": "HSS Twist Drill - 8.5mm",
+          "type": "drill",
+          "diameter_mm": "8.5",
+          "diameter_inch": "0.3346",
+          "flutes": 2,
+          "length_of_cut_mm": 75.0,
+          "overall_length_mm": 117.0,
+          "shank_diameter_mm": 8.5,
+          "coating": "TiN",
+          "material": "HSS",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 180,
+            "steel_sfm": 70,
+            "titanium_sfm": 35
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.010,
+            "steel_chipload": 0.006,
+            "titanium_chipload": 0.003
+          },
+          "notes": "Standard HSS drill for general purpose hole making",
+          "part_number": "GUH-DR-85",
+          "price": 12.99,
+          "url": "https://www.guhring.com",
+          "tags": ["drill", "hss", "coated", "standard"],
+          "original_unit": "mm",
+          "original_diameter": "8.5"
+        },
+        "GUH_002": {
+          "id": "GUH_002",
+          "manufacturer": "Guhring",
+          "series": "Spot Drills",
+          "name": "90° Spot Drill - 1/4\"",
+          "type": "spot_drill",
+          "diameter_mm": "6.35",
+          "diameter_inch": "0.25",
+          "flutes": 4,
+          "length_of_cut_mm": 6.35,
+          "overall_length_mm": 50.8,
+          "shank_diameter_mm": 6.35,
+          "coating": "TiAlN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 600,
+            "steel_sfm": 250,
+            "titanium_sfm": 150
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.005,
+            "steel_chipload": 0.003,
+            "titanium_chipload": 0.002
+          },
+          "notes": "90° spot drill for accurate hole starting and chamfering",
+          "part_number": "GUH-SD-250",
+          "price": 35.99,
+          "url": "https://www.guhring.com",
+          "tags": ["spot_drill", "carbide", "coated", "chamfer"],
+          "original_unit": "inch",
+          "original_diameter": "0.25"
+        },
+        "GUH_003": {
+          "id": "GUH_003",
+          "manufacturer": "Guhring",
+          "series": "Spot Drills",
+          "name": "90° Spot Drill - 6mm",
+          "type": "spot_drill",
+          "diameter_mm": "6.0",
+          "diameter_inch": "0.2362",
+          "flutes": 4,
+          "length_of_cut_mm": 6.0,
+          "overall_length_mm": 50.0,
+          "shank_diameter_mm": 6.0,
+          "coating": "uncoated",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 550,
+            "steel_sfm": 220,
+            "titanium_sfm": 130
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.004,
+            "steel_chipload": 0.003,
+            "titanium_chipload": 0.002
+          },
+          "notes": "Sharp uncoated spot drill for precision hole starting",
+          "part_number": "GUH-SD-6MM",
+          "price": 29.99,
+          "url": "https://www.guhring.com",
+          "tags": ["spot_drill", "carbide", "uncoated", "precision"],
+          "original_unit": "mm",
+          "original_diameter": "6.0"
+        }
+      }
+    },
+    "specialty": {
+      "custom": {
+        "CUST_001": {
+          "id": "CUST_001",
+          "manufacturer": "Custom",
+          "series": "Chamfer Mills",
+          "name": "45° Chamfer Mill - 3/16\"",
+          "type": "custom",
+          "diameter_mm": "4.7625",
+          "diameter_inch": "0.1875",
+          "flutes": 6,
+          "length_of_cut_mm": 12.0,
+          "overall_length_mm": 63.5,
+          "shank_diameter_mm": 4.7625,
+          "coating": "TiN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 700,
+            "steel_sfm": 300,
+            "titanium_sfm": 180
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.003,
+            "steel_chipload": 0.002,
+            "titanium_chipload": 0.001
+          },
+          "notes": "45° chamfer mill for deburring and edge finishing",
+          "part_number": "CHAM-1875",
+          "price": 42.99,
+          "url": "",
+          "tags": ["chamfer", "deburring", "specialty", "carbide"],
+          "original_unit": "inch",
+          "original_diameter": "0.1875"
+        },
+        "CUST_002": {
+          "id": "CUST_002",
+          "manufacturer": "Custom",
+          "series": "Thread Mills",
+          "name": "Thread Mill - 2mm",
+          "type": "custom",
+          "diameter_mm": "2.0",
+          "diameter_inch": "0.0787",
+          "flutes": 3,
+          "length_of_cut_mm": 6.0,
+          "overall_length_mm": 50.0,
+          "shank_diameter_mm": 3.175,
+          "coating": "TiAlN",
+          "material": "carbide",
+          "manufacturer_speeds": {
+            "aluminum_sfm": 500,
+            "steel_sfm": 200,
+            "titanium_sfm": 120
+          },
+          "manufacturer_feeds": {
+            "aluminum_chipload": 0.002,
+            "steel_chipload": 0.001,
+            "titanium_chipload": 0.0005
+          },
+          "notes": "Precision thread mill for small metric threads",
+          "part_number": "THREAD-2MM",
+          "price": 89.99,
+          "url": "",
+          "tags": ["thread_mill", "precision", "specialty", "metric"],
+          "original_unit": "mm",
+          "original_diameter": "2.0"
         }
       }
     }
@@ -180,8 +686,8 @@
     "custom"
   ],
   "metadata": {
-    "version": "1.0",
-    "created": "2024-09-02",
-    "description": "Tool library for CNC machining applications"
+    "version": "2.0",
+    "created": "2024-09-06",
+    "description": "Comprehensive tool library for CNC machining applications with diverse tool types and specifications"
   }
 }

@@ -1,0 +1,338 @@
+{
+  "proj_001": {
+    "id": "proj_001",
+    "name": "Aerospace Bracket Assembly",
+    "description": "Precision aluminum aerospace bracket assembly with tight tolerances for flight-critical applications",
+    "customer_name": "AeroTech Industries",
+    "status": "active",
+    "date_created": "2024-08-15T09:30:00.000000",
+    "date_modified": "2024-09-05T14:22:30.000000",
+    "notes": "High precision requirements: ±0.001\" on critical dimensions. Material certs required. All tools must be carbide for consistent finish.",
+    "parts": [
+      {
+        "id": "part_001",
+        "name": "Main Bracket Body",
+        "project_id": "proj_001",
+        "description": "Primary structural bracket with complex geometry and mounting holes",
+        "material": "Aluminum 7075-T6",
+        "drawing_number": "AB-2024-001",
+        "quantity_required": 2,
+        "date_created": "2024-08-15T09:35:00.000000",
+        "date_modified": "2024-09-05T11:45:15.000000",
+        "notes": "Critical part - requires CMM inspection after machining",
+        "setups": [
+          {
+            "id": "setup_001",
+            "name": "Roughing Operations",
+            "part_id": "part_001",
+            "description": "Rough machine external profile and large pockets",
+            "work_offset": "G54",
+            "fixture_notes": "Vise with soft jaws, check part orientation with indicator",
+            "machine_config": "Haas VF-2SS, 10000 RPM max, flood coolant",
+            "operation_type": "roughing",
+            "date_created": "2024-08-15T09:40:00.000000",
+            "date_modified": "2024-08-22T16:30:45.000000",
+            "notes": "Leave 0.010\" stock for finishing ops",
+            "tools": [
+              {
+                "tool_id": "HT_004",
+                "quantity_needed": 1,
+                "notes": "Primary roughing tool - 1/2\" 4-flute for heavy material removal",
+                "date_added": "2024-08-15T09:45:00.000000"
+              },
+              {
+                "tool_id": "HT_003",
+                "quantity_needed": 1,
+                "notes": "3/8\" endmill for smaller pockets and tight areas",
+                "date_added": "2024-08-15T10:15:00.000000"
+              }
+            ]
+          },
+          {
+            "id": "setup_002",
+            "name": "Finishing Operations",
+            "part_id": "part_001",
+            "description": "Finish all surfaces to final dimensions and surface finish requirements",
+            "work_offset": "G55",
+            "fixture_notes": "Same vise setup as roughing, minimal re-clamping force",
+            "machine_config": "Spindle speed 8000 RPM for finishing passes",
+            "operation_type": "finishing",
+            "date_created": "2024-08-15T10:30:00.000000",
+            "date_modified": "2024-09-02T09:12:20.000000",
+            "notes": "Surface finish requirement: 32 µin Ra max on all surfaces",
+            "tools": [
+              {
+                "tool_id": "HT_005",
+                "quantity_needed": 1,
+                "notes": "1/4\" ball endmill for 3D contoured surfaces and radii",
+                "date_added": "2024-08-15T10:35:00.000000"
+              },
+              {
+                "tool_id": "MIT_001",
+                "quantity_needed": 1,
+                "notes": "3mm DLC coated endmill for fine detail work and tight tolerances",
+                "date_added": "2024-08-22T14:20:30.000000"
+              }
+            ]
+          }
+        ],
+        "tools": []
+      },
+      {
+        "id": "part_002", 
+        "name": "Mounting Plate",
+        "project_id": "proj_001",
+        "description": "Flat mounting plate with precision hole pattern",
+        "material": "Aluminum 6061-T6",
+        "drawing_number": "AB-2024-002",
+        "quantity_required": 4,
+        "date_created": "2024-08-20T13:15:00.000000",
+        "date_modified": "2024-09-05T14:22:30.000000",
+        "notes": "Hole locations critical - use CMM for first article inspection",
+        "setups": [
+          {
+            "id": "setup_001",
+            "name": "Face and Profile Milling",
+            "part_id": "part_002",
+            "description": "Face both sides and machine external profile",
+            "work_offset": "G54",
+            "fixture_notes": "Double-sided machining - use parallels and indicate both setups",
+            "machine_config": "Standard setup, flood coolant recommended",
+            "operation_type": "milling",
+            "date_created": "2024-08-20T13:20:00.000000",
+            "date_modified": "2024-08-25T11:05:15.000000",
+            "notes": "Face mill both sides to thickness, then profile mill perimeter",
+            "tools": [
+              {
+                "tool_id": "MIT_004",
+                "quantity_needed": 1,
+                "notes": "12mm AlCrN coated endmill for facing and profiling operations",
+                "date_added": "2024-08-20T13:25:00.000000"
+              },
+              {
+                "tool_id": "MIT_002",
+                "quantity_needed": 1, 
+                "notes": "6mm endmill for fine profiling and corner cleanup",
+                "date_added": "2024-08-20T13:45:00.000000"
+              }
+            ]
+          },
+          {
+            "id": "setup_002",
+            "name": "Drilling Operations",
+            "part_id": "part_002",
+            "description": "Drill all mounting holes and tap operations",
+            "work_offset": "G55",
+            "fixture_notes": "Use drill press vise for rigid clamping during drilling",
+            "machine_config": "Lower RPM for drilling, peck cycle recommended",
+            "operation_type": "drilling",
+            "date_created": "2024-08-20T14:00:00.000000",
+            "date_modified": "2024-09-01T10:30:45.000000",
+            "notes": "Spot drill first, then drill to size. Deburr all holes.",
+            "tools": [
+              {
+                "tool_id": "KEN_003",
+                "quantity_needed": 1,
+                "notes": "5mm TiAlN carbide drill for main mounting holes",
+                "date_added": "2024-08-20T14:05:00.000000"
+              },
+              {
+                "tool_id": "GUH_003",
+                "quantity_needed": 1,
+                "notes": "6mm spot drill for accurate hole starting",
+                "date_added": "2024-08-25T09:15:30.000000"
+              }
+            ]
+          }
+        ],
+        "tools": []
+      }
+    ],
+    "tools": [
+      {
+        "tool_id": "MIT_003",
+        "quantity_needed": 2,
+        "notes": "10mm uncoated endmill - shared tool for both parts, general machining operations",
+        "date_added": "2024-08-15T11:00:00.000000"
+      }
+    ]
+  },
+  "proj_002": {
+    "id": "proj_002",
+    "name": "Custom Tooling Fixture",
+    "description": "Steel work-holding fixture for production machining of custom automotive components",
+    "customer_name": "Internal Shop Project", 
+    "status": "completed",
+    "date_created": "2024-06-10T08:00:00.000000",
+    "date_modified": "2024-07-28T16:45:00.000000",
+    "notes": "Completed project - fixture in active use for production runs. Heat treat after machining.",
+    "parts": [
+      {
+        "id": "part_001",
+        "name": "Base Plate",
+        "project_id": "proj_002",
+        "description": "Heavy steel base plate with T-slots and precision locating features",
+        "material": "1018 Steel",
+        "drawing_number": "FX-2024-100",
+        "quantity_required": 1,
+        "date_created": "2024-06-10T08:15:00.000000",
+        "date_modified": "2024-07-15T14:20:00.000000",
+        "notes": "Heat treat to 30-35 HRC after machining. Stress relieve before final ops.",
+        "setups": [
+          {
+            "id": "setup_001",
+            "name": "Face Milling",
+            "part_id": "part_001",
+            "description": "Face mill top surface to establish primary datum",
+            "work_offset": "G54",
+            "fixture_notes": "Clamp in 4-jaw chuck, indicate true within 0.001\"",
+            "machine_config": "Heavy cuts, 500 RPM max, flood coolant essential",
+            "operation_type": "facing",
+            "date_created": "2024-06-10T08:30:00.000000",
+            "date_modified": "2024-06-15T13:45:00.000000",
+            "notes": "Take heavy facing cuts to remove scale and establish flat surface",
+            "tools": [
+              {
+                "tool_id": "HT_004",
+                "quantity_needed": 1,
+                "notes": "1/2\" endmill for heavy facing operations in steel",
+                "date_added": "2024-06-10T08:35:00.000000"
+              }
+            ]
+          },
+          {
+            "id": "setup_002", 
+            "name": "Pocket Milling",
+            "part_id": "part_001",
+            "description": "Machine T-slot pockets and locating features",
+            "work_offset": "G55",
+            "fixture_notes": "Flip part, indicate off machined face for Z-zero reference",
+            "machine_config": "Moderate speeds for steel, climb milling preferred",
+            "operation_type": "pocketing",
+            "date_created": "2024-06-15T09:00:00.000000",
+            "date_modified": "2024-06-20T11:30:00.000000",
+            "notes": "Rough with square endmill, finish with ball mill for smooth surfaces",
+            "tools": [
+              {
+                "tool_id": "HT_002",
+                "quantity_needed": 1,
+                "notes": "1/4\" square endmill for pocket roughing and semi-finishing",
+                "date_added": "2024-06-15T09:05:00.000000"
+              },
+              {
+                "tool_id": "MIT_006",
+                "quantity_needed": 1,
+                "notes": "8mm ball endmill for smooth pocket floors and blend radii",
+                "date_added": "2024-06-15T10:15:00.000000"
+              }
+            ]
+          },
+          {
+            "id": "setup_003",
+            "name": "Hole Operations", 
+            "part_id": "part_001",
+            "description": "Drill mounting holes and threaded features",
+            "work_offset": "G56",
+            "fixture_notes": "Same setup as pocketing, add drilling supports where needed",
+            "machine_config": "Low RPM for drilling, high-pressure coolant for chip evacuation",
+            "operation_type": "drilling",
+            "date_created": "2024-06-20T14:00:00.000000",
+            "date_modified": "2024-07-05T09:45:00.000000", 
+            "notes": "Spot, drill, tap sequence. Check tap alignment carefully.",
+            "tools": [
+              {
+                "tool_id": "GUH_002",
+                "quantity_needed": 1,
+                "notes": "1/4\" spot drill for accurate hole starting in steel",
+                "date_added": "2024-06-20T14:05:00.000000"
+              },
+              {
+                "tool_id": "KEN_001",
+                "quantity_needed": 2,
+                "notes": "1/8\" HSS drill for small clearance holes (qty 2 - spares)",
+                "date_added": "2024-06-20T14:10:00.000000"
+              },
+              {
+                "tool_id": "GUH_001",
+                "quantity_needed": 1,
+                "notes": "8.5mm drill for 10mm tap drill holes",
+                "date_added": "2024-06-25T10:30:00.000000"
+              }
+            ]
+          }
+        ],
+        "tools": []
+      },
+      {
+        "id": "part_002",
+        "name": "Clamp Blocks",
+        "project_id": "proj_002", 
+        "description": "Adjustable clamp blocks with threaded adjustment mechanism",
+        "material": "4140 Steel",
+        "drawing_number": "FX-2024-101",
+        "quantity_required": 4,
+        "date_created": "2024-07-01T10:00:00.000000",
+        "date_modified": "2024-07-28T16:45:00.000000",
+        "notes": "Higher strength steel for clamp blocks. Heat treat to 40-45 HRC.",
+        "setups": [
+          {
+            "id": "setup_001",
+            "name": "Profile and Slot Machining",
+            "part_id": "part_002",
+            "description": "Machine external profile and internal adjustment slots",
+            "work_offset": "G54",
+            "fixture_notes": "Gang setup - machine all 4 pieces simultaneously in vise",
+            "machine_config": "Conservative speeds for 4140, flood coolant mandatory",
+            "operation_type": "profiling",
+            "date_created": "2024-07-01T10:15:00.000000",
+            "date_modified": "2024-07-10T13:20:00.000000",
+            "notes": "Pre-machine before heat treat, leave stock for post-HT finishing",
+            "tools": [
+              {
+                "tool_id": "MIT_002",
+                "quantity_needed": 1,
+                "notes": "6mm endmill for profiling and slotting operations",
+                "date_added": "2024-07-01T10:20:00.000000"
+              },
+              {
+                "tool_id": "CUST_002", 
+                "quantity_needed": 1,
+                "notes": "2mm thread mill for fine threading operations",
+                "date_added": "2024-07-05T11:45:00.000000"
+              }
+            ]
+          },
+          {
+            "id": "setup_002",
+            "name": "Finishing Operations",
+            "part_id": "part_002",
+            "description": "Post heat-treat finishing and deburring operations",
+            "work_offset": "G55",
+            "fixture_notes": "Light clamping to avoid distortion of heat-treated parts",
+            "machine_config": "Light finishing cuts, higher surface speeds for finish",
+            "operation_type": "finishing",
+            "date_created": "2024-07-20T08:30:00.000000",
+            "date_modified": "2024-07-28T15:30:00.000000",
+            "notes": "Final finishing after heat treatment. Check dimensions carefully.",
+            "tools": [
+              {
+                "tool_id": "CUST_001",
+                "quantity_needed": 1,
+                "notes": "3/16\" chamfer mill for deburring and edge breaking",
+                "date_added": "2024-07-20T08:35:00.000000"
+              },
+              {
+                "tool_id": "MIT_005",
+                "quantity_needed": 1,
+                "notes": "4mm ball endmill for blending sharp corners post heat-treat",
+                "date_added": "2024-07-25T14:15:00.000000"
+              }
+            ]
+          }
+        ],
+        "tools": []
+      }
+    ],
+    "tools": []
+  }
+}

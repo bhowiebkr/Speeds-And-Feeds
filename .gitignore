@@ -133,7 +133,7 @@ dmypy.json
 .claude
 
 # User data files
-data/projects.json
+# data/projects.json - Now committed as example data
 
 # Nuitka build directories
 build/

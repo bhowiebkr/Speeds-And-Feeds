@@ -28,8 +28,7 @@ class BackupManager:
         self.backup_dirs = {
             'tool_library': self.base_path / 'tool_library',
             'projects': self.base_path / 'projects',
-            'materials': self.base_path / 'materials',
-            'tool_presets': self.base_path / 'tool_presets'
+            'materials': self.base_path / 'materials'
         }
         
         # Create all backup directories
@@ -42,7 +41,7 @@ class BackupManager:
         
         Args:
             file_path: Path to the file to backup
-            backup_type: Type of backup ('tool_library', 'projects', 'materials', 'tool_presets')
+            backup_type: Type of backup ('tool_library', 'projects', 'materials')
         
         Returns:
             True if backup was successful, False otherwise
@@ -278,7 +277,5 @@ def get_file_type_from_path(file_path: str) -> Optional[str]:
         return 'projects'
     elif 'materials' in filename:
         return 'materials'
-    elif 'tool_presets' in filename:
-        return 'tool_presets'
     
     return None

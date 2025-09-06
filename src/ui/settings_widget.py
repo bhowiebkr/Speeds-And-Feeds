@@ -96,7 +96,7 @@ class BackupSectionWidget(QtWidgets.QGroupBox):
         
         # File type selection
         self.backup_type_combo = QtWidgets.QComboBox()
-        self.backup_type_combo.addItems(["tool_library", "projects", "materials", "tool_presets"])
+        self.backup_type_combo.addItems(["tool_library", "projects", "materials"])
         manual_layout.addWidget(QtWidgets.QLabel("File type:"))
         manual_layout.addWidget(self.backup_type_combo)
         
@@ -136,7 +136,7 @@ class BackupSectionWidget(QtWidgets.QGroupBox):
         filter_layout.addWidget(QtWidgets.QLabel("Show backups for:"))
         
         self.filter_type_combo = QtWidgets.QComboBox()
-        self.filter_type_combo.addItems(["All Types", "tool_library", "projects", "materials", "tool_presets"])
+        self.filter_type_combo.addItems(["All Types", "tool_library", "projects", "materials"])
         self.filter_type_combo.currentTextChanged.connect(self.refresh_backup_list)
         filter_layout.addWidget(self.filter_type_combo)
         
@@ -265,8 +265,7 @@ class BackupSectionWidget(QtWidgets.QGroupBox):
         file_mappings = {
             'tool_library': f"{base_path}/tool_library.json",
             'projects': f"{base_path}/projects.json", 
-            'materials': f"{base_path}/materials.json",
-            'tool_presets': f"{base_path}/tool_presets.json"
+            'materials': f"{base_path}/materials.json"
         }
         
         file_path = file_mappings.get(backup_type)
@@ -311,7 +310,7 @@ class BackupSectionWidget(QtWidgets.QGroupBox):
         filter_type = self.filter_type_combo.currentText()
         
         if filter_type == "All Types":
-            backup_types = ["tool_library", "projects", "materials", "tool_presets"]
+            backup_types = ["tool_library", "projects", "materials"]
         else:
             backup_types = [filter_type]
         
@@ -463,7 +462,7 @@ class BackupSectionWidget(QtWidgets.QGroupBox):
         
         if reply == QtWidgets.QMessageBox.Yes:
             total_deleted = 0
-            for backup_type in ["tool_library", "projects", "materials", "tool_presets"]:
+            for backup_type in ["tool_library", "projects", "materials"]:
                 deleted = self.backup_manager.rotate_backups(backup_type, max_backups)
                 total_deleted += deleted
             
