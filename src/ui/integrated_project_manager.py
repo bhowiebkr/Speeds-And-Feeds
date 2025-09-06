@@ -1412,9 +1412,13 @@ class ProjectToolsWidget(QtWidgets.QWidget):
         if self.current_setup_id:
             self.header_label.setText("Setup Tools")
         elif self.current_part_id:
-            self.header_label.setText("Part Tools")
+            # Specific part selected - showing part + all setup tools for that part
+            part = self.project_manager.get_part(self.current_project_id, self.current_part_id)
+            part_name = part.name if part else "Unknown Part"
+            self.header_label.setText(f"All Tools for {part_name}")
         else:
-            self.header_label.setText("Project Tools")
+            # All Parts view - showing all tools in the entire project
+            self.header_label.setText("All Project Tools")
         
         # Use the rich tool widget formatting
         for tool_assoc in tools:
@@ -1424,15 +1428,107 @@ class ProjectToolsWidget(QtWidgets.QWidget):
     
     def get_current_tools(self):
         """Get tools for current context."""
+        if not self.current_project_id:
+            return []
+            
+        project = self.project_manager.get_project(self.current_project_id)
+        if not project:
+            return []
+        
         if self.current_setup_id:
+            # Specific setup selected - show only setup tools
             setup = self.project_manager.get_setup(self.current_project_id, self.current_part_id, self.current_setup_id)
             return setup.tools if setup else []
         elif self.current_part_id:
+            # Specific part selected (includes "All Setups" for that part) - show aggregated tools for that part
             part = self.project_manager.get_part(self.current_project_id, self.current_part_id)
-            return part.tools if part else []
+            if not part:
+                return []
+            
+            return self._aggregate_tools_with_context(
+                part_tools=part.tools,
+                setup_tools=[(setup.name, setup.tools) for setup in part.setups],
+                part_name=part.name
+            )
         else:
-            project = self.project_manager.get_project(self.current_project_id)
-            return project.tools if project else []
+            # Project level with "All Parts" - show all tools in the entire project
+            return self._aggregate_tools_with_context(
+                project_tools=project.tools,
+                part_tools_list=[(part.name, part.tools, [(setup.name, setup.tools) for setup in part.setups]) for part in project.parts]
+            )
+    
+    def _aggregate_tools_with_context(self, project_tools=None, part_tools=None, setup_tools=None, part_name=None, part_tools_list=None):
+        """Aggregate tools from multiple contexts, combining quantities and preserving context info."""
+        from ..models.project import ProjectToolAssociation
+        from datetime import datetime
+        
+        tool_aggregation = {}  # tool_id -> {quantity, contexts, latest_date}
+        
+        # Helper to add tool with context
+        def add_tool_with_context(tool_assoc, context_name):
+            if tool_assoc.tool_id not in tool_aggregation:
+                tool_aggregation[tool_assoc.tool_id] = {
+                    'quantity': 0,
+                    'contexts': [],
+                    'notes': tool_assoc.notes,
+                    'latest_date': tool_assoc.date_added
+                }
+            
+            agg = tool_aggregation[tool_assoc.tool_id]
+            agg['quantity'] += tool_assoc.quantity_needed
+            agg['contexts'].append(f"{context_name} (qty: {tool_assoc.quantity_needed})")
+            
+            # Use the most detailed notes and latest date
+            if len(tool_assoc.notes.strip()) > len(agg['notes'].strip()):
+                agg['notes'] = tool_assoc.notes
+            if tool_assoc.date_added > agg['latest_date']:
+                agg['latest_date'] = tool_assoc.date_added
+        
+        # Process project-level tools
+        if project_tools:
+            for tool_assoc in project_tools:
+                add_tool_with_context(tool_assoc, "Project")
+        
+        # Process single part context (when part is selected)
+        if part_name:  # Process if we have a part name, regardless of whether part has direct tools
+            # Add part-level tools if any exist
+            if part_tools:
+                for tool_assoc in part_tools:
+                    add_tool_with_context(tool_assoc, f"Part: {part_name}")
+                
+            # Add setup tools if any exist
+            if setup_tools:
+                for setup_name, tools in setup_tools:
+                    for tool_assoc in tools:
+                        add_tool_with_context(tool_assoc, f"Setup: {setup_name}")
+        
+        # Process all parts context (when "All Parts" is selected)
+        if part_tools_list:
+            for part_name, part_tools, part_setup_tools in part_tools_list:
+                for tool_assoc in part_tools:
+                    add_tool_with_context(tool_assoc, f"Part: {part_name}")
+                
+                for setup_name, setup_tools in part_setup_tools:
+                    for tool_assoc in setup_tools:
+                        add_tool_with_context(tool_assoc, f"{part_name} → {setup_name}")
+        
+        # Convert aggregated data back to ProjectToolAssociation objects
+        aggregated_tools = []
+        for tool_id, agg_data in tool_aggregation.items():
+            # Create comprehensive notes showing all contexts
+            contexts_text = " | ".join(agg_data['contexts'])
+            combined_notes = f"Used in: {contexts_text}"
+            if agg_data['notes'].strip():
+                combined_notes += f"\n\nNotes: {agg_data['notes']}"
+            
+            aggregated_tools.append(ProjectToolAssociation(
+                tool_id=tool_id,
+                quantity_needed=agg_data['quantity'],
+                notes=combined_notes,
+                date_added=agg_data['latest_date']
+            ))
+        
+        return aggregated_tools
     
     def add_tool(self, tool_id: str):
         """Add a tool to current context."""
