@@ -123,6 +123,30 @@
           "tags": [],
           "original_unit": "inch",
           "original_diameter": "0.25"
+        },
+        "232": {
+          "id": "232",
+          "manufacturer": "Harvey Tool",
+          "series": "",
+          "name": "dsfd",
+          "type": "square_endmill",
+          "diameter_mm": "5",
+          "diameter_inch": "0.1968503937007874015748031496",
+          "flutes": 1,
+          "length_of_cut_mm": 0.1,
+          "overall_length_mm": 1.0,
+          "shank_diameter_mm": "5",
+          "coating": "uncoated",
+          "material": "HSS",
+          "manufacturer_speeds": {},
+          "manufacturer_feeds": {},
+          "notes": "",
+          "part_number": "",
+          "price": 0.0,
+          "url": "",
+          "tags": [],
+          "original_unit": "mm",
+          "original_diameter": "5"
         }
       }
     }

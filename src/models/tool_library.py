@@ -147,8 +147,8 @@ class ToolLibrary:
         
     def _get_default_library_path(self) -> str:
         """Get default path for tool library file."""
-        components_dir = os.path.join(os.path.dirname(__file__), "..", "components")
-        return os.path.join(components_dir, "tool_library.json")
+        data_dir = os.path.join(os.path.dirname(__file__), "..", "..", "data")
+        return os.path.join(data_dir, "tool_library.json")
     
     def load_library(self) -> bool:
         """Load tool library from JSON file."""

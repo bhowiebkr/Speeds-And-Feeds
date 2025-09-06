@@ -11,7 +11,7 @@ CNC ToolHub is a comprehensive CNC tool management and machining optimization ap
 ## Running the Application
 
 - **Run application**: `run.bat` (Windows batch file that activates venv and runs the app)
-- **Run with Python directly**: `venv/Scripts/python.exe speeds_and_feeds.py`
+- **Run with Python directly**: `venv/Scripts/python.exe src/cnc_toolhub.py`
 - **Install dependencies**: `venv/Scripts/python.exe -m pip install -r requirements.txt`
 
 ## Key Features
@@ -46,7 +46,7 @@ CNC ToolHub is a comprehensive CNC tool management and machining optimization ap
 ## Architecture
 
 ### Entry Points
-- `speeds_and_feeds.py` - Main entry point that imports and calls `src.app.start()`
+- `src/cnc_toolhub.py` - Main entry point that imports and calls `src.app.start()`
 - `src/app.py` - Application startup and theme loading
 - `src/main.py` - Simplified GUI class and main window logic
 
@@ -86,10 +86,14 @@ The codebase has been comprehensively refactored from large monolithic files int
 #### Components (Unchanged)
 - `src/components/widgets.py` - Custom widgets (`MaterialCombo`, input validation)
 - `src/components/dashboard_widgets.py` - Graphical dashboard components
-- `src/components/materials.json` - Extended material database
+- `data/materials.json` - Extended material database
 
 ### Data Files
-- `src/components/materials.json` - Material database with hardness ranges and K-factors for power calculations
+- `data/materials.json` - Material database with hardness ranges and K-factors for power calculations
+- `data/projects.json` - Project data with tool assignments and organization
+- `data/tool_library.json` - Tool library database with specifications
+- `data/tool_presets.json` - Tool presets for common operations
+- `data/backups/` - Automatic backups of all data files
 
 ### UI Theme
 - Uses a custom dark theme stylesheet in `src/dark_theme.qss`

@@ -142,7 +142,7 @@ def load_materials_database(json_path: str = None) -> Dict:
     if json_path is None:
         # Default path relative to this module
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        json_path = os.path.join(base_dir, 'components', 'materials.json')
+        json_path = os.path.join(base_dir, '..', 'data', 'materials.json')
     
     try:
         with open(json_path, 'r', encoding='utf-8') as f:

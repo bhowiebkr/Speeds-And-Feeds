@@ -260,7 +260,7 @@ class BackupSectionWidget(QtWidgets.QGroupBox):
     
     def get_data_file_path(self, backup_type: str) -> Optional[str]:
         """Get the path to the data file for the given backup type."""
-        base_path = "src/components"
+        base_path = "data"
         
         file_mappings = {
             'tool_library': f"{base_path}/tool_library.json",

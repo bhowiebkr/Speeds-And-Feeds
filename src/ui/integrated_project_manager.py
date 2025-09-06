@@ -12,6 +12,7 @@ import uuid
 from ..models.project import ProjectManager, Project, Part, Setup, ProjectStatus
 from ..models.tool_library import ToolLibrary, ToolSpecs
 from .project_tools import ProjectToolWidget, ProjectToolListWidget as OriginalProjectToolListWidget, ToolNotesDialog
+from .navigation import ProjectNavigationWidget
 from ..utils.fractions import format_diameter_display
 
 

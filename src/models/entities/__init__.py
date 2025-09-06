@@ -1,0 +1,1 @@
+"""Project entity models and data structures."""

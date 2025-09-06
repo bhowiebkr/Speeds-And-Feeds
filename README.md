@@ -57,7 +57,7 @@ pip install -r requirements.txt
 run.bat
 
 # Or directly with Python
-python speeds_and_feeds.py
+python src/cnc_toolhub.py
 ```
 
 ## Usage
