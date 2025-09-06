@@ -42,7 +42,7 @@ jobs:
     - name: Download build artifact
       uses: actions/download-artifact@v4
       with:
-        name: SpeedsAndFeeds-${{ inputs.tag }}-windows
+        name: CNCToolHub-${{ inputs.tag }}-windows
         path: ./artifact
 
     - name: Verify artifact contents
@@ -50,12 +50,12 @@ jobs:
         echo "📦 Artifact contents:"
         ls -la artifact/
         
-        if [ ! -f "artifact/SpeedsAndFeeds.exe" ]; then
-          echo "❌ SpeedsAndFeeds.exe not found in artifact"
+        if [ ! -f "artifact/CNCToolHub.exe" ]; then
+          echo "❌ CNCToolHub.exe not found in artifact"
           exit 1
         fi
         
-        echo "✅ SpeedsAndFeeds.exe found"
+        echo "✅ CNCToolHub.exe found"
         
         # Check for required files
         echo "📋 Checking build contents:"
@@ -72,7 +72,7 @@ jobs:
         mkdir -p ../release
         
         # Copy main executable and required files
-        cp SpeedsAndFeeds.exe ../release/
+        cp CNCToolHub.exe ../release/
         
         # Copy any required directories (Qt libs, etc.)
         find . -type d -name "*Qt*" -exec cp -r {} ../release/ \;
@@ -86,11 +86,11 @@ jobs:
         
         # Create the release archive
         cd ../release
-        zip -r "../SpeedsAndFeeds-${{ inputs.tag }}-windows.zip" .
+        zip -r "../CNCToolHub-${{ inputs.tag }}-windows.zip" .
         
         # Show final archive contents
         echo "📦 Release archive contents:"
-        unzip -l "../SpeedsAndFeeds-${{ inputs.tag }}-windows.zip"
+        unzip -l "../CNCToolHub-${{ inputs.tag }}-windows.zip"
 
     - name: Generate changelog
       id: changelog
@@ -129,12 +129,12 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ inputs.tag }}
-        name: "Speeds & Feeds Calculator ${{ inputs.tag }}"
+        name: "CNC ToolHub ${{ inputs.tag }}"
         body: ${{ steps.changelog.outputs.changelog }}
         draft: false
         prerelease: ${{ inputs.release_type == 'prerelease' }}
         make_latest: ${{ inputs.make_latest }}
-        files: ./SpeedsAndFeeds-${{ inputs.tag }}-windows.zip
+        files: ./CNCToolHub-${{ inputs.tag }}-windows.zip
 
     - name: Release Summary
       run: |
