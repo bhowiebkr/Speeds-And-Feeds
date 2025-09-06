@@ -1,0 +1,1 @@
+"""Main manager widgets that coordinate multiple components."""
