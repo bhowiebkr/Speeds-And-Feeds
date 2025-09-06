@@ -339,8 +339,8 @@ class ProjectManager:
     
     def _get_default_projects_path(self) -> str:
         """Get default path for projects file."""
-        components_dir = os.path.join(os.path.dirname(__file__), "..", "components")
-        return os.path.join(components_dir, "projects.json")
+        data_dir = os.path.join(os.path.dirname(__file__), "..", "..", "data")
+        return os.path.join(data_dir, "projects.json")
     
     def load_projects(self) -> bool:
         """Load projects from JSON file."""

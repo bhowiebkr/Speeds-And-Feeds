@@ -133,7 +133,7 @@ dmypy.json
 .claude
 
 # User data files
-src/components/projects.json
+data/projects.json
 
 # Nuitka build directories
 build/
