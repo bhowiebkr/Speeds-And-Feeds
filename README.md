@@ -7,6 +7,7 @@ A comprehensive desktop application for CNC tool management, project organizatio
 ## Key Features
 
 ### Advanced Machining Calculations
+
 - **Standard & Micro Tool Support**: Optimized calculations for tools ≥3mm and <3mm
 - **HSM (High Speed Machining)**: Chip thinning compensation and advanced algorithms
 - **Tool Deflection Analysis**: Cantilever beam theory with deflection warnings
@@ -14,6 +15,7 @@ A comprehensive desktop application for CNC tool management, project organizatio
 - **Real-time Parameter Validation**: Comprehensive warnings and recommendations
 
 ### Tool & Project Management
+
 - **Project-Based Organization**: Organize tools by project with quantity tracking
 - **Comprehensive Tool Library**: Browse and filter extensive tool database
 - **Material Database**: Extensive material properties with coating multipliers
@@ -23,11 +25,10 @@ A comprehensive desktop application for CNC tool management, project organizatio
 
 ### Feeds & Speeds Calculator
 
-![Feeds and Speeds Tab](images/feeds-speeds-tab.png)
-
 The core machining calculation engine that computes optimal cutting parameters:
 
 **Input Parameters:**
+
 - Tool diameter and flute count with unit conversion
 - Material selection with automatic property loading
 - Cutting parameters (depth/width of cut, surface speed, feed per tooth)
@@ -35,6 +36,7 @@ The core machining calculation engine that computes optimal cutting parameters:
 - Advanced options (HSM mode, tool stickout, chip thinning)
 
 **Calculated Results:**
+
 - Spindle Speed (RPM)
 - Feed Rate (IPM/mm/min)
 - Material Removal Rate (MRR)
@@ -42,6 +44,7 @@ The core machining calculation engine that computes optimal cutting parameters:
 - Tool deflection analysis with warnings
 
 **Key Formulas:**
+
 - **RPM**: `(Surface Speed × 1000) / (π × Tool Diameter)`
 - **Feed Rate**: `RPM × Feed per Tooth × Flute Count`
 - **MRR**: `Width of Cut × Depth of Cut × Feed Rate`
@@ -53,6 +56,7 @@ The core machining calculation engine that computes optimal cutting parameters:
 Comprehensive tool database with advanced filtering and management:
 
 **Features:**
+
 - Browse extensive tool database with specifications
 - Filter by diameter, flute count, coating, application
 - View detailed tool information and recommendations
@@ -60,6 +64,7 @@ Comprehensive tool database with advanced filtering and management:
 - Export tool data for external use
 
 **Tool Categories:**
+
 - End mills (standard, micro, specialty)
 - Drill bits and reamers  
 - Face mills and fly cutters
@@ -72,6 +77,7 @@ Comprehensive tool database with advanced filtering and management:
 Project-based tool organization and workflow management:
 
 **Project Management:**
+
 - Create and organize multiple CNC projects
 - Assign tools to projects with quantities and notes
 - Track project progress and tool usage
@@ -79,6 +85,7 @@ Project-based tool organization and workflow management:
 - Project-specific cutting parameters
 
 **Tool Assignment:**
+
 - Assign specific tools from library to projects
 - Track tool quantities and availability
 - Add project-specific notes and parameters
@@ -91,12 +98,14 @@ Project-based tool organization and workflow management:
 System configuration and data management:
 
 **Configuration Options:**
+
 - Unit system preferences (metric/imperial)
 - Default machine settings and rigidity
 - Application theme and interface options
 - Data file locations and backup settings
 
 **Data Management:**
+
 - Import/export tool library data
 - Backup and restore project files
 - Material database updates
@@ -111,10 +120,12 @@ Download the latest Windows executable from the [Releases](https://github.com/bh
 ### From Source
 
 **Requirements:**
+
 - Python 3.11
 - PySide6
 
 **Installation:**
+
 ```bash
 git clone https://github.com/bhowiebkr/CNC-ToolHub.git
 cd CNC-ToolHub
@@ -122,6 +133,7 @@ pip install -r requirements.txt
 ```
 
 **Run:**
+
 ```bash
 # Windows
 run.bat
@@ -133,12 +145,14 @@ python src/cnc_toolhub.py
 ## Technical Specifications
 
 ### Calculation Engine
+
 - **Strategy Pattern**: Automatic selection between standard and micro tool calculators
 - **Physics-Based**: Cantilever beam theory for deflection analysis
 - **Industry Standards**: Formulas from garrtool.com and major tooling manufacturers
 - **Machine Aware**: Rigidity adjustments for Router, DIY, and Industrial VMC
 
 ### Architecture
+
 - **Modular Design**: Separate packages for calculators, formulas, UI components
 - **Qt Framework**: PySide6 for cross-platform GUI
 - **JSON Data**: Human-readable material and tool databases
@@ -157,6 +171,7 @@ For detailed build instructions including Nuitka compilation, see [BUILD.md](BUI
 ## Testing
 
 Run the test suite to verify calculations:
+
 ```bash
 # Windows
 run_tests.bat
